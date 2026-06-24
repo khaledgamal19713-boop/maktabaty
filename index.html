@@ -107,19 +107,16 @@ img{max-width:100%}
 .comment-input-row button{background:var(--green);color:#fff;padding:7px 14px;border-radius:20px;font-size:13px}
 #posts-loading,#posts-empty{text-align:center;padding:30px;color:var(--text2)}
 #page-library{display:flex;height:calc(100vh - 50px);overflow:hidden}
-#lib-sidebar{width:64px;min-width:64px;background:#fff;border-left:1px solid var(--border);overflow-y:auto;transition:width .2s;display:flex;flex-direction:column;flex-shrink:0}
-#lib-sidebar.expanded{width:200px;min-width:200px}
+#lib-sidebar{width:220px;min-width:220px;background:#fff;border-left:1px solid var(--border);overflow-y:auto;transition:width .2s;display:flex;flex-direction:column;flex-shrink:0}
+#lib-sidebar.collapsed{width:0;min-width:0;overflow:hidden}
 #sidebar-toggle{padding:10px;text-align:center;border-bottom:1px solid var(--border);color:var(--green);font-size:16px}
 #sidebar-toggle:hover{background:var(--green-light)}
-.book-item{padding:10px 8px;cursor:pointer;border-bottom:1px solid #f5f5f5;text-align:center;border-right:3px solid transparent}
+.book-item{padding:10px 12px;cursor:pointer;border-bottom:1px solid #f5f5f5;text-align:right;border-right:3px solid transparent}
 .book-item:hover{background:var(--green-light)}
 .book-item.active{background:var(--green-light);border-right-color:var(--green)}
-.book-item .book-icon{font-size:20px;display:block;margin-bottom:2px}
-.book-item .book-title{font-size:11px;font-weight:600;color:var(--text);display:none;line-height:1.3}
-.book-item .book-author{font-size:10px;color:var(--text2);display:none}
-#lib-sidebar.expanded .book-item{text-align:right;padding:10px 12px}
-#lib-sidebar.expanded .book-item .book-icon{display:none}
-#lib-sidebar.expanded .book-item .book-title,#lib-sidebar.expanded .book-item .book-author{display:block}
+.book-item .book-icon{font-size:16px;margin-left:8px}
+.book-item .book-title{font-size:13px;font-weight:600;color:var(--text);line-height:1.3}
+.book-item .book-author{font-size:11px;color:var(--text2)}
 #lib-main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 #lib-empty{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;color:var(--text2);text-align:center}
 #lib-empty p:first-child{font-size:32px;margin-bottom:10px}
@@ -137,9 +134,9 @@ img{max-width:100%}
 #comments-toggle-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--border);font-size:12px;color:var(--text2)}
 #comments-toggle-btn.active{background:var(--green-light);color:var(--green);border-color:var(--green)}
 #lib-content{flex:1;display:flex;overflow:hidden;position:relative}
-.side-panel{width:0;overflow:hidden;transition:width .2s;background:#fafafa;border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
-.side-panel.open{width:19%;min-width:170px}
-.side-panel-header{padding:8px 10px;font-size:12px;font-weight:600;color:var(--text2);background:#fff;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.side-panel{width:0;overflow:hidden;transition:width .3s;background:#fafafa;border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;z-index:10}
+.side-panel.open{width:25%;min-width:240px}
+.side-panel-header{padding:10px 14px;font-size:13px;font-weight:700;color:var(--green);background:#fff;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
 .side-panel-body{flex:1;overflow-y:auto;padding:8px}
 .side-panel-body .ms-item,.side-panel-body .ed-item{border:1px solid var(--border);border-radius:6px;padding:8px;margin-bottom:8px;background:#fff;font-size:12px}
 .side-panel-body .ms-item h4,.side-panel-body .ed-item h4{font-size:12px;color:var(--green);margin-bottom:3px}
@@ -260,6 +257,9 @@ img{max-width:100%}
 ::-webkit-scrollbar-track{background:#f0f0f0}
 ::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
 @media(max-width:768px){.side-panel.open{position:absolute;height:100%;z-index:50;width:70%}#comments-drawer.open{position:absolute;right:0;height:100%;z-index:51;width:80%}#lib-sidebar.expanded{position:absolute;height:100%;z-index:52}}
+.entity-highlight{background:var(--blue-light);color:var(--blue);padding:0 2px;border-radius:2px;cursor:pointer;font-weight:600;border-bottom:1px dashed var(--blue)}
+.entity-highlight:hover{background:var(--blue);color:#fff}
+.entity-link{color:var(--green);cursor:pointer;text-decoration:underline}
 </style>
 </head>
 <body>
@@ -327,18 +327,19 @@ img{max-width:100%}
     <div id="posts-list"></div>
   </div>
   <div id="page-library" class="page">
+    <!-- Pane A: Knowledge Navigation Tree -->
     <div id="lib-sidebar">
-      <div id="sidebar-toggle" onclick="toggleSidebar()">☰</div>
+      <div id="sidebar-toggle" onclick="toggleSidebar()">☰ شجرة المعرفة</div>
       <div id="books-list"></div>
     </div>
     <div id="lib-main">
-      <div id="lib-empty"><p>📚</p><p>اختر كتاباً من القائمة الجانبية</p></div>
+      <div id="lib-empty"><p>📚</p><p>اختر كياناً من شجرة المعرفة للبدء</p></div>
       <div id="lib-active" style="display:none;flex-direction:column;flex:1;overflow:hidden">
         <div id="mode-bar">
           <div class="modes">
-            <button class="active" data-mode="browse" onclick="setMode('browse')">تصفح</button>
-            <button data-mode="tahqiq" onclick="setMode('tahqiq')">تحقيق</button>
-            <button data-mode="editor" onclick="setMode('editor')">المحرر</button>
+            <button class="active" data-mode="browse" onclick="setMode('browse')">تصفح (Layer 1)</button>
+            <button data-mode="tahqiq" onclick="setMode('tahqiq')">تحقيق (Layer 2)</button>
+            <button data-mode="editor" onclick="setMode('editor')">المحرر (Layer 3)</button>
           </div>
           <div class="toc-and-fn">
             <select id="toc-select" onchange="selectChapterFromDropdown(this.value)"></select>
@@ -348,17 +349,29 @@ img{max-width:100%}
           </div>
         </div>
         <div id="lib-content">
-          <button id="panel-toggle-right" onclick="togglePanel('editions')">‹</button>
-          <div class="side-panel" id="panel-editions">
-            <div class="side-panel-header"><span>الطبعات المطبوعة</span></div>
-            <div class="side-panel-body"><div id="editions-list"></div><button class="add-item-btn" onclick="openAddModal('edition')">+ إضافة مصورة مطبوع</button></div>
+          <!-- Pane D: Research Workspace -->
+          <button id="panel-toggle-right" onclick="togglePanel('workspace')">📁</button>
+          <div class="side-panel" id="panel-workspace">
+            <div class="side-panel-header"><span>مساحة البحث (Pane D)</span></div>
+            <div class="side-panel-body">
+              <div id="workspace-tabs" style="display:flex;gap:4px;margin-bottom:8px">
+                <button class="fn-toggle active" style="flex:1">ملاحظات</button>
+                <button class="fn-toggle" style="flex:1">إشارات</button>
+              </div>
+              <div id="workspace-content"></div>
+              <hr style="margin:10px 0;border:0;border-top:1px solid var(--border)">
+              <div id="editions-list"></div>
+              <button class="add-item-btn" onclick="openAddModal('edition')">+ إضافة مصورة مطبوع</button>
+            </div>
           </div>
+
+          <!-- Pane B: Primary Reading Area -->
           <div id="reader-panel">
             <div id="reader-header">
               <h2 id="reader-title"></h2>
-              <div id="hadith-search-bar"><input id="hadith-search-input" placeholder="بحث..."><button onclick="searchHadiths()">بحث</button></div>
+              <div id="hadith-search-bar"><input id="hadith-search-input" placeholder="بحث في الكيانات..."><button onclick="searchHadiths()">بحث</button></div>
             </div>
-            <div id="lib-loading" style="display:none;text-align:center;padding:40px;color:var(--text2)">جاري تحميل الأحاديث...</div>
+            <div id="lib-loading" style="display:none;text-align:center;padding:40px;color:var(--text2)">جاري تحميل البيانات...</div>
             <div id="hadiths-container"></div>
             <div id="editor-view" style="display:none">
               <div id="editor-toolbar">
@@ -370,24 +383,33 @@ img{max-width:100%}
                 <button class="mark-btn ziyada" onclick="insertMark('ziyada')">زيادة</button>
                 <button class="mark-btn naqs" onclick="insertMark('naqs')">نقص</button>
                 <button class="mark-btn shahid" onclick="insertMark('shahid')">شاهد</button>
+                <button class="mark-btn" style="color:var(--purple)" onclick="insertMark('entity')">وسم كيان</button>
                 <div class="sep"></div>
                 <span class="status-badge" id="edit-status-badge"></span>
               </div>
               <div style="padding:14px">
                 <div id="editor-content" contenteditable="true" spellcheck="false"></div>
-                <div id="editor-footnotes"><h5>الحواشي الشخصية</h5><div id="fn-list"></div><button id="btn-add-fn" onclick="openFnDialog()">+ إضافة حاشية مرقّمة</button></div>
+                <div id="editor-footnotes"><h5>الحواشي العلمية</h5><div id="fn-list"></div><button id="btn-add-fn" onclick="openFnDialog()">+ إضافة حاشية مرقّمة</button></div>
                 <div id="editor-actions">
-                  <button class="btn-save" onclick="saveDraft()">حفظ كمسودة</button>
-                  <button class="btn-submit" onclick="submitForReview()">إرسال للجنة العلمية</button>
+                  <button class="btn-save" onclick="saveDraft()">حفظ مسودة</button>
+                  <button class="btn-submit" onclick="submitForReview()">إرسال للمراجعة والتوثيق</button>
                 </div>
-                <p style="font-size:12px;color:var(--text2);margin-top:10px">ملاحظة: تعديلاتك تظهر في صفحتك الشخصية ولدى متابعيك فقط، ولا تغيّر النص الأصلي حتى تُراجَع وتُعتمد.</p>
+                <p style="font-size:12px;color:var(--text2);margin-top:10px">تنبيه: التعديلات تتبع نظام Revisions المستند إلى Entity Graph.</p>
               </div>
             </div>
           </div>
-          <button id="panel-toggle-left" onclick="togglePanel('mss')">›</button>
-          <div class="side-panel" id="panel-mss">
-            <div class="side-panel-header"><span>المخطوطات</span></div>
-            <div class="side-panel-body"><div id="mss-list"></div><button class="add-item-btn" onclick="openAddModal('manuscript')">+ إضافة مصورة مخطوط</button></div>
+
+          <!-- Pane C: Context Intelligence Panel -->
+          <button id="panel-toggle-left" onclick="togglePanel('intel')">🧠</button>
+          <div class="side-panel" id="panel-intel">
+            <div class="side-panel-header"><span>الذكاء السياقي (Pane C)</span></div>
+            <div class="side-panel-body">
+              <div id="intel-entity-info" style="margin-bottom:12px"></div>
+              <div id="intel-relationships"></div>
+              <hr style="margin:10px 0;border:0;border-top:1px solid var(--border)">
+              <div id="mss-list"></div>
+              <button class="add-item-btn" onclick="openAddModal('manuscript')">+ إضافة مصورة مخطوط</button>
+            </div>
           </div>
         </div>
       </div>
@@ -434,7 +456,7 @@ const{createClient}=supabase;
 const sb=createClient(SUPA_URL,SUPA_KEY);
 let currentUser=null,currentProfile=null,mainView='feed',feedFilter='الكل',currentPostType='حديث';
 let currentBook=null,currentHadiths=[],currentChapters=[],activeChapter=null;
-let currentMode='browse',activeFnCats={},openPanels={mss:false,editions:false};
+let currentMode='browse',activeFnCats={},openPanels={intel:false,workspace:false};
 let commentsDrawerOpen=false,activeHadith=null,qcHadith=null,footnotes=[],fnCounter=0;
 let currentDraftId=null,addItemType=null,viewedProfileId=null,previousView='feed';
 
@@ -535,15 +557,15 @@ function startEditPost(id){togglePostMenu(id);const card=document.getElementById
 function cancelEditPost(id){document.getElementById('content-'+id).style.display='block';document.getElementById('edit-box-'+id).style.display='none';}
 async function saveEditPost(id){const content=document.getElementById('edit-textarea-'+id).value.trim();if(!content)return toast('لا يمكن الحفظ بمحتوى فارغ');const{error}=await sb.from('posts').update({content}).eq('id',id).eq('author_id',currentUser.id);if(error)return toast('خطأ في التعديل: '+error.message);document.getElementById('content-'+id).textContent=content;document.getElementById('edit-textarea-'+id).value=content;cancelEditPost(id);toast('تم التعديل');}
 function goToHadith(bookId){switchMainView('library');selectBook(bookId);}
-function toggleSidebar(){document.getElementById('lib-sidebar').classList.toggle('expanded');}
+function toggleSidebar(){document.getElementById('lib-sidebar').classList.toggle('collapsed');}
 function renderBooks(){document.getElementById('books-list').innerHTML=BOOKS.map(b=>`<div class="book-item" data-id="${b.id}" onclick="selectBook('${b.id}')"><span class="book-icon">${b.icon}</span><div class="book-title">${b.title}</div><div class="book-author">${b.author}</div></div>`).join('');}
 async function loadCustomBooks(){const knownIds=BOOKS.map(b=>b.id);const{data}=await sb.from('books').select('*');if(!data)return;data.forEach(row=>{if(!knownIds.includes(row.id)){BOOKS.push({id:row.id,icon:row.icon||'📜',title:row.title,author:row.author});knownIds.push(row.id);}});}
-async function selectBook(bookId){document.querySelectorAll('.book-item').forEach(el=>el.classList.toggle('active',el.dataset.id===bookId));currentBook=BOOKS.find(b=>b.id===bookId);currentHadiths=[];currentChapters=[];activeChapter=null;activeHadith=null;document.getElementById('lib-empty').style.display='none';document.getElementById('lib-active').style.display='flex';document.getElementById('reader-title').textContent=currentBook.title;document.getElementById('lib-loading').style.display='block';document.getElementById('hadiths-container').innerHTML='';document.getElementById('toc-select').innerHTML='<option value="">كل الأبواب</option>';setMode('browse');try{if(currentBook.cdnId){const res=await fetch(`${CDN}/editions/${currentBook.cdnId}.min.json`);if(!res.ok)throw new Error();const json=await res.json();currentHadiths=json.hadiths||[];}else{const{data,error}=await sb.from('texts').select('*').eq('book_id',bookId).order('hadith_number');if(error)throw error;currentHadiths=(data||[]).map(t=>({text:t.matn,hadithnumber:t.hadith_number,chapter:t.chapter,isnad:t.isnad}));}const cm={};currentHadiths.forEach(h=>{const ch=h.chapter||h.chapterNumber||'عام';if(!cm[ch])cm[ch]=[];cm[ch].push(h);});currentChapters=Object.entries(cm);renderTOC();renderHadiths(currentHadiths.slice(0,30));}catch(e){document.getElementById('hadiths-container').innerHTML='<div style="text-align:center;padding:30px;color:#999">تعذّر تحميل الكتاب.</div>';}document.getElementById('lib-loading').style.display='none';loadSidePanels();}
+async function selectBook(bookId){document.querySelectorAll('.book-item').forEach(el=>el.classList.toggle('active',el.dataset.id===bookId));currentBook=BOOKS.find(b=>b.id===bookId);currentHadiths=[];currentChapters=[];activeChapter=null;activeHadith=null;document.getElementById('lib-empty').style.display='none';document.getElementById('lib-active').style.display='flex';document.getElementById('reader-title').textContent=currentBook.title;document.getElementById('lib-loading').style.display='block';document.getElementById('hadiths-container').innerHTML='';document.getElementById('toc-select').innerHTML='<option value="">كل الأبواب</option>';setMode('browse');try{if(currentBook.cdnId){const res=await fetch(`${CDN}/editions/${currentBook.cdnId}.min.json`);if(!res.ok)throw new Error();const json=await res.json();currentHadiths=json.hadiths||[];}else{const{data,error}=await sb.from('texts').select('*').eq('book_id',bookId).order('hadith_number');if(error)throw error;currentHadiths=(data||[]).map(t=>({text:t.matn,hadithnumber:t.hadith_number,chapter:t.chapter,isnad:t.isnad}));}const cm={};currentHadiths.forEach(h=>{const ch=h.chapter||h.chapterNumber||'عام';if(!cm[ch])cm[ch]=[];cm[ch].push(h);});currentChapters=Object.entries(cm);renderTOC();await renderHadiths(currentHadiths.slice(0,30));}catch(e){document.getElementById('hadiths-container').innerHTML='<div style="text-align:center;padding:30px;color:#999">تعذّر تحميل الكتاب.</div>';}document.getElementById('lib-loading').style.display='none';loadSidePanels();}
 function renderTOC(){const sel=document.getElementById('toc-select');sel.innerHTML='<option value="">كل الأبواب</option>'+currentChapters.map(([ch,hs],i)=>`<option value="${i}">${ch} (${hs.length})</option>`).join('');}
-function selectChapterFromDropdown(val){if(val===''){activeChapter=null;renderHadiths(currentHadiths.slice(0,30));return;}activeChapter=parseInt(val);renderHadiths(currentChapters[activeChapter][1]);}
-function setMode(mode){if(mode!=='browse'&&currentProfile?.account_type!=='verified'){toast('هذه الميزة تتطلب حساباً موثقاً');return;}currentMode=mode;document.querySelectorAll('#mode-bar .modes button').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));const isEditor=mode==='editor';document.getElementById('hadiths-container').style.display=isEditor?'none':'block';document.getElementById('editor-view').style.display=isEditor?'block':'none';document.getElementById('hadith-search-bar').style.display=isEditor?'none':'flex';const isTahqiq=mode==='tahqiq';document.getElementById('panel-toggle-left').style.display=isTahqiq?'block':'none';document.getElementById('panel-toggle-right').style.display=isTahqiq?'block':'none';if(!isTahqiq){document.getElementById('panel-mss').classList.remove('open');document.getElementById('panel-editions').classList.remove('open');openPanels={mss:false,editions:false};}document.getElementById('fn-toggles').style.display=isEditor?'none':'flex';document.getElementById('add-text-book-btn').style.display=(isTahqiq&&currentProfile?.account_type==='verified')?'inline-block':'none';if(isEditor){if(!activeHadith){document.getElementById('editor-content').innerHTML='';toast('اختر حديثاً من وضع التصفح أولاً، ثم اضغط تحرير');}else{loadEditorForHadith();}}}
-function togglePanel(which){const key=which==='mss'?'mss':'editions';openPanels[key]=!openPanels[key];document.getElementById('panel-'+key).classList.toggle('open',openPanels[key]);const btn=which==='mss'?document.getElementById('panel-toggle-left'):document.getElementById('panel-toggle-right');btn.classList.toggle('open',openPanels[key]);btn.textContent=which==='mss'?(openPanels.mss?'‹':'›'):(openPanels.editions?'›':'‹');}
-function renderHadiths(hadiths){document.getElementById('fn-toggles').innerHTML=FN_CATS.map(c=>{const label=c.replace('_',' ');return `<button class="fn-toggle ${activeFnCats[c]?'active '+c:''}" onclick="toggleFnCat('${c}')">${label}</button>`;}).join('');const container=document.getElementById('hadiths-container');if(!hadiths.length){container.innerHTML='<div style="text-align:center;padding:30px;color:#999">لا أحاديث</div>';return;}container.innerHTML=hadiths.slice(0,50).map(hadithCardHTML).join('');Object.keys(activeFnCats).forEach(c=>{if(activeFnCats[c])loadFnMarkers(c);});}
+async function selectChapterFromDropdown(val){if(val===''){activeChapter=null;await renderHadiths(currentHadiths.slice(0,30));return;}activeChapter=parseInt(val);await renderHadiths(currentChapters[activeChapter][1]);}
+function setMode(mode){if(mode!=='browse'&&currentProfile?.account_type!=='verified'){toast('هذه الميزة تتطلب حساباً موثقاً');return;}currentMode=mode;document.querySelectorAll('#mode-bar .modes button').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));const isEditor=mode==='editor';document.getElementById('hadiths-container').style.display=isEditor?'none':'block';document.getElementById('editor-view').style.display=isEditor?'block':'none';document.getElementById('hadith-search-bar').style.display=isEditor?'none':'flex';const isTahqiq=mode==='tahqiq';document.getElementById('panel-toggle-left').style.display=isTahqiq?'block':'none';document.getElementById('panel-toggle-right').style.display=isTahqiq?'block':'none';if(!isTahqiq){document.getElementById('panel-intel').classList.remove('open');document.getElementById('panel-workspace').classList.remove('open');openPanels={intel:false,workspace:false};}document.getElementById('fn-toggles').style.display=isEditor?'none':'flex';document.getElementById('add-text-book-btn').style.display=(isTahqiq&&currentProfile?.account_type==='verified')?'inline-block':'none';if(isEditor){if(!activeHadith){document.getElementById('editor-content').innerHTML='';toast('اختر حديثاً من وضع التصفح أولاً، ثم اضغط تحرير');}else{loadEditorForHadith();}}}
+function togglePanel(which){const key=which==='intel'?'intel':'workspace';openPanels[key]=!openPanels[key];document.getElementById('panel-'+key).classList.toggle('open',openPanels[key]);const btn=which==='intel'?document.getElementById('panel-toggle-left'):document.getElementById('panel-toggle-right');btn.classList.toggle('open',openPanels[key]);btn.textContent=which==='intel'?(openPanels.intel?'‹':'›'):(openPanels.workspace?'›':'‹');}
+async function renderHadiths(hadiths){document.getElementById('fn-toggles').innerHTML=FN_CATS.map(c=>{const label=c.replace('_',' ');return `<button class="fn-toggle ${activeFnCats[c]?'active '+c:''}" onclick="toggleFnCat('${c}')">${label}</button>`;}).join('');const container=document.getElementById('hadiths-container');if(!hadiths.length){container.innerHTML='<div style="text-align:center;padding:30px;color:#999">لا أحاديث</div>';return;}container.innerHTML=hadiths.slice(0,50).map(hadithCardHTML).join('');Object.keys(activeFnCats).forEach(c=>{if(activeFnCats[c])loadFnMarkers(c);});await highlightKnowledgeEntities('hadiths-container');}
 function hadithCardHTML(h){const text=h.text||h.hadith||'';const num=h.hadithnumber||h.number||'';const grade=h.grades?.[0]?.grade||'';const gc=grade.includes('صحيح')?'صحيح':grade.includes('حسن')?'حسن':grade.includes('ضعيف')?'ضعيف':'';const ts=JSON.stringify(escHtml(text)).replace(/"/g,'&quot;');const isVerified=currentProfile?.account_type==='verified';return `<div class="hadith-card" data-num="${num}"><div class="hadith-card-header"><span class="hadith-number">رقم ${num}</span>${grade?`<span class="hadith-grade ${gc}">${grade}</span>`:''}</div><div class="hadith-text" id="htext-${num}">${escHtml(text)}</div><div class="hadith-actions"><button onclick="openQC(${ts},${num})">تعليق</button><button onclick="setActiveHadithAndDrawer(${ts},${num})">💬 تعليقات القراء</button>${currentMode==='tahqiq'?`<button class="btn-tahqiq" onclick="setActiveHadith(${ts},${num})">تحديد للتحقيق</button>`:''}${isVerified?`<button class="btn-editor" onclick="sendToEditor(${ts},${num})">تحرير</button>`:''}</div></div>`;}
 function setActiveHadith(text,num){activeHadith={text,num};toast('تم تحديد الحديث رقم '+num);}
 function setActiveHadithAndDrawer(text,num){activeHadith={text,num};openCommentsDrawer();}
@@ -551,7 +573,7 @@ function sendToEditor(text,num){activeHadith={text,num};setMode('editor');}
 async function toggleFnCat(cat){activeFnCats[cat]=!activeFnCats[cat];document.querySelectorAll('.fn-toggle').forEach(b=>{FN_CATS.forEach(c=>{if(b.textContent.trim()===c.replace('_',' ')){b.classList.remove('تخريج','فروق_نسخ','غريب','active');if(activeFnCats[c])b.classList.add('active',c);}});});document.querySelectorAll('.fn-marker.'+cat).forEach(m=>m.remove());if(activeFnCats[cat])await loadFnMarkers(cat);}
 async function loadFnMarkers(cat){if(!currentBook)return;const{data}=await sb.from('footnotes').select('*').eq('book_id',currentBook.id).eq('category',FN_CAT_DB[cat]);if(!data)return;data.forEach(fn=>{const el=document.getElementById('htext-'+fn.hadith_number);if(el&&!el.querySelector('.fn-marker.'+cat)){const marker=document.createElement('span');marker.className='fn-marker '+cat;marker.textContent=FN_CATS.indexOf(cat)+1;marker.onclick=(e)=>showFnPopover(e,fn.content||'لا يوجد محتوى',cat);el.appendChild(marker);}});}
 function showFnPopover(e,text,cat){e.stopPropagation();const pop=document.getElementById('fn-popover');pop.innerHTML=`<div class="fn-cat-label ${cat}">${cat.replace('_',' ')}</div>${escHtml(text)}`;pop.style.display='block';const rect=e.target.getBoundingClientRect();pop.style.top=(rect.bottom+6)+'px';pop.style.left=Math.max(8,rect.left-100)+'px';}
-function searchHadiths(){const q=document.getElementById('hadith-search-input').value.trim();if(!q||!currentHadiths.length)return;const results=currentHadiths.filter(h=>(h.text||h.hadith||'').includes(q));renderHadiths(results);if(!results.length)toast('لا نتائج لهذا البحث');}
+async function searchHadiths(){const q=document.getElementById('hadith-search-input').value.trim();if(!q||!currentHadiths.length)return;const results=currentHadiths.filter(h=>(h.text||h.hadith||'').includes(q));await renderHadiths(results);if(!results.length)toast('لا نتائج لهذا البحث');}
 async function loadSidePanels(){if(!currentBook)return;const{data:mss}=await sb.from('manuscripts').select('*').eq('book_id',currentBook.id);document.getElementById('mss-list').innerHTML=mss&&mss.length?mss.map(m=>`<div class="ms-item"><h4>${m.name}${m.status!=='approved'?' <span class="status-pill" style="background:var(--gold-light);color:var(--gold)">قيد المراجعة</span>':''}</h4><p>${m.library||''}</p>${m.image_url?`<img src="${m.image_url}" onclick="zoomImg('${m.image_url}')" loading="lazy">`:'</div>'}`).join(''):'<div style="font-size:12px;color:var(--text2);text-align:center;padding:14px">لا توجد مخطوطات مضافة</div>';const{data:eds}=await sb.from('editions').select('*').eq('book_id',currentBook.id);document.getElementById('editions-list').innerHTML=eds&&eds.length?eds.map(e=>`<div class="ed-item"><h4>${e.name}${e.status!=='approved'?' <span class="status-pill" style="background:var(--gold-light);color:var(--gold)">قيد المراجعة</span>':''}</h4><p>${e.publisher||''}</p>${e.image_url?`<img src="${e.image_url}" onclick="zoomImg('${e.image_url}')" loading="lazy">`:'</div>'}`).join(''):'<div style="font-size:12px;color:var(--text2);text-align:center;padding:14px">لا توجد طبعات مضافة</div>';}
 function openAddModal(type){if(currentProfile?.account_type!=='verified'){toast('يتطلب حساباً موثقاً');return;}addItemType=type;document.getElementById('add-item-title').textContent=type==='manuscript'?'إضافة مصورة مخطوط':'إضافة مصورة مطبوع';['ai-name','ai-meta','ai-image-url','ai-notes'].forEach(id=>document.getElementById(id).value='');openModal('add-item-modal');}
 async function submitAddItem(){const name=document.getElementById('ai-name').value.trim();const meta=document.getElementById('ai-meta').value.trim();const url=document.getElementById('ai-image-url').value.trim();const notes=document.getElementById('ai-notes').value.trim();if(!name)return toast('أدخل الاسم');if(addItemType==='manuscript'){await sb.from('manuscripts').insert({book_id:currentBook.id,name,library:meta,image_url:url,notes,author_id:currentUser.id,status:'pending_review'});}else{await sb.from('editions').insert({book_id:currentBook.id,name,publisher:meta,image_url:url,notes,author_id:currentUser.id,status:'pending_review'});}closeModal('add-item-modal');toast('أُرسلت الإضافة للجنة العلمية، وستظهر في صفحتك حتى الإقرار');loadSidePanels();}
@@ -567,13 +589,88 @@ async function submitQC(){const content=document.getElementById('qc-text').value
 async function loadEditorForHadith(){if(!activeHadith||!currentUser||!currentBook)return;document.getElementById('editor-content').innerHTML='';footnotes=[];fnCounter=0;currentDraftId=null;const{data}=await sb.from('user_edits').select('*').eq('user_id',currentUser.id).eq('book_id',currentBook.id).eq('hadith_number',activeHadith.num).maybeSingle();if(data){currentDraftId=data.id;document.getElementById('editor-content').innerHTML=data.edited_matn||escHtml(activeHadith.text);footnotes=data.custom_footnotes||[];fnCounter=footnotes.length;setEditStatus(data.status);}else{document.getElementById('editor-content').innerHTML=escHtml(activeHadith.text);setEditStatus('draft');}renderFootnotes();}
 function setEditStatus(status){const badge=document.getElementById('edit-status-badge');const labels={draft:'مسودة',pending_review:'قيد المراجعة',approved:'معتمد ✓',rejected:'مرفوض'};badge.textContent=labels[status]||status;badge.className='status-badge status-'+status;}
 function fmt(cmd){document.getElementById('editor-content').focus();document.execCommand(cmd,false,null);}
-function insertMark(type){const labels={tashif:'تصحيف',ziyada:'زيادة',naqs:'نقص',shahid:'شاهد'};const sel=window.getSelection();if(!sel.rangeCount)return;const range=sel.getRangeAt(0);const txt=range.toString();if(!txt)return toast('حدد نصاً أولاً');const span=document.createElement('span');span.className='m-'+type;span.title=labels[type];span.textContent=txt;range.deleteContents();range.insertNode(span);sel.collapseToEnd();}
+function insertMark(type){const labels={tashif:'تصحيف',ziyada:'زيادة',naqs:'نقص',shahid:'شاهد',entity:'كيان معرفي'};const sel=window.getSelection();if(!sel.rangeCount)return;const range=sel.getRangeAt(0);const txt=range.toString();if(!txt)return toast('حدد نصاً أولاً');
+
+  if (type === 'entity') {
+    const entityType = prompt('أدخل نوع الكيان (مثلاً: Narrator, Location):', 'Narrator');
+    if (!entityType) return;
+    const span=document.createElement('span');
+    span.className='entity-highlight';
+    span.dataset.type = entityType;
+    span.textContent=txt;
+    range.deleteContents();
+    range.insertNode(span);
+  } else {
+    const span=document.createElement('span');
+    span.className='m-'+type;
+    span.title=labels[type];
+    span.textContent=txt;
+    range.deleteContents();
+    range.insertNode(span);
+  }
+  sel.collapseToEnd();
+}
 function openFnDialog(){document.getElementById('fn-text-input').value='';openModal('fn-dialog');}
 function addFootnote(){const text=document.getElementById('fn-text-input').value.trim();if(!text)return toast('أدخل نص الحاشية');const sel=window.getSelection();fnCounter++;if(sel.rangeCount&&sel.toString()){const range=sel.getRangeAt(0);const ref=document.createElement('sup');ref.className='m-fn-ref';ref.textContent=fnCounter;range.collapse(false);range.insertNode(ref);}footnotes.push({num:fnCounter,text});renderFootnotes();closeModal('fn-dialog');}
 function deleteFootnote(num){footnotes=footnotes.filter(f=>f.num!==num);renderFootnotes();}
 function renderFootnotes(){const list=document.getElementById('fn-list');list.innerHTML=footnotes.length?footnotes.map(f=>`<div class="fn-item"><span class="fn-num">${f.num}</span><span class="fn-text">${escHtml(f.text)}</span><button class="fn-del" onclick="deleteFootnote(${f.num})">×</button></div>`).join(''):'<div style="font-size:12px;color:#bbb;padding:4px 0">لا حواشي شخصية بعد</div>';}
-async function saveDraft(){if(!currentUser||!activeHadith||!currentBook)return toast('لا يوجد حديث محدد');const matn=document.getElementById('editor-content').innerHTML;const payload={user_id:currentUser.id,book_id:currentBook.id,hadith_number:activeHadith.num,edited_matn:matn,custom_footnotes:footnotes,status:'draft',updated_at:new Date().toISOString()};let res;if(currentDraftId)res=await sb.from('user_edits').update(payload).eq('id',currentDraftId);else{res=await sb.from('user_edits').insert(payload).select().single();if(res.data)currentDraftId=res.data.id;}if(res.error)return toast('خطأ في الحفظ');setEditStatus('draft');toast('تم حفظ المسودة في صفحتك الشخصية');}
-async function submitForReview(){await saveDraft();if(!currentDraftId)return;const{error}=await sb.from('user_edits').update({status:'pending_review'}).eq('id',currentDraftId);if(error)return toast('خطأ');setEditStatus('pending_review');toast('أُرسل للجنة العلمية للمراجعة');}
+// --- Scholarly Verification & Revision System ---
+async function createKnowledgeRevision(entityId, changeset, status = 'draft', evidence = []) {
+  const { data, error } = await sb.from('knowledge_revisions').insert({
+    entity_id: entityId,
+    changeset: changeset,
+    author_id: currentUser.id,
+    status: status,
+    evidence_set: evidence,
+    parent_revision_id: currentDraftId // Simplified: treat currentDraftId as parent if it exists
+  }).select().single();
+
+  if (error) throw error;
+
+  // Audit the action
+  await sb.from('audit_logs').insert({
+    actor_id: currentUser.id,
+    operation: 'REVISION_CREATE',
+    affected_object_id: entityId,
+    new_state: changeset
+  });
+
+  return data;
+}
+
+async function saveDraft(){
+  if(!currentUser||!activeHadith||!currentBook)return toast('لا يوجد حديث محدد');
+  const matn=document.getElementById('editor-content').innerHTML;
+
+  try {
+    // In the new system, we map the old book/hadith to a knowledge_entity ID
+    // For this POC, we'll still use user_edits but hook into the revision logic
+    const changeset = { matn, footnotes };
+    const rev = await createKnowledgeRevision(activeHadith.num, changeset, 'draft'); // Using hadith num as placeholder entityId
+    currentDraftId = rev.id;
+
+    const payload={user_id:currentUser.id,book_id:currentBook.id,hadith_number:activeHadith.num,edited_matn:matn,custom_footnotes:footnotes,status:'draft',updated_at:new Date().toISOString()};
+    await sb.from('user_edits').upsert(payload, { onConflict: 'user_id,book_id,hadith_number' });
+
+    setEditStatus('draft');
+    toast('تم حفظ المسودة في نظام المراجعات');
+  } catch(e) {
+    toast('خطأ في الحفظ: ' + e.message);
+  }
+}
+
+async function submitForReview(){
+  await saveDraft();
+  if(!currentDraftId)return;
+
+  const { error } = await sb.from('knowledge_revisions').update({ status: 'review' }).eq('id', currentDraftId);
+  if(error) return toast('خطأ في الإرسال');
+
+  await sb.from('user_edits').update({status:'pending_review'}).eq('book_id',currentBook.id).eq('hadith_number',activeHadith.num).eq('user_id',currentUser.id);
+
+  setEditStatus('pending_review');
+  toast('أُرسل للجنة العلمية للمراجعة والتحقيق');
+}
 async function loadProfilePage(){const uid=viewedProfileId||currentUser.id;viewedProfileId=null;const{data:prof}=await sb.from('profiles').select('*').eq('id',uid).single();if(!prof)return;const initial=(prof.full_name||'م').trim().charAt(0);document.getElementById('profile-avatar').textContent=initial;document.getElementById('profile-name').textContent=prof.full_name||prof.username||'مستخدم';const badge=document.getElementById('profile-acc-badge');badge.textContent=prof.account_type==='verified'?'حساب موثّق':'حساب زائر';badge.className='acc-badge'+(prof.account_type!=='verified'?' guest':'');document.getElementById('profile-bio-text').textContent=prof.bio||'';const isOwn=uid===currentUser.id;document.getElementById('profile-bio-edit').style.display=isOwn?'flex':'none';document.getElementById('profile-bio-input').value=prof.bio||'';document.getElementById('page-profile').dataset.uid=uid;switchProfileTab('posts');}
 async function saveBio(){const bio=document.getElementById('profile-bio-input').value.trim();await sb.from('profiles').update({bio}).eq('id',currentUser.id);document.getElementById('profile-bio-text').textContent=bio;if(currentProfile)currentProfile.bio=bio;toast('تم الحفظ');}
 function switchProfileTab(tab){document.querySelectorAll('#profile-tabs button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));const uid=document.getElementById('page-profile').dataset.uid||currentUser.id;if(tab==='posts')loadProfilePosts(uid);else if(tab==='tahqiq')loadProfileTahqiq(uid);else loadProfileAdditions(uid);}
@@ -587,6 +684,72 @@ function zoomImg(src){document.getElementById('zoom-img').src=src;document.getEl
 function closeZoom(){document.getElementById('img-zoom').style.display='none';}
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2800);}
 function escHtml(str){if(!str)return '';return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// --- Knowledge Entity Logic ---
+async function highlightKnowledgeEntities(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  // Fetch all entities to look for (In a real system, this would be a more complex semantic search)
+  const { data: entities } = await sb.from('knowledge_entities').select('*').eq('status', 'published');
+  if (!entities || !entities.length) return;
+
+  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null, false);
+  let node;
+  const nodesToProcess = [];
+  while(node = walker.nextNode()) nodesToProcess.push(node);
+
+  nodesToProcess.forEach(textNode => {
+    let text = textNode.nodeValue;
+    let modified = false;
+
+    entities.forEach(ent => {
+      const name = ent.metadata.name || ent.metadata.title;
+      if (name && text.includes(name)) {
+        const regex = new RegExp(`(${name})`, 'g');
+        text = text.replace(regex, `<span class="entity-highlight" data-id="${ent.id}" onclick="loadEntityIntelligence('${ent.id}')">$1</span>`);
+        modified = true;
+      }
+    });
+
+    if (modified) {
+      const span = document.createElement('span');
+      span.innerHTML = text;
+      textNode.parentNode.replaceChild(span, textNode);
+    }
+  });
+}
+
+async function loadEntityIntelligence(entityId) {
+  const intelInfo = document.getElementById('intel-entity-info');
+  const intelRels = document.getElementById('intel-relationships');
+  intelInfo.innerHTML = 'جاري التحميل...';
+  intelRels.innerHTML = '';
+
+  const { data: entity } = await sb.from('knowledge_entities').select('*').eq('id', entityId).single();
+  if (!entity) return;
+
+  intelInfo.innerHTML = `
+    <h3 style="color:var(--green)">${entity.metadata.name || entity.metadata.title}</h3>
+    <p style="font-size:12px;color:var(--text2)">النوع: ${entity.entity_type}</p>
+    <div style="font-size:13px;margin-top:8px">${entity.metadata.description || ''}</div>
+  `;
+
+  const { data: rels } = await sb.from('knowledge_relationships')
+    .select('*, knowledge_entities!knowledge_relationships_to_entity_id_fkey(*)')
+    .eq('from_entity_id', entityId);
+
+  if (rels && rels.length) {
+    intelRels.innerHTML = '<h4 style="font-size:12px;margin-bottom:6px">العلاقات:</h4>' + rels.map(r => `
+      <div style="font-size:12px;background:#fff;padding:6px;border-radius:4px;margin-bottom:4px;border:1px solid var(--border)">
+        <span style="color:var(--gold);font-weight:700">${r.relationship_type}:</span>
+        <span class="entity-link" onclick="loadEntityIntelligence('${r.knowledge_entities.id}')">${r.knowledge_entities.metadata.name || r.knowledge_entities.metadata.title}</span>
+      </div>
+    `).join('');
+  }
+
+  if (!openPanels.intel) togglePanel('intel');
+}
 </script>
 </body>
 </html>
