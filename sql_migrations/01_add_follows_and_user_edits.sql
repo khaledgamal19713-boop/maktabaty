@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS user_edits (
 
 -- 3. Add new columns to profiles if not exist
 ALTER TABLE profiles 
-ADD COLUMN IF NOT EXISTS account_tier TEXT DEFAULT 'guest' CHECK (account_tier IN ('guest', 'verified')),
+ADD COLUMN IF NOT EXISTS account_type TEXT DEFAULT 'guest' CHECK (account_type IN ('guest', 'verified')),
 ADD COLUMN IF NOT EXISTS phone TEXT UNIQUE,
 ADD COLUMN IF NOT EXISTS phone_verified_at TIMESTAMPTZ,
 ADD COLUMN IF NOT EXISTS email_verified_at TIMESTAMPTZ,
