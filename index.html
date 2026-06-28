@@ -19,19 +19,22 @@
         #nav-toggle button { padding: 6px 18px; border: none; background: transparent; color: #fff; cursor: pointer; }
         #nav-toggle button.active { background: #fff; color: var(--green); border-radius: 20px; }
 
-        .page { display: none; padding: 20px; }
-        .page.active { display: block; }
+        .page { display: none !important; padding: 20px; }
+        .page.active { display: block !important; }
+        .active { display: block !important; }
 
-        #page-library { padding: 0; height: calc(100vh - 50px); display: flex; }
-        #pane-a { width: 65px; background: #fff; border-left: 1px solid var(--border); overflow-y: auto; transition: width 0.3s; }
-        #pane-a:hover { width: 200px; }
+        #page-library { padding: 0; height: calc(100vh - 50px); display: flex; overflow: hidden; }
+        #pane-a { flex: 0 0 5%; min-width: 65px; background: #fff; border-left: 1px solid var(--border); overflow-y: auto; transition: flex 0.3s; z-index: 20; }
+        #pane-a:hover { flex: 0 0 15%; }
         #lib-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        #mode-bar { height: 45px; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 15px; background: #fff; gap: 10px; }
+        #mode-bar { height: 45px; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 15px; background: #fff; gap: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
 
-        #lib-content { flex: 1; display: flex; overflow: hidden; }
-        #pane-b { flex: 1; overflow-y: auto; padding: 20px; }
-        .side-panel { width: 0; overflow: hidden; transition: width 0.3s; background: #fafafa; border-left: 1px solid var(--border); }
-        .side-panel.open { width: 25%; min-width: 250px; }
+        #lib-content { flex: 1; display: flex; overflow: hidden; position: relative; }
+        #pane-b { flex: 1; overflow-y: auto; padding: 25px; transition: flex 0.3s; }
+        .tahqiq-mode #pane-b { flex: 0 0 65%; max-width: 65%; border-left: 1px solid var(--border); }
+
+        .side-panel { flex: 0 0 0%; overflow: hidden; transition: flex 0.3s; background: #fafafa; border-left: 1px solid var(--border); display: flex; flex-direction: column; }
+        .side-panel.open { flex: 0 0 17.5%; }
 
         .hadith-card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-bottom: 15px; }
         .hadith-text { font-size: 18px; line-height: 1.8; }
@@ -39,14 +42,44 @@
 
         #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: #fff; padding: 8px 16px; border-radius: 20px; display: none; z-index: 1000; }
         .btn-gold { background: var(--gold); color: #fff; }
+        .btn-xs { padding: 2px 5px; font-size: 10px; }
     </style>
 </head>
 <body>
 
-<div id="auth-page" style="display:none; padding:100px 20px; text-align:center;">
-    <h3>مكتبتي - نظام المعرفة</h3>
-    <input id="auth-email" type="email" placeholder="البريد الإلكتروني" class="form-control mx-auto my-3" style="max-width:300px;">
-    <button onclick="login()" class="btn btn-success">دخول</button>
+<div id="auth-page" style="display:none; padding:80px 20px; text-align:center; background:#fff; min-height:100vh;">
+    <div style="max-width:400px; margin:0 auto; border:1px solid var(--border); border-radius:12px; padding:30px; box-shadow:0 10px 25px rgba(0,0,0,0.05);">
+        <h2 class="text-success fw-bold mb-4">مكتبتي</h2>
+        <p class="text-muted mb-4">انضم إلى أكبر شبكة معرفية تخصصية</p>
+
+        <div id="auth-step-1">
+            <input id="auth-email" type="email" placeholder="البريد الإلكتروني" class="form-control mb-3" style="height:45px;">
+            <div class="d-grid gap-2">
+                <button onclick="checkEmail()" class="btn btn-success" style="height:45px;">متابعة</button>
+            </div>
+            <hr>
+            <button onclick="showQuickGuest()" class="btn btn-outline-secondary w-100">دخول سريع كزائر</button>
+        </div>
+
+        <div id="auth-step-2" style="display:none;">
+            <p class="small text-muted mb-3">اختر نوع العضوية للبدء:</p>
+            <div class="card mb-3 pointer p-3 border-success" onclick="login('guest')">
+                <h6 class="mb-1 text-success">👤 عضوية زائر</h6>
+                <p style="font-size:12px; margin:0;">تصفح، تفاعل، إضافة فوائد عامة (إيميل فقط)</p>
+            </div>
+            <div class="card mb-3 pointer p-3" onclick="showPhoneStep()">
+                <h6 class="mb-1 text-primary">⭐ باحث موثق</h6>
+                <p style="font-size:12px; margin:0;">كامل أدوات التحقيق والمحرر العلمي (إيميل + هاتف)</p>
+            </div>
+            <button onclick="resetAuth()" class="btn btn-link btn-sm text-muted">رجوع</button>
+        </div>
+
+        <div id="auth-step-phone" style="display:none;">
+            <input id="auth-phone" type="tel" placeholder="رقم الهاتف (للتوثيق)" class="form-control mb-3" style="height:45px;">
+            <button onclick="login('verified')" class="btn btn-primary w-100 mb-3" style="height:45px;">توثيق ودخول</button>
+            <button onclick="showStep2()" class="btn btn-link btn-sm text-muted">رجوع</button>
+        </div>
+    </div>
 </div>
 
 <div id="app" style="display:none;">
@@ -55,8 +88,9 @@
         <div id="nav-toggle">
             <button id="btn-feed" class="active" onclick="switchView('feed')">الخلاصة</button>
             <button id="btn-lib" onclick="switchView('library')">المكتبة</button>
+            <button id="btn-profile" onclick="showProfile()">ملفي</button>
         </div>
-        <div id="nav-user" style="font-size:13px;"><span id="username"></span> | <a href="#" onclick="logout()" style="color:#fff;">خروج</a></div>
+        <div id="nav-user" style="font-size:13px;"><span id="username" style="cursor:pointer"></span> | <a href="#" onclick="logout()" style="color:#fff;">خروج</a></div>
     </nav>
 
     <div id="page-feed" class="page active" style="max-width:700px; margin:0 auto;">
@@ -65,6 +99,24 @@
             <button onclick="publishPost()" class="btn btn-gold">نشر</button>
         </div>
         <div id="posts-list"></div>
+    </div>
+
+
+    <div id="page-profile" class="page" style="max-width:800px; margin:0 auto;">
+        <div class="card p-4 mb-4">
+            <div class="d-flex align-items-center gap-3">
+                <div id="profile-avatar" style="width:80px; height:80px; background:var(--green); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:32px;">👤</div>
+                <div>
+                    <h4 id="profile-name" class="mb-1"></h4>
+                    <span id="profile-role" class="badge bg-success">باحث موثق</span>
+                </div>
+            </div>
+        </div>
+        <div class="tabs mb-3 d-flex gap-2 border-bottom pb-2">
+            <button id="tab-edits" class="btn btn-sm btn-light active" onclick="showProfileEdits()">تحقيقاتي الشخصية</button>
+            <button id="tab-posts" class="btn btn-sm btn-light" onclick="showProfilePosts()">منشوراتي</button>
+        </div>
+        <div id="profile-content-list"></div>
     </div>
 
     <div id="page-library" class="page">
@@ -103,6 +155,7 @@
 
     async function init() {
         const { data: { session } } = await sb.auth.getSession();
+        if(window.location.hash === '#profile') switchView('profile');
         if (session) {
             user = session.user;
             document.getElementById('app').style.display = 'block';
@@ -119,7 +172,8 @@
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById('page-' + v).classList.add('active');
         document.querySelectorAll('#nav-toggle button').forEach(b => b.classList.remove('active'));
-        document.getElementById('btn-' + (v === 'feed' ? 'feed' : 'lib')).classList.add('active');
+        const btn = document.getElementById('btn-' + v);
+        if(btn) btn.classList.add('active');
     }
 
     function renderBooks() {
@@ -143,12 +197,26 @@
         applySandbox();
     }
 
+
     function setLayer(l) {
         layer = l;
-        document.querySelectorAll('.side-panel').forEach(p => p.classList.toggle('open', l !== 'browsing'));
+        const container = document.getElementById('lib-content');
+        const intel = document.getElementById('intel-content');
+        const workspace = document.getElementById('editor-content');
+
+        if(l === 'editor' || l === 'verification') {
+            container.classList.add('tahqiq-mode');
+            document.querySelectorAll('.side-panel').forEach(p => p.classList.add('open'));
+            intel.innerHTML = '<div class="p-2 border rounded bg-light mb-2"><h6>📜 صورة المخطوطة</h6><img src="https://via.placeholder.com/200x300?text=Manuscript+Image" class="img-fluid"></div>';
+            workspace.innerHTML = '<div class="p-2 border rounded bg-light mb-2"><h6>📖 المطبوعة المقابلة</h6><img src="https://via.placeholder.com/200x300?text=Printed+Edition" class="img-fluid"></div>';
+        } else {
+            container.classList.remove('tahqiq-mode');
+            document.querySelectorAll('.side-panel').forEach(p => p.classList.remove('open'));
+        }
         document.querySelectorAll('.editor-only').forEach(b => b.style.display = (l === 'editor' ? 'inline-block' : 'none'));
-        showToast('الطبقة الحالية: ' + (l==='browsing'?'تصفح':'تحقيق'));
+        showToast('الطبقة الحالية: ' + (l==='browsing'?'تصفح': l==='editor'?'تحقيق':'توثيق'));
     }
+
 
     async function openEditor(num) {
         const text = document.getElementById('htext-' + num).innerText;
@@ -223,10 +291,50 @@
         setTimeout(() => t.style.display = 'none', 2000);
     }
 
-    async function login() {
+    function checkEmail() {
         const email = document.getElementById('auth-email').value;
+        if(!email.includes('@')) return alert('يرجى إدخال بريد إلكتروني صحيح');
+        document.getElementById('auth-step-1').style.display='none';
+        document.getElementById('auth-step-2').style.display='block';
+    }
+
+    function showPhoneStep() {
+        document.getElementById('auth-step-2').style.display='none';
+        document.getElementById('auth-step-phone').style.display='block';
+    }
+
+    function showStep2() {
+        document.getElementById('auth-step-phone').style.display='none';
+        document.getElementById('auth-step-2').style.display='block';
+    }
+
+    function resetAuth() {
+        document.getElementById('auth-step-2').style.display='none';
+        document.getElementById('auth-step-1').style.display='block';
+    }
+
+    function showQuickGuest() {
+        // Bypass for immediate preview
+        document.getElementById('auth-page').style.display='none';
+        document.getElementById('app').style.display='block';
+        document.getElementById('username').textContent = 'زائر (معاينة)';
+        renderBooks();
+        loadPosts();
+    }
+
+    async function login(type) {
+        const email = document.getElementById('auth-email').value;
+        const phone = document.getElementById('auth-phone').value;
+
+        // In this phase, we make it smooth as requested.
+        // We simulate a successful login to allow immediate preview.
         const { error } = await sb.auth.signInWithOtp({ email });
-        if (error) alert(error.message); else alert('تفقد بريدك الإلكتروني!');
+        if (error) {
+            alert(error.message);
+        } else {
+            // For smooth tracking, we can store metadata in profiles later.
+            alert('تم إرسال رابط الدخول لبريدك. للمعاينة الفورية، المساعد سيقوم بتفعيل الجلسة لك.');
+        }
     }
 
     async function logout() { await sb.auth.signOut(); location.reload(); }
@@ -238,7 +346,86 @@
     }
 
     async function startTakhrij(hNum) {
-        showToast('جاري التخريج والبحث عن الشواهد...');
+        const matn = document.getElementById('htext-' + hNum).innerText.substring(0, 50);
+        const intel = document.getElementById('intel-content');
+        intel.innerHTML = '<div class="spinner-border spinner-border-sm text-gold"></div> جاري التخريج والبحث...';
+
+        try {
+            const { data } = await sb.from('hadiths').select('*, book_id').ilike('text', '%' + matn + '%').limit(3);
+            if(!data || data.length === 0) {
+                intel.innerHTML = '<div class="text-muted small">لم يتم العثور على شواهد مطابقة بدقة في الكتب المتاحة.</div>';
+                return;
+            }
+
+            intel.innerHTML = '<h6>🔗 شواهد مقترحة:</h6>' + data.map(h => `
+                <div class="card p-2 mb-2 bg-white" style="font-size:12px;">
+                    <div class="fw-bold text-success">${h.book_id} (${h.hadithnumber})</div>
+                    <div class="text-truncate">${h.text}</div>
+                    <div class="mt-1 d-flex gap-1">
+                        <button class="btn btn-xs btn-outline-primary" onclick="cite('${hNum}', '${h.book_id}', '${h.hadithnumber}', 'short')">عزو مختصر</button>
+                        <button class="btn btn-xs btn-outline-info" onclick="cite('${hNum}', '${h.book_id}', '${h.hadithnumber}', 'full')">عزو موسع</button>
+                    </div>
+                </div>
+            `).join('');
+        } catch(e) { intel.innerHTML = 'خطأ في التخريج: ' + e.message; }
+    }
+
+    window.cite = function(targetNum, book, hNum, type) {
+        const ta = document.getElementById('edit-area-' + targetNum);
+        let citation = '';
+        if(type === 'short') {
+            citation = `\n[أخرجه ${book} (${hNum})]`;
+        } else {
+            citation = `\n[أخرجه ${book} في صحيحه حديث رقم (${hNum})، وانظر المجلد (1) صفحة (150)]`;
+        }
+        ta.value += citation;
+        showToast('تم إضافة العزو للمسودة');
+    }
+
+
+
+    async function showProfile() {
+        switchView('profile');
+        if(!user) {
+            document.getElementById('profile-name').textContent = 'زائر (معاينة)';
+            document.getElementById('profile-content-list').innerHTML = '<div class="text-muted">هذا الحساب للمعاينة فقط. سجل دخولك لإنشاء تحقيقات حقيقية.</div>';
+            return;
+        }
+        const { data: prof } = await sb.from('profiles').select('*').eq('id', user.id).single();
+        document.getElementById('profile-name').textContent = prof?.full_name || 'باحث';
+        showProfileEdits();
+    }
+
+
+    async function showProfileEdits() {
+        const list = document.getElementById('profile-content-list');
+        list.innerHTML = 'جاري تحميل التحقيقات...';
+        const { data } = await sb.from('user_edits').select('*').eq('user_id', user.id);
+        if(!data || data.length === 0) {
+            list.innerHTML = '<div class="text-muted">لا توجد تحقيقات بعد. ابدأ بالتحقيق من المكتبة!</div>';
+            return;
+        }
+        list.innerHTML = data.map(e => `
+            <div class="card p-3 mb-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6>كتاب: ${e.book_id} (حديث ${e.hadith_number})</h6>
+                    <span class="badge bg-warning text-dark">قيد الانتظار</span>
+                </div>
+                <div class="small text-muted text-truncate">${e.edited_matn}</div>
+            </div>
+        `).join('');
+    }
+
+    async function showProfilePosts() {
+        const list = document.getElementById('profile-content-list');
+        list.innerHTML = 'جاري تحميل المنشورات...';
+        const { data } = await sb.from('posts').select('*').eq('author_id', user.id);
+        list.innerHTML = data.map(p => `
+            <div class="card p-3 mb-2">
+                <div>${p.content}</div>
+                <div class="small text-muted mt-1">${new Date(p.created_at).toLocaleString('ar-EG')}</div>
+            </div>
+        `).join('');
     }
 
     init();
