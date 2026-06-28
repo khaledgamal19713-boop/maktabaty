@@ -106,56 +106,67 @@ img{max-width:100%}
 .comment-input-row input{flex:1;border:1px solid var(--border);border-radius:20px;padding:7px 12px;font-size:13px}
 .comment-input-row button{background:var(--green);color:#fff;padding:7px 14px;border-radius:20px;font-size:13px}
 #posts-loading,#posts-empty{text-align:center;padding:30px;color:var(--text2)}
-#page-library{display:flex;height:calc(100vh - 50px);overflow:hidden}
-#lib-sidebar{width:5%;min-width:64px;background:#fff;border-left:1px solid var(--border);overflow-y:auto;transition:width .3s;display:flex;flex-direction:column;flex-shrink:0;z-index:101}
-#lib-sidebar:hover,#lib-sidebar.expanded{width:220px}
-#sidebar-toggle{padding:10px;text-align:center;border-bottom:1px solid var(--border);color:var(--green);font-size:16px;cursor:pointer}
+#page-library{display:grid;grid-template-columns:auto 1fr;height:calc(100vh - 50px);overflow:hidden;background:var(--bg)}
+#lib-sidebar{width:64px;background:#fff;border-left:1px solid var(--border);overflow-y:auto;transition:width .3s cubic-bezier(0.4, 0, 0.2, 1);display:flex;flex-direction:column;z-index:110;position:relative}
+#lib-sidebar.expanded{width:260px;box-shadow:2px 0 10px rgba(0,0,0,0.1)}
+#sidebar-toggle{padding:12px;text-align:center;border-bottom:1px solid var(--border);color:var(--green);font-size:18px;cursor:pointer;background:var(--white);position:sticky;top:0;z-index:10}
 #sidebar-toggle:hover{background:var(--green-light)}
 .lib-cat-group{border-bottom:1px solid var(--border)}
-.lib-cat-header{padding:10px 8px;font-weight:700;font-size:11px;cursor:pointer;background:var(--bg);color:var(--green);display:flex;justify-content:space-between;align-items:center;white-space:nowrap;overflow:hidden}
-.lib-cat-header small{background:var(--green);color:#fff;padding:1px 5px;border-radius:10px;font-size:9px}
+.lib-cat-header{padding:12px 8px;font-weight:700;font-size:13px;cursor:pointer;background:var(--bg);color:var(--green);border-bottom:1px solid rgba(0,0,0,0.05);display:flex;justify-content:space-between;align-items:center;white-space:nowrap;overflow:hidden}
+.lib-cat-header small{background:var(--green);color:#fff;padding:2px 6px;border-radius:10px;font-size:10px}
 .lib-cat-books{display:none;background:#fff}
 .lib-cat-group.open .lib-cat-books{display:block}
 .book-item{padding:10px 8px;cursor:pointer;border-bottom:1px solid #f5f5f5;text-align:center;border-right:3px solid transparent;font-size:11px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .book-item:hover{background:var(--green-light)}
 .book-item.active{background:var(--green-light);border-right-color:var(--green)}
-#lib-sidebar:hover .book-item,#lib-sidebar.expanded .book-item{text-align:right;padding:10px 12px;font-size:13px}
-#lib-main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+#lib-sidebar.expanded .book-item{text-align:right;padding:12px 16px;font-size:14px}
+#lib-sidebar:not(.expanded) .lib-cat-header span { display: none; }
+#lib-sidebar:not(.expanded) .lib-cat-header { justify-content: center; padding: 12px 0; }
+#lib-sidebar:not(.expanded) .lib-cat-header small { display: none; }
+
+#lib-main{display:flex;flex-direction:column;overflow:hidden;min-width:0;position:relative}
 #lib-empty{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;color:var(--text2);text-align:center}
 #lib-empty p:first-child{font-size:32px;margin-bottom:10px}
-#mode-bar{background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:8px 14px;flex-wrap:wrap;gap:8px}
+
+#mode-bar{background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:8px 14px;flex-wrap:wrap;gap:8px;z-index:100}
 #mode-bar .modes{display:flex;gap:6px}
 #mode-bar .modes button{padding:6px 16px;border-radius:6px;border:1px solid var(--border);font-size:13px;color:var(--text2)}
 #mode-bar .modes button.active{background:var(--green);color:#fff;border-color:var(--green)}
 #mode-bar .modes button:disabled{opacity:.4;cursor:not-allowed}
 #mode-bar .toc-and-fn{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 #mode-bar select{border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:12px}
+
 .fn-toggle{padding:4px 10px;border-radius:14px;border:1px solid var(--border);font-size:11px;color:var(--text2)}
 .fn-toggle.active.تخريج{background:var(--blue-light);color:var(--blue);border-color:var(--blue)}
 .fn-toggle.active.فروق_نسخ{background:var(--gold-light);color:var(--gold);border-color:var(--gold)}
 .fn-toggle.active.غريب{background:var(--purple-light);color:var(--purple);border-color:var(--purple)}
 #comments-toggle-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--border);font-size:12px;color:var(--text2)}
 #comments-toggle-btn.active{background:var(--green-light);color:var(--green);border-color:var(--green)}
-#lib-content{flex:1;display:flex;overflow:hidden;position:relative}
-.side-panel{width:0;overflow:hidden;transition:width .2s;background:#fafafa;border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
-.side-panel.open{width:19%;min-width:170px}
-.side-panel-header{padding:8px 10px;font-size:12px;font-weight:600;color:var(--text2);background:#fff;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
-.side-panel-body{flex:1;overflow-y:auto;padding:8px}
-.side-panel-body .ms-item,.side-panel-body .ed-item{border:1px solid var(--border);border-radius:6px;padding:8px;margin-bottom:8px;background:#fff;font-size:12px}
-.side-panel-body .ms-item h4,.side-panel-body .ed-item h4{font-size:12px;color:var(--green);margin-bottom:3px}
-.side-panel-body .ms-item p,.side-panel-body .ed-item p{font-size:10px;color:var(--text2);line-height:1.5}
-.side-panel-body img{width:100%;border-radius:4px;margin-top:6px;cursor:zoom-in}
-.add-item-btn{width:100%;padding:6px;border:1px dashed var(--border);border-radius:6px;font-size:11px;color:var(--green);margin-top:4px}
-.add-item-btn:hover{background:var(--green-light)}
-#panel-toggle-left,#panel-toggle-right{position:absolute;top:8px;z-index:10;background:#fff;border:1px solid var(--border);border-radius:50%;width:28px;height:28px;font-size:13px;color:var(--text2)}
-#panel-toggle-left{right:8px}
-#panel-toggle-right{left:8px}
-#panel-toggle-left.open,#panel-toggle-right.open{background:var(--green-light);color:var(--green)}
-#reader-panel{flex:1;overflow-y:auto;padding:18px;min-width:0;background:var(--bg)}
+
+#lib-active{display:none;flex-direction:column;flex:1;overflow:hidden}
+#lib-content{flex:1;display:flex;overflow:hidden;position:relative;background:#eee}
+
+.side-panel{width:0;min-width:0;overflow:hidden;transition:width .3s cubic-bezier(0.4, 0, 0.2, 1);background:#fff;border:none;display:flex;flex-direction:column;z-index:90;height:100%}
+.side-panel.open{width:300px;min-width:200px;border-left:1px solid var(--border);border-right:1px solid var(--border)}
+.side-panel-header{padding:10px 12px;font-size:13px;font-weight:700;color:var(--green);background:var(--green-light);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.side-panel-body{flex:1;overflow-y:auto;padding:12px;background:#fafafa}
+.side-panel-body .ms-item,.side-panel-body .ed-item{border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:12px;background:#fff;font-size:13px;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+.side-panel-body .ms-item h4,.side-panel-body .ed-item h4{font-size:13px;color:var(--green);margin-bottom:5px;border-bottom:1px solid var(--green-light);padding-bottom:3px}
+.side-panel-body .ms-item p,.side-panel-body .ed-item p{font-size:11px;color:var(--text2);line-height:1.6}
+.side-panel-body img{width:100%;border-radius:6px;margin-top:8px;cursor:zoom-in;transition:transform .2s}
+.side-panel-body img:hover{transform:scale(1.02)}
+.add-item-btn{width:100%;padding:10px;border:2px dashed var(--border);border-radius:8px;font-size:12px;color:var(--green);margin-top:8px;font-weight:600;background:#fff;transition:.2s}
+.add-item-btn:hover{background:var(--green-light);border-color:var(--green)}
+
+#panel-toggle-left,#panel-toggle-right{background:#fff;border:1px solid var(--border);border-radius:50%;width:32px;height:32px;font-size:16px;color:var(--green);margin:12px 6px;flex-shrink:0;align-self:flex-start;position:relative;z-index:100;box-shadow:0 2px 4px rgba(0,0,0,0.1);transition:.2s}
+#panel-toggle-left:hover,#panel-toggle-right:hover{background:var(--green-light);transform:scale(1.1)}
+#panel-toggle-left.open,#panel-toggle-right.open{background:var(--green);color:#fff;border-color:var(--green)}
+
+#reader-panel{flex:1;overflow-y:auto;padding:24px;min-width:300px;background:var(--white);position:relative;z-index:10;box-shadow:inset 0 0 10px rgba(0,0,0,0.02)}
 #lib-content.layout-horizontal { flex-direction: column; }
-#lib-content.layout-horizontal .side-panel.open { width: 100%; min-width: 100%; height: 250px; }
-#lib-content.layout-horizontal #panel-toggle-left { top: auto; bottom: 8px; right: 50%; transform: rotate(90deg); }
-#lib-content.layout-horizontal #panel-toggle-right { top: 8px; left: 50%; transform: rotate(90deg); }
+#lib-content.layout-horizontal .side-panel.open { width: 100%; min-width: 100%; height: 35vh; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+#lib-content.layout-horizontal #reader-panel { height: 60vh; }
+#lib-content.layout-horizontal div[style*="flex-direction:column"] { flex-direction: row !important; height: 40px; width: 100%; justify-content: center; }
 
 #reader-header{margin-bottom:12px}
 #reader-header h2{color:var(--green);font-size:18px;margin-bottom:6px}
@@ -250,6 +261,9 @@ img{max-width:100%}
 .tahqiq-item h4{font-size:13px;color:var(--green)}
 .tahqiq-item .preview{font-size:13px;color:var(--text2);line-height:1.7;max-height:60px;overflow:hidden}
 .status-pill{font-size:11px;padding:2px 10px;border-radius:10px}
+.comparison-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.comp-box{border:1px solid var(--border);border-radius:6px;padding:10px;font-size:13px;background:#fff;max-height:300px;overflow-y:auto;line-height:1.8}
+.comp-label{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:4px;display:block}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:none;align-items:center;justify-content:center;padding:16px}
 .modal-box{background:#fff;border-radius:8px;padding:22px;width:460px;max-width:100%;max-height:90vh;overflow-y:auto}
 .modal-box h3{color:var(--green);margin-bottom:6px;font-size:16px}
@@ -270,7 +284,14 @@ img{max-width:100%}
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:#f0f0f0}
 ::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
-@media(max-width:768px){.side-panel.open{position:absolute;height:100%;z-index:50;width:70%}#comments-drawer.open{position:absolute;right:0;height:100%;z-index:51;width:80%}#lib-sidebar.expanded{position:absolute;height:100%;z-index:52}}
+@media(max-width:992px){
+  #page-library{grid-template-columns:1fr}
+  #lib-sidebar{position:fixed;top:50px;bottom:0;right:0;width:0;border:none}
+  #lib-sidebar.expanded{width:280px;border-left:1px solid var(--border)}
+  .side-panel.open{position:absolute;height:100%;z-index:120;width:85%;right:0;border-left:1px solid var(--border)}
+  #comments-drawer.open{position:absolute;left:0;height:100%;z-index:130;width:85%;border-right:1px solid var(--border)}
+  #sidebar-toggle{position:fixed;bottom:20px;right:20px;width:50px;height:50px;border-radius:50%;box-shadow:0 4px 12px rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center;z-index:140;border:none;background:var(--green);color:#fff}
+}
 </style>
 </head>
 <body>
@@ -356,20 +377,23 @@ img{max-width:100%}
             <span id="fn-toggles" style="display:flex;gap:4px"></span>
             <button id="add-text-book-btn" onclick="openAddTextModal()" style="display:none;padding:5px 12px;border-radius:6px;border:1px solid var(--border);font-size:12px;color:var(--green)">+ كتاب نصي</button>
             <button id="comments-toggle-btn" onclick="toggleCommentsDrawer()">💬 تعليقات</button>
+            <button id="layout-toggle-btn" onclick="toggleLibLayout()" style="padding:5px 10px; border-radius:6px; border:1px solid var(--border); font-size:12px; color:var(--text2)">🔄 عرض</button>
           </div>
         </div>
         <div id="lib-content">
-          <button id="panel-toggle-right" onclick="togglePanel('editions')">‹</button>
           <div class="side-panel" id="panel-editions">
-            <div class="side-panel-header"><span>الطبعات المطبوعة</span></div>
+            <div class="side-panel-header">
+              <span>الطبعات المطبوعة</span>
+              <button onclick="togglePanel('editions')" style="color:var(--text3)">✕</button>
+            </div>
             <div class="side-panel-body"><div id="editions-list"></div><button class="add-item-btn" onclick="openAddModal('edition')">+ إضافة مصورة مطبوع</button></div>
           </div>
-          <div id="service-sidebar" style="width:40px; background:#fff; border-left:1px solid var(--border); display:flex; flex-direction:column; gap:8px; padding:8px 0; align-items:center">
-            <button onclick="toggleService('takhrij')" title="التخريج" style="width:30px; height:30px; border-radius:4px; background:var(--blue-light); color:var(--blue); font-weight:700; font-size:10px">خ</button>
-            <button onclick="toggleService('narrators')" title="الرواة" style="width:30px; height:30px; border-radius:4px; background:var(--green-light); color:var(--green); font-weight:700; font-size:10px">ر</button>
-            <button onclick="toggleService('sharh')" title="الشرح" style="width:30px; height:30px; border-radius:4px; background:var(--gold-light); color:var(--gold); font-weight:700; font-size:10px">ش</button>
-            <button onclick="toggleService('gharib')" title="الغريب" style="width:30px; height:30px; border-radius:4px; background:var(--purple-light); color:var(--purple); font-weight:700; font-size:10px">غ</button>
+
+          <div id="right-tools" style="display:flex; flex-direction:column; gap:4px; background:#f0f0f0; border-left:1px solid var(--border); border-right:1px solid var(--border); z-index:100">
+            <button id="panel-toggle-right" onclick="togglePanel('editions')" title="فتح الطبعات" style="width:32px; height:40px; background:#fff; border-bottom:1px solid var(--border)">📚</button>
+            <button onclick="toggleService('takhrij')" title="التخريج" style="width:32px; height:40px; background:#fff; border-bottom:1px solid var(--border)">🎓</button>
           </div>
+
           <div id="reader-panel">
             <div id="reader-header">
               <h2 id="reader-title"></h2>
@@ -382,7 +406,7 @@ img{max-width:100%}
                 <button onclick="fmt('bold')" title="عريض"><b>B</b></button>
                 <button onclick="fmt('italic')" title="مائل"><i>I</i></button>
                 <button onclick="fmt('underline')" title="تحته خط"><u>U</u></button>
-                <select onchange="document.execCommand('fontSize', false, this.value); this.selectedIndex=0;" style="width:50px">
+                <select onchange="fmt('fontSize', this.value); this.selectedIndex=0;" style="width:50px">
                   <option value="">A</option>
                   <option value="3">صغير</option>
                   <option value="4">عادي</option>
@@ -409,7 +433,7 @@ img{max-width:100%}
                 <span class="status-badge" id="edit-status-badge"></span>
               </div>
               <div style="padding:14px">
-                <div id="editor-content" contenteditable="true" spellcheck="false"></div>
+                <div id="editor-content" contenteditable="true" spellcheck="false" style="min-height: 400px; border: 1px solid var(--border); padding: 20px; border-radius: 8px; background: #fff;"></div>
                 <div id="editor-footnotes"><h5>الحواشي الشخصية</h5><div id="fn-list"></div><button id="btn-add-fn" onclick="openFnDialog()">+ إضافة حاشية مرقّمة</button></div>
                 <div id="editor-actions">
                   <button class="btn-save" onclick="saveDraft()">حفظ كمسودة</button>
@@ -419,9 +443,17 @@ img{max-width:100%}
               </div>
             </div>
           </div>
-          <button id="panel-toggle-left" onclick="togglePanel('mss')">›</button>
+
+          <div id="left-tools" style="display:flex; flex-direction:column; gap:4px; background:#f0f0f0; border-left:1px solid var(--border); border-right:1px solid var(--border); z-index:100">
+            <button id="panel-toggle-left" onclick="togglePanel('mss')" title="فتح المخطوطات" style="width:32px; height:40px; background:#fff; border-bottom:1px solid var(--border)">📜</button>
+            <button onclick="toggleCommentsDrawer()" title="التعليقات" style="width:32px; height:40px; background:#fff; border-bottom:1px solid var(--border)">💬</button>
+          </div>
+
           <div class="side-panel" id="panel-mss">
-            <div class="side-panel-header"><span>المخطوطات</span></div>
+            <div class="side-panel-header">
+              <span>المخطوطات</span>
+              <button onclick="togglePanel('mss')" style="color:var(--text3)">✕</button>
+            </div>
             <div class="side-panel-body"><div id="mss-list"></div><button class="add-item-btn" onclick="openAddModal('manuscript')">+ إضافة مصورة مخطوط</button></div>
           </div>
         </div>
@@ -454,7 +486,31 @@ img{max-width:100%}
 <div class="modal-overlay" id="quick-comment-modal"><div class="modal-box"><h3>تعليق على الحديث</h3><div id="qc-hadith-preview" style="font-size:13px;color:var(--text2);background:var(--bg);padding:10px;border-radius:6px;margin-bottom:10px;max-height:80px;overflow:hidden"></div><div class="modal-types" id="qc-types"><button class="active" data-type="حديث">حديث</button><button data-type="فائدة">فائدة</button><button data-type="تحقيق">تحقيق</button></div><textarea id="qc-text" placeholder="اكتب تعليقك..."></textarea><div class="modal-footer"><button class="modal-cancel" onclick="closeModal('quick-comment-modal')">إلغاء</button><button class="modal-submit" onclick="submitQC()">نشر في الرئيسية</button></div></div></div>
 <div class="modal-overlay" id="fn-dialog"><div class="modal-box"><h3>إضافة حاشية مرقّمة</h3><p style="font-size:12px;color:var(--text2);margin-bottom:8px">حدد كلمة في النص أولاً.</p><textarea id="fn-text-input" placeholder="نص الحاشية..."></textarea><div class="modal-footer"><button class="modal-cancel" onclick="closeModal('fn-dialog')">إلغاء</button><button class="modal-submit" onclick="addFootnote()">إضافة</button></div></div></div>
 <div class="modal-overlay" id="add-item-modal"><div class="modal-box"><h3 id="add-item-title">إضافة مصورة</h3><input type="text" id="ai-name" placeholder="الاسم"><input type="text" id="ai-meta" placeholder="معلومات إضافية"><input type="text" id="ai-image-url" placeholder="رابط الصورة (URL)"><textarea id="ai-notes" placeholder="ملاحظات..."></textarea><div class="modal-footer"><button class="modal-cancel" onclick="closeModal('add-item-modal')">إلغاء</button><button class="modal-submit" onclick="submitAddItem()">إضافة</button></div></div></div>
-<div class="modal-overlay" id="add-text-modal"><div class="modal-box"><h3>إضافة كتاب نصي</h3><input type="text" id="at-title" placeholder="عنوان الكتاب"><input type="text" id="at-author" placeholder="المؤلف"><textarea id="at-content" placeholder="النص..." style="min-height:160px"></textarea><div class="modal-footer"><button class="modal-cancel" onclick="closeModal('add-text-modal')">إلغاء</button><button class="modal-submit" onclick="submitAddText()">حفظ</button></div></div></div>
+<div class="modal-overlay" id="add-text-modal"><div class="modal-box"><h3>إضافة كتاب نصي</h3><input type="text" id="at-title" placeholder="عنوان الكتاب"><input type="text" id="at-author" placeholder="المؤلف"><select id="at-category" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;margin-bottom:10px"></select><textarea id="at-content" placeholder="النص..." style="min-height:160px"></textarea><div class="modal-footer"><button class="modal-cancel" onclick="closeModal('add-text-modal')">إلغاء</button><button class="modal-submit" onclick="submitAddText()">حفظ</button></div></div></div>
+<div class="modal-overlay" id="comparison-modal">
+  <div class="modal-box" style="width:800px; max-width:95vw">
+    <h3>مراجعة التحقيق النصي</h3>
+    <div class="comparison-grid">
+      <div>
+        <span class="comp-label">النص الأصلي:</span>
+        <div class="comp-box" id="comp-orig"></div>
+      </div>
+      <div>
+        <span class="comp-label">النص المقترح:</span>
+        <div class="comp-box" id="comp-edit"></div>
+      </div>
+    </div>
+    <div style="margin-top:12px">
+      <span class="comp-label">الحواشي المضافة:</span>
+      <div id="comp-fn-list" style="font-size:12px; background:var(--gold-light); padding:8px; border-radius:6px"></div>
+    </div>
+    <div class="modal-footer" style="margin-top:16px">
+      <button id="btn-comp-reject" style="background:#fde8e8; color:#c0392b">رفض التعديل</button>
+      <button id="btn-comp-approve" style="background:var(--green); color:#fff">اعتماد ونشر</button>
+      <button class="modal-cancel" onclick="closeModal('comparison-modal')">إغلاق</button>
+    </div>
+  </div>
+</div>
 <div class="modal-overlay" id="takhrij-modal">
   <div class="modal-box" style="width:600px">
     <h3>أداة التخريج</h3>
@@ -496,7 +552,7 @@ const FN_CAT_DB={'تخريج':'تخريج','فروق_نسخ':'فروق نسخ','
 const{createClient}=supabase;
 const sb=createClient(SUPA_URL,SUPA_KEY);
 let currentUser=null,currentProfile=null,mainView='feed',feedFilter='الكل',currentPostType='حديث';
-let currentBook=null,currentHadiths=[],currentChapters=[],activeChapter=null;
+let currentBook=null,currentHadiths=[],currentChapters=[],activeChapter=null,pageHadiths={};
 let currentMode='browse',activeFnCats={},openPanels={mss:false,editions:false};
 let commentsDrawerOpen=false,activeHadith=null,qcHadith=null,footnotes=[],fnCounter=0;
 let currentDraftId=null,addItemType=null,viewedProfileId=null,previousView='feed';
@@ -670,9 +726,40 @@ function postHTML(p){
       </div>
     </div>`;
 }
-async function publishPost(){const content=document.getElementById('post-content').value.trim();if(!content)return toast('أدخل محتوى المنشور');if(!currentUser)return toast('يجب تسجيل الدخول');if(currentProfile?.account_type!=='verified'&&currentPostType!=='فائدة')return toast('الحساب الزائر يسمح فقط بنشر فائدة');document.getElementById('btn-publish').disabled=true;const track=document.getElementById('post-track').value;const{error}=await sb.from('posts').insert({author_id:currentUser.id,post_type:currentPostType,content,track,likes:0});document.getElementById('btn-publish').disabled=false;if(error)return toast('خطأ في النشر: '+error.message);document.getElementById('post-content').value='';toast('تم النشر');feedFilter='الكل';renderSubBar();loadPosts();}
+async function publishPost(){
+  const content=document.getElementById('post-content').value.trim();
+  if(!content)return toast('أدخل محتوى المنشور');
+  if(!currentUser)return toast('يجب تسجيل الدخول');
+  if(currentProfile?.account_type!=='verified'&&currentPostType!=='فائدة')return toast('الحساب الزائر يسمح فقط بنشر فائدة');
+
+  const btn = document.getElementById('btn-publish');
+  btn.disabled=true;
+  btn.textContent = 'جاري النشر...';
+
+  const track=document.getElementById('post-track').value;
+
+  const postData = {
+    author_id:currentUser.id,
+    post_type:currentPostType,
+    content,
+    track,
+    likes:0
+  };
+
+  const{error}=await sb.from('posts').insert(postData);
+  btn.disabled=false;
+  btn.textContent = 'نشر';
+
+  if(error)return toast('خطأ في النشر: '+error.message);
+
+  document.getElementById('post-content').value='';
+  toast('تم النشر');
+  feedFilter='الكل';
+  renderSubBar();
+  loadPosts();
+}
 async function toggleLike(postId,btn){if(!currentUser)return toast('يجب تسجيل الدخول');const liked=btn.classList.contains('liked');if(liked){await sb.from('likes').delete().eq('user_id',currentUser.id).eq('post_id',postId);await sb.from('posts').update({likes:Math.max(0,(parseInt(btn.textContent.replace(/\D/g,''))||1)-1)}).eq('id',postId);btn.classList.remove('liked');}else{await sb.from('likes').insert({user_id:currentUser.id,post_id:postId});const cur=parseInt(btn.textContent.replace(/\D/g,''))||0;await sb.from('posts').update({likes:cur+1}).eq('id',postId);btn.classList.add('liked');}loadPosts();}
-async function toggleComments(postId){const s=document.getElementById('comments-'+postId);if(s.style.display==='block'){s.style.display='none';return;}s.style.display='block';const{data}=await sb.from('comments').select('*, profiles(full_name)').eq('post_id',postId).order('created_at');const list=document.getElementById('comments-list-'+postId);list.innerHTML=data&&data.length?data.map(c=>`<div class="comment-item"><span class="comment-author">${c.profiles?.full_name||'مجهول'}: </span>${escHtml(c.content)}</div>`).join(''):'<div style="font-size:12px;color:#999;padding:6px">لا تعليقات بعد</div>';}
+async function toggleComments(postId){const s=document.getElementById('comments-'+postId);if(s.style.display==='block'){s.style.display='none';return;}s.style.display='block';const list=document.getElementById('comments-list-'+postId);list.innerHTML='<div style="font-size:12px;color:#999;padding:6px">جاري تحميل التعليقات...</div>';const{data}=await sb.from('comments').select('*, profiles(full_name)').eq('post_id',postId).order('created_at');list.innerHTML=data&&data.length?data.map(c=>`<div class="comment-item"><span class="comment-author" onclick="showProfilePage('${c.author_id}')" style="cursor:pointer">${c.profiles?.full_name||'مجهول'}: </span>${escHtml(c.content)}</div>`).join(''):'<div style="font-size:12px;color:#999;padding:6px">لا تعليقات بعد</div>';}
 async function submitComment(postId){const input=document.getElementById('comment-input-'+postId);const content=input.value.trim();if(!content||!currentUser)return;const{error}=await sb.from('comments').insert({post_id:postId,author_id:currentUser.id,content});if(error){toast('خطأ في إرسال التعليق: '+error.message);return;}input.value='';toggleComments(postId);setTimeout(()=>toggleComments(postId),100);}
 function togglePostMenu(id){document.querySelectorAll('.post-menu-dropdown.open').forEach(d=>{if(d.id!=='dropdown-'+id)d.classList.remove('open');});document.getElementById('dropdown-'+id)?.classList.toggle('open');}
 document.addEventListener('click',e=>{if(!e.target.closest('.post-menu'))document.querySelectorAll('.post-menu-dropdown.open').forEach(d=>d.classList.remove('open'));});
@@ -684,6 +771,17 @@ function goToHadith(bookId, hadithNum){
   switchMainView('library');
   selectBook(bookId).then(() => {
     if(hadithNum){
+      // If hadith not in current view (initial 50), try to find and render it
+      const existing = document.querySelector(`[data-num="${hadithNum}"]`);
+      if(!existing && currentHadiths.length > 0) {
+        const target = currentHadiths.find(h => (h.hadithnumber||h.number) == hadithNum);
+        if(target) {
+          // Render a slice around the target or just filter to it
+          renderHadiths([target]);
+          toast('تم الانتقال للحديث المطلوب');
+        }
+      }
+
       setTimeout(() => {
         const el = document.querySelector(`[data-num="${hadithNum}"]`);
         if(el){
@@ -691,7 +789,7 @@ function goToHadith(bookId, hadithNum){
           el.classList.add('active');
           setTimeout(() => el.classList.remove('active'), 3000);
         }
-      }, 500);
+      }, 600);
     }
   });
 }
@@ -727,6 +825,10 @@ function renderBooks(){
   }).join('');
 }
 function toggleLibCat(cat){
+  const sidebar = document.getElementById('lib-sidebar');
+  if(!sidebar.classList.contains('expanded')) {
+    sidebar.classList.add('expanded');
+  }
   document.querySelectorAll('.lib-cat-group').forEach(g => {
     if(g.id === 'cat-group-'+cat) g.classList.toggle('open');
     else g.classList.remove('open');
@@ -743,7 +845,46 @@ async function loadCustomBooks(){
     }
   });
 }
-async function selectBook(bookId){document.querySelectorAll('.book-item').forEach(el=>el.classList.toggle('active',el.dataset.id===bookId));currentBook=BOOKS.find(b=>b.id===bookId);currentHadiths=[];currentChapters=[];activeChapter=null;activeHadith=null;document.getElementById('lib-empty').style.display='none';document.getElementById('lib-active').style.display='flex';document.getElementById('reader-title').textContent=currentBook.title;document.getElementById('lib-loading').style.display='block';document.getElementById('hadiths-container').innerHTML='';document.getElementById('toc-select').innerHTML='<option value="">كل الأبواب</option>';setMode('browse');try{if(currentBook.cdnId){const res=await fetch(`${CDN}/editions/${currentBook.cdnId}.min.json`);if(!res.ok)throw new Error();const json=await res.json();currentHadiths=json.hadiths||[];}else{const{data,error}=await sb.from('texts').select('*').eq('book_id',bookId).order('hadith_number');if(error)throw error;currentHadiths=(data||[]).map(t=>({text:t.matn,hadithnumber:t.hadith_number,chapter:t.chapter,isnad:t.isnad}));}const cm={};currentHadiths.forEach(h=>{const ch=h.chapter||h.chapterNumber||'عام';if(!cm[ch])cm[ch]=[];cm[ch].push(h);});currentChapters=Object.entries(cm);renderTOC();renderHadiths(currentHadiths.slice(0,30));}catch(e){document.getElementById('hadiths-container').innerHTML='<div style="text-align:center;padding:30px;color:#999">تعذّر تحميل الكتاب.</div>';}document.getElementById('lib-loading').style.display='none';loadSidePanels();}
+async function selectBook(bookId){
+  document.querySelectorAll('.book-item').forEach(el=>el.classList.toggle('active',el.dataset.id===bookId));
+  currentBook=BOOKS.find(b=>b.id===bookId);
+  currentHadiths=[];
+  currentChapters=[];
+  activeChapter=null;
+  activeHadith=null;
+  document.getElementById('lib-empty').style.display='none';
+  document.getElementById('lib-active').style.display='flex';
+  document.getElementById('reader-title').textContent=currentBook.title;
+  document.getElementById('lib-loading').style.display='block';
+  document.getElementById('hadiths-container').innerHTML='';
+  document.getElementById('toc-select').innerHTML='<option value="">كل الأبواب</option>';
+  setMode('browse');
+  try{
+    if(currentBook.cdnId){
+      const res=await fetch(`${CDN}/editions/${currentBook.cdnId}.min.json`);
+      if(!res.ok)throw new Error();
+      const json=await res.json();
+      currentHadiths=json.hadiths||[];
+    }else{
+      const{data,error}=await sb.from('texts').select('*').eq('book_id',bookId).order('hadith_number');
+      if(error)throw error;
+      currentHadiths=(data||[]).map(t=>({text:t.matn,hadithnumber:t.hadith_number,chapter:t.chapter,isnad:t.isnad,volume:t.volume,page:t.page}));
+    }
+    const cm={};
+    currentHadiths.forEach(h=>{
+      const ch=h.chapter||h.chapterNumber||'عام';
+      if(!cm[ch])cm[ch]=[];
+      cm[ch].push(h);
+    });
+    currentChapters=Object.entries(cm);
+    renderTOC();
+    renderHadiths(currentHadiths.slice(0,50));
+  }catch(e){
+    document.getElementById('hadiths-container').innerHTML='<div style="text-align:center;padding:30px;color:#999">تعذّر تحميل الكتاب.</div>';
+  }
+  document.getElementById('lib-loading').style.display='none';
+  loadSidePanels();
+}
 function renderTOC(){const sel=document.getElementById('toc-select');sel.innerHTML='<option value="">كل الأبواب</option>'+currentChapters.map(([ch,hs],i)=>`<option value="${i}">${ch} (${hs.length})</option>`).join('');}
 function selectChapterFromDropdown(val){if(val===''){activeChapter=null;renderHadiths(currentHadiths.slice(0,30));return;}activeChapter=parseInt(val);renderHadiths(currentChapters[activeChapter][1]);}
 function setMode(mode){
@@ -764,8 +905,8 @@ function setMode(mode){
 
   // Panels are visible in both Tahqiq and Editor modes
   const showPanels = isTahqiq || isEditor;
-  document.getElementById('panel-toggle-left').style.display = showPanels?'block':'none';
-  document.getElementById('panel-toggle-right').style.display = showPanels?'block':'none';
+  document.getElementById('left-tools').style.display = showPanels?'flex':'none';
+  document.getElementById('right-tools').style.display = showPanels?'flex':'none';
 
   // If we were in tahqiq and panels were open, keep them open for editor
   if(showPanels) {
@@ -788,17 +929,22 @@ function setMode(mode){
     }
   }
 }
-function togglePanel(which){const key=which==='mss'?'mss':'editions';openPanels[key]=!openPanels[key];document.getElementById('panel-'+key).classList.toggle('open',openPanels[key]);const btn=which==='mss'?document.getElementById('panel-toggle-left'):document.getElementById('panel-toggle-right');btn.classList.toggle('open',openPanels[key]);btn.textContent=which==='mss'?(openPanels.mss?'‹':'›'):(openPanels.editions?'›':'‹');}
+function togglePanel(which){
+  const key=which==='mss'?'mss':'editions';
+  openPanels[key]=!openPanels[key];
+  document.getElementById('panel-'+key).classList.toggle('open',openPanels[key]);
+  const btn=which==='mss'?document.getElementById('panel-toggle-left'):document.getElementById('panel-toggle-right');
+  btn.classList.toggle('open',openPanels[key]);
+}
 function renderHadiths(hadiths){document.getElementById('fn-toggles').innerHTML=FN_CATS.map(c=>{const label=c.replace('_',' ');return `<button class="fn-toggle ${activeFnCats[c]?'active '+c:''}" onclick="toggleFnCat('${c}')">${label}</button>`;}).join('');const container=document.getElementById('hadiths-container');if(!hadiths.length){container.innerHTML='<div style="text-align:center;padding:30px;color:#999">لا أحاديث</div>';return;}container.innerHTML=hadiths.slice(0,50).map(hadithCardHTML).join('');Object.keys(activeFnCats).forEach(c=>{if(activeFnCats[c])loadFnMarkers(c);});}
 function hadithCardHTML(h){
   const text=h.text||h.hadith||'';
   const num=h.hadithnumber||h.number||'';
   const grade=h.grades?.[0]?.grade||'';
   const gc=grade.includes('صحيح')?'صحيح':grade.includes('حسن')?'حسن':grade.includes('ضعيف')?'ضعيف':'';
-  const ts=JSON.stringify(escHtml(text)).replace(/"/g,'&quot;');
   const isVerified=currentProfile?.account_type==='verified';
   return `
-    <div class="hadith-card" data-num="${num}">
+    <div class="hadith-card" id="hcard-${num}" data-num="${num}">
       <div class="hadith-indicators">
         <span class="h-indicator comm" id="ind-comm-${num}">💬 0</span>
         <span class="h-indicator edit" id="ind-edit-${num}">📝 معدل</span>
@@ -809,14 +955,20 @@ function hadithCardHTML(h){
       </div>
       <div class="hadith-text" id="htext-${num}">${escHtml(text)}</div>
       <div class="hadith-actions">
-        <button onclick="openQC(${ts},${num})">تعليق</button>
-        <button onclick="setActiveHadithAndDrawer(${ts},${num})">💬 تعليقات القراء</button>
-        ${currentMode==='tahqiq'?`<button class="btn-tahqiq" onclick="setActiveHadith(${ts},${num})">تحديد للتحقيق</button>`:''}
-        ${isVerified?`<button class="btn-editor" onclick="sendToEditor(${ts},${num})">تحرير</button>`:''}
+        <button onclick="openQC('${num}')">تعليق</button>
+        <button onclick="setActiveHadithAndDrawer('${num}')">💬 تعليقات القراء</button>
+        ${currentMode==='tahqiq'?`<button class="btn-tahqiq" onclick="setActiveHadith('${num}')">تحديد للتحقيق</button>`:''}
+        ${isVerified?`<button class="btn-editor" onclick="sendToEditor('${num}')">تحرير</button>`:''}
       </div>
     </div>`;
 }
 function renderHadiths(hadiths){
+  pageHadiths = {};
+  hadiths.forEach(h => {
+    const num = h.hadithnumber || h.number || '';
+    pageHadiths[num] = h.text || h.hadith || '';
+  });
+
   document.getElementById('fn-toggles').innerHTML=FN_CATS.map(c=>{
     const label=c.replace('_',' ');
     return `<button class="fn-toggle ${activeFnCats[c]?'active '+c:''}" onclick="toggleFnCat('${c}')">${label}</button>`;
@@ -863,9 +1015,21 @@ async function loadHadithIndicators(nums){
     });
   }
 }
-function setActiveHadith(text,num){activeHadith={text,num};toast('تم تحديد الحديث رقم '+num);}
-function setActiveHadithAndDrawer(text,num){activeHadith={text,num};openCommentsDrawer();}
-function sendToEditor(text,num){activeHadith={text,num};setMode('editor');}
+function setActiveHadith(num){
+  const text = pageHadiths[num];
+  activeHadith={text,num};
+  toast('تم تحديد الحديث رقم '+num);
+}
+function setActiveHadithAndDrawer(num){
+  const text = pageHadiths[num];
+  activeHadith={text,num};
+  openCommentsDrawer();
+}
+function sendToEditor(num){
+  const text = pageHadiths[num];
+  activeHadith={text,num};
+  setMode('editor');
+}
 function toggleLibLayout(){
   const content = document.getElementById('lib-content');
   content.classList.toggle('layout-horizontal');
@@ -880,7 +1044,37 @@ async function toggleFnCat(cat){activeFnCats[cat]=!activeFnCats[cat];document.qu
 async function loadFnMarkers(cat){if(!currentBook)return;const{data}=await sb.from('footnotes').select('*').eq('book_id',currentBook.id).eq('category',FN_CAT_DB[cat]);if(!data)return;data.forEach(fn=>{const el=document.getElementById('htext-'+fn.hadith_number);if(el&&!el.querySelector('.fn-marker.'+cat)){const marker=document.createElement('span');marker.className='fn-marker '+cat;marker.textContent=FN_CATS.indexOf(cat)+1;marker.onclick=(e)=>showFnPopover(e,fn.content||'لا يوجد محتوى',cat);el.appendChild(marker);}});}
 function showFnPopover(e,text,cat){e.stopPropagation();const pop=document.getElementById('fn-popover');pop.innerHTML=`<div class="fn-cat-label ${cat}">${cat.replace('_',' ')}</div>${escHtml(text)}`;pop.style.display='block';const rect=e.target.getBoundingClientRect();pop.style.top=(rect.bottom+6)+'px';pop.style.left=Math.max(8,rect.left-100)+'px';}
 function searchHadiths(){const q=document.getElementById('hadith-search-input').value.trim();if(!q||!currentHadiths.length)return;const results=currentHadiths.filter(h=>(h.text||h.hadith||'').includes(q));renderHadiths(results);if(!results.length)toast('لا نتائج لهذا البحث');}
-async function loadSidePanels(){if(!currentBook)return;const{data:mss}=await sb.from('manuscripts').select('*').eq('book_id',currentBook.id);document.getElementById('mss-list').innerHTML=mss&&mss.length?mss.map(m=>`<div class="ms-item"><h4>${m.name}${m.status!=='approved'?' <span class="status-pill" style="background:var(--gold-light);color:var(--gold)">قيد المراجعة</span>':''}</h4><p>${m.library||''}</p>${m.image_url?`<img src="${m.image_url}" onclick="zoomImg('${m.image_url}')" loading="lazy">`:'</div>'}`).join(''):'<div style="font-size:12px;color:var(--text2);text-align:center;padding:14px">لا توجد مخطوطات مضافة</div>';const{data:eds}=await sb.from('editions').select('*').eq('book_id',currentBook.id);document.getElementById('editions-list').innerHTML=eds&&eds.length?eds.map(e=>`<div class="ed-item"><h4>${e.name}${e.status!=='approved'?' <span class="status-pill" style="background:var(--gold-light);color:var(--gold)">قيد المراجعة</span>':''}</h4><p>${e.publisher||''}</p>${e.image_url?`<img src="${e.image_url}" onclick="zoomImg('${e.image_url}')" loading="lazy">`:'</div>'}`).join(''):'<div style="font-size:12px;color:var(--text2);text-align:center;padding:14px">لا توجد طبعات مضافة</div>';}
+async function loadSidePanels(){
+  if(!currentBook)return;
+
+  // Fetch manuscripts (Approved + Current User's pending)
+  let mssQuery = sb.from('manuscripts').select('*').eq('book_id',currentBook.id);
+  const{data:mss}=await mssQuery;
+
+  const mssList = mss ? mss.filter(m => m.status === 'approved' || (currentUser && m.author_id === currentUser.id)) : [];
+
+  document.getElementById('mss-list').innerHTML=mssList.length ? mssList.map(m=>`
+    <div class="ms-item">
+      <h4>${m.name}${m.status!=='approved'?' <span class="status-pill" style="background:var(--gold-light);color:var(--gold)">قيد المراجعة</span>':''}</h4>
+      <p>${m.library||''}</p>
+      ${m.image_url?`<img src="${m.image_url}" onclick="zoomImg('${m.image_url}')" style="cursor:zoom-in; margin-top:8px; border-radius:4px" loading="lazy">` : ''}
+      ${m.notes?`<p style="font-style:italic; margin-top:4px">${m.notes}</p>`:''}
+    </div>`).join('') : '<div style="font-size:12px;color:var(--text2);text-align:center;padding:14px">لا توجد مخطوطات مضافة</div>';
+
+  // Fetch editions (Approved + Current User's pending)
+  let edsQuery = sb.from('editions').select('*').eq('book_id',currentBook.id);
+  const{data:eds}=await edsQuery;
+
+  const edsList = eds ? eds.filter(e => e.status === 'approved' || (currentUser && e.author_id === currentUser.id)) : [];
+
+  document.getElementById('editions-list').innerHTML=edsList.length ? edsList.map(e=>`
+    <div class="ed-item">
+      <h4>${e.name}${e.status!=='approved'?' <span class="status-pill" style="background:var(--gold-light);color:var(--gold)">قيد المراجعة</span>':''}</h4>
+      <p>${e.publisher||''}</p>
+      ${e.image_url?`<img src="${e.image_url}" onclick="zoomImg('${e.image_url}')" style="cursor:zoom-in; margin-top:8px; border-radius:4px" loading="lazy">` : ''}
+      ${e.notes?`<p style="font-style:italic; margin-top:4px">${e.notes}</p>`:''}
+    </div>`).join('') : '<div style="font-size:12px;color:var(--text2);text-align:center;padding:14px">لا توجد طبعات مضافة</div>';
+}
 function openAddModal(type){if(currentProfile?.account_type!=='verified'){toast('يتطلب حساباً موثقاً');return;}addItemType=type;document.getElementById('add-item-title').textContent=type==='manuscript'?'إضافة مصورة مخطوط':'إضافة مصورة مطبوع';['ai-name','ai-meta','ai-image-url','ai-notes'].forEach(id=>document.getElementById(id).value='');openModal('add-item-modal');}
 async function submitAddItem(){const name=document.getElementById('ai-name').value.trim();const meta=document.getElementById('ai-meta').value.trim();const url=document.getElementById('ai-image-url').value.trim();const notes=document.getElementById('ai-notes').value.trim();if(!name)return toast('أدخل الاسم');if(addItemType==='manuscript'){await sb.from('manuscripts').insert({book_id:currentBook.id,name,library:meta,image_url:url,notes,author_id:currentUser.id,status:'pending_review'});}else{await sb.from('editions').insert({book_id:currentBook.id,name,publisher:meta,image_url:url,notes,author_id:currentUser.id,status:'pending_review'});}closeModal('add-item-modal');toast('أُرسلت الإضافة للجنة العلمية، وستظهر في صفحتك حتى الإقرار');loadSidePanels();}
 function openAddTextModal(){
@@ -931,7 +1125,13 @@ async function submitDrawerComment(){
   }
 }
 function initQCTypes(){document.querySelectorAll('#qc-types button').forEach(btn=>{btn.addEventListener('click',function(){document.querySelectorAll('#qc-types button').forEach(b=>b.classList.remove('active'));this.classList.add('active');});});}
-function openQC(text,num){qcHadith={text,num};document.getElementById('qc-hadith-preview').textContent=text.substring(0,150)+(text.length>150?'...':'');document.getElementById('qc-text').value='';openModal('quick-comment-modal');}
+function openQC(num){
+  const text = pageHadiths[num];
+  qcHadith={text,num};
+  document.getElementById('qc-hadith-preview').textContent=text.substring(0,150)+(text.length>150?'...':'');
+  document.getElementById('qc-text').value='';
+  openModal('quick-comment-modal');
+}
 function openTakhrijModal(){
   openModal('takhrij-modal');
   document.getElementById('takhrij-results').innerHTML = '<div style="text-align:center;color:var(--text3);padding:20px">ابدأ البحث للعثور على الأحاديث</div>';
@@ -946,10 +1146,17 @@ async function doTakhrijSearch(){
   if(error || !data) return resultsDiv.innerHTML = 'حدث خطأ أو لا توجد نتائج';
 
   resultsDiv.innerHTML = data.map(h => `
-    <div style="display:flex; gap:8px; border-bottom:1px solid #eee; padding:6px 0; align-items:center">
-      <input type="checkbox" class="takhrij-check" data-book="${h.books?.title||h.book_id}" data-num="${h.hadith_number}" data-chapter="${h.chapter||''}">
-      <div style="font-size:12px; flex:1">
-        <b>${h.books?.title||h.book_id} (${h.hadith_number})</b>: ${h.matn.substring(0,80)}...
+    <div style="display:flex; gap:8px; border-bottom:1px solid #eee; padding:8px 0; align-items:center">
+      <input type="checkbox" class="takhrij-check"
+        data-book="${h.books?.title||h.book_id}"
+        data-num="${h.hadith_number}"
+        data-chapter="${h.chapter||''}"
+        data-isnad="${h.isnad||''}"
+        data-vol="${h.volume||''}"
+        data-page="${h.page||''}">
+      <div style="font-size:12px; flex:1; display:flex; justify-content:space-between">
+        <span><b>${h.books?.title||h.book_id} (${h.hadith_number})</b>: ${h.matn.substring(0,60)}...</span>
+        <span style="color:var(--text3)">${h.volume ? h.volume+'/'+h.page : ''} ${h.chapter||''}</span>
       </div>
     </div>
   `).join('');
@@ -959,16 +1166,24 @@ function insertTakhrij(type){
   if(!checks.length) return toast('اختر نتائج أولاً');
 
   let str = "أخرجه ";
+  let commonIsnad = "";
+
   const parts = checks.map(c => {
     const book = c.dataset.book;
     const num = c.dataset.num;
     const chapter = c.dataset.chapter;
+    const vol = c.dataset.vol;
+    const page = c.dataset.page;
+    if(!commonIsnad && c.dataset.isnad) commonIsnad = c.dataset.isnad.split('،').pop(); // Simplified common narrator
+
     if(type === 'short') return `${book} (${num})`;
-    if(type === 'medium') return `${book} (${num})${chapter ? ' باب ' + chapter : ''}`;
-    return `${book} (${num})${chapter ? ' - كتاب ' + chapter : ''}`;
+    if(type === 'medium') return `${book} ${vol?vol+'/':''}${page?page+' ':''}(${num})`;
+    return `${book} ${vol?vol+'/':''}${page?page+' ':''}(${num}) ${chapter ? ' كتاب ' + chapter : ''}`;
   });
 
-  str += parts.join('، ') + ".";
+  str += parts.join('، ');
+  if(commonIsnad) str += ` من طريق ${commonIsnad} بنحوه.`;
+  else str += ".";
 
   if(currentMode === 'editor'){
     insertText(str);
@@ -1002,26 +1217,139 @@ async function submitQC(){
   const {error} = await sb.from('posts').insert(postData);
   if(error) return toast('خطأ في النشر: ' + error.message);
 
+  // Also add to internal comments for the book
+  await sb.from('comments').insert({
+    author_id: currentUser.id,
+    content: content,
+    book_id: currentBook?.id,
+    hadith_number: qcHadith?.num
+  });
+
   toast('نُشر التعليق في الرئيسية كمنشور');
   closeModal('quick-comment-modal');
   if(mainView === 'feed') loadPosts();
+
+  // Update UI indicators
+  const ind = document.getElementById('ind-comm-'+qcHadith.num);
+  if(ind){
+    const cur = parseInt(ind.textContent.replace(/\D/g,''))||0;
+    ind.textContent = '💬 ' + (cur+1);
+    ind.classList.add('active');
+  }
 }
-async function loadEditorForHadith(){if(!activeHadith||!currentUser||!currentBook)return;document.getElementById('editor-content').innerHTML='';footnotes=[];fnCounter=0;currentDraftId=null;const{data}=await sb.from('user_edits').select('*').eq('user_id',currentUser.id).eq('book_id',currentBook.id).eq('hadith_number',activeHadith.num).maybeSingle();if(data){currentDraftId=data.id;document.getElementById('editor-content').innerHTML=data.edited_matn||escHtml(activeHadith.text);footnotes=data.custom_footnotes||[];fnCounter=footnotes.length;setEditStatus(data.status);}else{document.getElementById('editor-content').innerHTML=escHtml(activeHadith.text);setEditStatus('draft');}renderFootnotes();}
+async function loadEditorForHadith(){
+  if(!activeHadith||!currentUser||!currentBook)return;
+  const editor = document.getElementById('editor-content');
+  editor.innerHTML='';
+  footnotes=[];
+  fnCounter=0;
+  currentDraftId=null;
+
+  // Clean up old listeners
+  const newEditor = editor.cloneNode(true);
+  editor.parentNode.replaceChild(newEditor, editor);
+  newEditor.addEventListener('input', () => reindexFootnotes());
+  newEditor.addEventListener('keydown', (e) => {
+    if(e.ctrlKey && e.key === 's') {
+      e.preventDefault();
+      saveDraft();
+    }
+  });
+
+  const{data}=await sb.from('user_edits').select('*').eq('user_id',currentUser.id).eq('book_id',currentBook.id).eq('hadith_number',activeHadith.num).maybeSingle();
+  if(data){
+    currentDraftId=data.id;
+    newEditor.innerHTML=data.edited_matn||escHtml(activeHadith.text);
+    footnotes=data.custom_footnotes||[];
+    fnCounter=footnotes.length;
+    setEditStatus(data.status);
+  }else{
+    newEditor.innerHTML=escHtml(activeHadith.text);
+    setEditStatus('draft');
+  }
+  renderFootnotes();
+}
 function setEditStatus(status){const badge=document.getElementById('edit-status-badge');const labels={draft:'مسودة',pending_review:'قيد المراجعة',approved:'معتمد ✓',rejected:'مرفوض'};badge.textContent=labels[status]||status;badge.className='status-badge status-'+status;}
-function fmt(cmd){document.getElementById('editor-content').focus();document.execCommand(cmd,false,null);}
-function insertMark(type){const labels={tashif:'تصحيف',ziyada:'زيادة',naqs:'نقص',shahid:'شاهد'};const sel=window.getSelection();if(!sel.rangeCount)return;const range=sel.getRangeAt(0);const txt=range.toString();if(!txt)return toast('حدد نصاً أولاً');const span=document.createElement('span');span.className='m-'+type;span.title=labels[type];span.textContent=txt;range.deleteContents();range.insertNode(span);sel.collapseToEnd();}
+function fmt(cmd, val=null){document.getElementById('editor-content').focus();document.execCommand(cmd,false,val);}
+function insertMark(type){const labels={tashif:'تصحيف',ziyada:'زيادة',naqs:'نقص',shahid:'شاهد'};const sel=window.getSelection();if(!sel.rangeCount)return;const range=sel.getRangeAt(0);const txt=range.toString();if(!txt)return toast('حدد نصاً أولاً');const span=document.createElement('span');span.className='m-'+type;span.title=labels[type];span.textContent=txt;range.deleteContents();range.insertNode(span);sel.collapseToEnd();reindexFootnotes();}
 function insertText(txt){
-  document.getElementById('editor-content').focus();
+  const el = document.getElementById('editor-content');
+  el.focus();
   const sel = window.getSelection();
   if (!sel.rangeCount) return;
   const range = sel.getRangeAt(0);
-  range.insertNode(document.createTextNode(txt));
+  const node = document.createTextNode(txt);
+  range.insertNode(node);
   range.collapse(false);
+  sel.removeAllRanges();
+  sel.addRange(range);
 }
 function openFnDialog(){document.getElementById('fn-text-input').value='';openModal('fn-dialog');}
-function addFootnote(){const text=document.getElementById('fn-text-input').value.trim();if(!text)return toast('أدخل نص الحاشية');const sel=window.getSelection();fnCounter++;if(sel.rangeCount&&sel.toString()){const range=sel.getRangeAt(0);const ref=document.createElement('sup');ref.className='m-fn-ref';ref.textContent=fnCounter;range.collapse(false);range.insertNode(ref);}footnotes.push({num:fnCounter,text});renderFootnotes();closeModal('fn-dialog');}
-function deleteFootnote(num){footnotes=footnotes.filter(f=>f.num!==num);renderFootnotes();}
-function renderFootnotes(){const list=document.getElementById('fn-list');list.innerHTML=footnotes.length?footnotes.map(f=>`<div class="fn-item"><span class="fn-num">${f.num}</span><span class="fn-text">${escHtml(f.text)}</span><button class="fn-del" onclick="deleteFootnote(${f.num})">×</button></div>`).join(''):'<div style="font-size:12px;color:#bbb;padding:4px 0">لا حواشي شخصية بعد</div>';}
+function addFootnote(){
+  const text=document.getElementById('fn-text-input').value.trim();
+  if(!text)return toast('أدخل نص الحاشية');
+  const sel=window.getSelection();
+  if(sel.rangeCount){
+    const range=sel.getRangeAt(0);
+    const ref=document.createElement('sup');
+    ref.className='m-fn-ref';
+    ref.textContent='?';
+    ref.dataset.tempText = text;
+    range.collapse(false);
+    range.insertNode(ref);
+  }
+  reindexFootnotes();
+  closeModal('fn-dialog');
+}
+function deleteFootnote(num){
+  const content = document.getElementById('editor-content');
+  const refs = content.querySelectorAll('.m-fn-ref');
+  refs.forEach(ref => { if(parseInt(ref.textContent) === num) ref.remove(); });
+  reindexFootnotes();
+}
+function reindexFootnotes() {
+  const content = document.getElementById('editor-content');
+  const refs = content.querySelectorAll('.m-fn-ref');
+  const newFootnotes = [];
+  refs.forEach((ref, index) => {
+    const newNum = index + 1;
+    let fnText = "";
+    if (ref.dataset.tempText) {
+      fnText = ref.dataset.tempText;
+      delete ref.dataset.tempText;
+    } else {
+      const oldNum = parseInt(ref.textContent);
+      const existingFn = footnotes.find(f => f.num === oldNum);
+      fnText = existingFn ? existingFn.text : "نص الحاشية مفقود";
+    }
+    ref.textContent = newNum;
+    ref.onclick = (e) => {
+      e.preventDefault();
+      const el = document.getElementById('fn-item-' + newNum);
+      if(el) {
+        el.scrollIntoView({behavior:'smooth', block:'center'});
+        el.style.background = 'var(--gold-light)';
+        setTimeout(() => el.style.background = 'transparent', 2000);
+      }
+    };
+    newFootnotes.push({ num: newNum, text: fnText });
+  });
+  footnotes = newFootnotes;
+  fnCounter = footnotes.length;
+  renderFootnotes();
+}
+function renderFootnotes(){const list=document.getElementById('fn-list');list.innerHTML=footnotes.length?footnotes.map(f=>`<div class="fn-item" id="fn-item-${f.num}"><span class="fn-num" style="cursor:pointer" onclick="scrollToFnRef(${f.num})">${f.num}</span><span class="fn-text">${escHtml(f.text)}</span><button class="fn-del" onclick="deleteFootnote(${f.num})">×</button></div>`).join(''):'<div style="font-size:12px;color:#bbb;padding:4px 0">لا حواشي شخصية بعد</div>';}
+function scrollToFnRef(num) {
+  const editor = document.getElementById('editor-content');
+  const refs = editor.querySelectorAll('.m-fn-ref');
+  refs.forEach(r => {
+    if(parseInt(r.textContent) === num) {
+      r.scrollIntoView({behavior:'smooth', block:'center'});
+      r.style.background = 'var(--gold)';
+      setTimeout(() => r.style.background = 'var(--gold-light)', 2000);
+    }
+  });
+}
 async function saveDraft(){
   if(!currentUser||!activeHadith||!currentBook)return toast('لا يوجد حديث محدد');
   const matn=document.getElementById('editor-content').innerHTML;
@@ -1075,7 +1403,8 @@ async function loadProfileAdditions(uid){
           <div class="tahqiq-item-header"><h4>حديث ${it.hadith_number} — ${it.book_id}</h4></div>
           <div class="preview">مُرسِل: ${it.profiles?.full_name||'مجهول'}</div>
           <div style="display:flex;gap:6px;margin-top:8px">
-            <button style="background:var(--green-light);color:var(--green);padding:5px 12px;border-radius:4px;font-size:12px" onclick="reviewItem('user_edits','${it.id}','approved')">اعتماد</button>
+            <button style="background:var(--gold-light);color:var(--gold);padding:5px 12px;border-radius:4px;font-size:12px" onclick="viewEditComparison('${it.id}')">مراجعة الفروق</button>
+            <button style="background:var(--green-light);color:var(--green);padding:5px 12px;border-radius:4px;font-size:12px" onclick="reviewItem('user_edits','${it.id}','approved')">اعتماد سريع</button>
             <button style="background:#fde8e8;color:#c0392b;padding:5px 12px;border-radius:4px;font-size:12px" onclick="reviewItem('user_edits','${it.id}','rejected')">رفض</button>
           </div>
         </div>
@@ -1093,6 +1422,30 @@ async function loadProfileAdditions(uid){
   }
   content.innerHTML=html;
 }
+async function viewEditComparison(id) {
+  const {data, error} = await sb.from('user_edits').select('*, profiles(full_name)').eq('id', id).single();
+  if(error || !data) return toast('خطأ في تحميل البيانات');
+
+  let original = "جاري التحميل...";
+  const book = BOOKS.find(b => b.id === data.book_id);
+  if(book && book.cdnId) {
+    original = "[نص الكتاب من المصدر المفتوح]";
+  } else {
+    const {data: txt} = await sb.from('texts').select('matn').eq('book_id', data.book_id).eq('hadith_number', data.hadith_number).single();
+    if(txt) original = txt.matn;
+  }
+
+  document.getElementById('comp-orig').textContent = original;
+  document.getElementById('comp-edit').innerHTML = data.edited_matn;
+  document.getElementById('comp-fn-list').innerHTML = data.custom_footnotes && data.custom_footnotes.length
+    ? data.custom_footnotes.map(f => `<div><b>${f.num}:</b> ${f.text}</div>`).join('')
+    : 'لا توجد حواشي مضافة';
+
+  document.getElementById('btn-comp-approve').onclick = () => { reviewItem('user_edits', id, 'approved'); closeModal('comparison-modal'); };
+  document.getElementById('btn-comp-reject').onclick = () => { reviewItem('user_edits', id, 'rejected'); closeModal('comparison-modal'); };
+
+  openModal('comparison-modal');
+}
 async function reviewItem(kind,id,status){
   let table = kind;
   if(kind === 'manuscript') table = 'manuscripts';
@@ -1101,9 +1454,29 @@ async function reviewItem(kind,id,status){
   const{error}=await sb.from(table).update({status}).eq('id',id);
   if(error) return toast('خطأ في التحديث: ' + error.message);
 
+  if(kind === 'user_edits' && status === 'approved') {
+    const {data: edit} = await sb.from('user_edits').select('*').eq('id', id).single();
+    if(edit) {
+      // Update the main library text
+      await sb.from('texts').update({matn: edit.edited_matn}).eq('book_id', edit.book_id).eq('hadith_number', edit.hadith_number);
+      // Transfer footnotes to the public footnotes table
+      if(edit.custom_footnotes && edit.custom_footnotes.length) {
+        for(const fn of edit.custom_footnotes) {
+          await sb.from('footnotes').insert({
+            book_id: edit.book_id,
+            hadith_number: edit.hadith_number,
+            category: 'تخريج', // Default category for user footnotes
+            content: fn.text,
+            author_id: edit.user_id
+          });
+        }
+      }
+    }
+  }
+
   toast(status==='approved'?'تم الاعتماد':'تم الرفض');
   loadProfileAdditions(currentUser.id);
-  if(currentBook) loadSidePanels();
+  if(currentBook) { loadSidePanels(); selectBook(currentBook.id); }
 }
 function openModal(id){document.getElementById(id).style.display='flex';}
 function closeModal(id){document.getElementById(id).style.display='none';}
