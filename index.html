@@ -55,7 +55,7 @@ img{max-width:100%}
 .page{display:none;min-height:calc(100vh - 50px)}
 .page.active{display:block}
 #page-feed{max-width:680px;margin:0 auto;padding:16px}
-#composer{background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px}
+#composer{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 2px 4px rgba(0,0,0,0.05)}
 #guest-notice{font-size:12px;color:var(--gold);background:var(--gold-light);padding:8px 12px;border-radius:6px;margin-bottom:10px}
 #post-types{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
 #post-types button{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:#fff;font-size:13px;color:var(--text2)}
@@ -68,7 +68,7 @@ img{max-width:100%}
 #btn-publish{background:var(--green);color:#fff;padding:8px 22px;border-radius:6px;font-size:14px}
 #btn-publish:hover{background:#155530}
 #btn-publish:disabled{background:#aaa}
-.post-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:12px}
+.post-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 2px 4px rgba(0,0,0,0.05)}
 .post-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
 .post-author-row{display:flex;align-items:center;gap:8px}
 .avatar{width:34px;height:34px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
@@ -107,19 +107,19 @@ img{max-width:100%}
 .comment-input-row button{background:var(--green);color:#fff;padding:7px 14px;border-radius:20px;font-size:13px}
 #posts-loading,#posts-empty{text-align:center;padding:30px;color:var(--text2)}
 #page-library{display:flex;height:calc(100vh - 50px);overflow:hidden}
-#lib-sidebar{width:64px;min-width:64px;background:#fff;border-left:1px solid var(--border);overflow-y:auto;transition:width .2s;display:flex;flex-direction:column;flex-shrink:0}
-#lib-sidebar.expanded{width:200px;min-width:200px}
-#sidebar-toggle{padding:10px;text-align:center;border-bottom:1px solid var(--border);color:var(--green);font-size:16px}
+#lib-sidebar{width:5%;min-width:64px;background:#fff;border-left:1px solid var(--border);overflow-y:auto;transition:width .3s;display:flex;flex-direction:column;flex-shrink:0;z-index:101}
+#lib-sidebar:hover,#lib-sidebar.expanded{width:220px}
+#sidebar-toggle{padding:10px;text-align:center;border-bottom:1px solid var(--border);color:var(--green);font-size:16px;cursor:pointer}
 #sidebar-toggle:hover{background:var(--green-light)}
-.book-item{padding:10px 8px;cursor:pointer;border-bottom:1px solid #f5f5f5;text-align:center;border-right:3px solid transparent}
+.lib-cat-group{border-bottom:1px solid var(--border)}
+.lib-cat-header{padding:10px 8px;font-weight:700;font-size:11px;cursor:pointer;background:var(--bg);color:var(--green);display:flex;justify-content:space-between;align-items:center;white-space:nowrap;overflow:hidden}
+.lib-cat-header small{background:var(--green);color:#fff;padding:1px 5px;border-radius:10px;font-size:9px}
+.lib-cat-books{display:none;background:#fff}
+.lib-cat-group.open .lib-cat-books{display:block}
+.book-item{padding:10px 8px;cursor:pointer;border-bottom:1px solid #f5f5f5;text-align:center;border-right:3px solid transparent;font-size:11px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .book-item:hover{background:var(--green-light)}
 .book-item.active{background:var(--green-light);border-right-color:var(--green)}
-.book-item .book-icon{font-size:20px;display:block;margin-bottom:2px}
-.book-item .book-title{font-size:11px;font-weight:600;color:var(--text);display:none;line-height:1.3}
-.book-item .book-author{font-size:10px;color:var(--text2);display:none}
-#lib-sidebar.expanded .book-item{text-align:right;padding:10px 12px}
-#lib-sidebar.expanded .book-item .book-icon{display:none}
-#lib-sidebar.expanded .book-item .book-title,#lib-sidebar.expanded .book-item .book-author{display:block}
+#lib-sidebar:hover .book-item,#lib-sidebar.expanded .book-item{text-align:right;padding:10px 12px;font-size:13px}
 #lib-main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 #lib-empty{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;color:var(--text2);text-align:center}
 #lib-empty p:first-child{font-size:32px;margin-bottom:10px}
@@ -162,8 +162,13 @@ img{max-width:100%}
 #hadith-search-bar{display:flex;gap:8px;margin-bottom:12px}
 #hadith-search-bar input{flex:1;border:1px solid var(--border);border-radius:6px;padding:8px 12px}
 #hadith-search-bar button{background:var(--green);color:#fff;padding:8px 16px;border-radius:6px}
-.hadith-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:12px; transition:all 0.3s}
+.hadith-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:12px; transition:all 0.3s; position:relative}
 .hadith-card.active{border-color:var(--gold); box-shadow:0 0 12px rgba(184, 134, 11, 0.3); background:var(--gold-light)}
+.hadith-indicators{position:absolute; top:10px; left:10px; display:flex; gap:5px}
+.h-indicator{font-size:10px; padding:2px 6px; border-radius:4px; background:var(--bg); color:var(--text2); display:none}
+.h-indicator.active{display:block}
+.h-indicator.comm{background:var(--green-light); color:var(--green)}
+.h-indicator.edit{background:var(--gold-light); color:var(--gold)}
 .hadith-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .hadith-number{font-size:12px;color:var(--text2)}
 .hadith-grade{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
@@ -477,7 +482,15 @@ img{max-width:100%}
 const SUPA_URL='https://uqfqpqjarofbcdzkrdgs.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVxZnFwcWphcm9mYmNkemtyZGdzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4ODUwMzUsImV4cCI6MjA5MzQ2MTAzNX0.8z2Nc8t14txttepiRV5yhhkBfDdE77FJ7rx1dxQrICI';
 const CDN='https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1';
-const BOOKS=[{id:'bukhari',cdnId:'ara-bukhari',icon:'📗',title:'صحيح البخاري',author:'البخاري'},{id:'muslim',cdnId:'ara-muslim',icon:'📘',title:'صحيح مسلم',author:'مسلم'},{id:'abudawud',cdnId:'ara-abudawud',icon:'📙',title:'سنن أبي داود',author:'أبو داود'},{id:'tirmidhi',cdnId:'ara-tirmidhi',icon:'📕',title:'سنن الترمذي',author:'الترمذي'},{id:'nasai',cdnId:'ara-nasai',icon:'📔',title:'سنن النسائي',author:'النسائي'},{id:'ibnmajah',cdnId:'ara-ibnmajah',icon:'📓',title:'سنن ابن ماجه',author:'ابن ماجه'}];
+const LIB_CATS=['العقيدة','التفسير','الحديث','التواريخ والسير والرجال','الفقه','أخرى'];
+const BOOKS=[
+  {id:'bukhari',cdnId:'ara-bukhari',category:'الحديث',title:'صحيح البخاري',short:'البخاري',author:'البخاري'},
+  {id:'muslim',cdnId:'ara-muslim',category:'الحديث',title:'صحيح مسلم',short:'مسلم',author:'مسلم'},
+  {id:'abudawud',cdnId:'ara-abudawud',category:'الحديث',title:'سنن أبي داود',short:'أبو داود',author:'أبو داود'},
+  {id:'tirmidhi',cdnId:'ara-tirmidhi',category:'الحديث',title:'سنن الترمذي',short:'الترمذي',author:'الترمذي'},
+  {id:'nasai',cdnId:'ara-nasai',category:'الحديث',title:'سنن النسائي',short:'النسائي',author:'النسائي'},
+  {id:'ibnmajah',cdnId:'ara-ibnmajah',category:'الحديث',title:'سنن ابن ماجه',short:'ابن ماجه',author:'ابن ماجه'}
+];
 const FN_CATS=['تخريج','فروق_نسخ','غريب'];
 const FN_CAT_DB={'تخريج':'تخريج','فروق_نسخ':'فروق نسخ','غريب':'غريب'};
 const{createClient}=supabase;
@@ -615,7 +628,7 @@ function postHTML(p){
     </div>` : '';
 
   const hadithRef = p.book_id ? `
-    <button class="post-hadith-ref" onclick="goToHadith('${p.book_id}', '${p.text_id||''}')" style="background:var(--blue-light); color:var(--blue); padding:4px 12px; border-radius:4px; font-size:12px; font-weight:600">مكتبة</button>
+    <button class="post-hadith-ref" onclick="goToHadith('${p.book_id}', '${p.text_id||''}')" style="background:var(--blue-light); color:var(--blue); padding:6px 16px; border-radius:20px; font-size:12px; font-weight:700; border:1px solid var(--blue)">📖 استعراض في المكتبة</button>
   ` : '';
 
   return `
@@ -683,8 +696,53 @@ function goToHadith(bookId, hadithNum){
   });
 }
 function toggleSidebar(){document.getElementById('lib-sidebar').classList.toggle('expanded');}
-function renderBooks(){document.getElementById('books-list').innerHTML=BOOKS.map(b=>`<div class="book-item" data-id="${b.id}" onclick="selectBook('${b.id}')"><span class="book-icon">${b.icon}</span><div class="book-title">${b.title}</div><div class="book-author">${b.author}</div></div>`).join('');}
-async function loadCustomBooks(){const knownIds=BOOKS.map(b=>b.id);const{data}=await sb.from('books').select('*');if(!data)return;data.forEach(row=>{if(!knownIds.includes(row.id)){BOOKS.push({id:row.id,icon:row.icon||'📜',title:row.title,author:row.author});knownIds.push(row.id);}});}
+function renderBooks(){
+  const container = document.getElementById('books-list');
+  const groups = {};
+  LIB_CATS.forEach(cat => groups[cat] = []);
+  BOOKS.forEach(b => {
+    const cat = b.category || 'أخرى';
+    if(!groups[cat]) groups[cat] = [];
+    groups[cat].push(b);
+  });
+
+  container.innerHTML = LIB_CATS.map(cat => {
+    const books = groups[cat];
+    if(books.length === 0) return '';
+    return `
+      <div class="lib-cat-group" id="cat-group-${cat}">
+        <div class="lib-cat-header" onclick="toggleLibCat('${cat}')">
+          <span>${cat}</span>
+          <small>${books.length}</small>
+        </div>
+        <div class="lib-cat-books">
+          ${books.map(b => `
+            <div class="book-item" data-id="${b.id}" onclick="selectBook('${b.id}')" title="${b.title}">
+              ${b.short || b.title.split(' ').slice(0,2).join(' ')}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+function toggleLibCat(cat){
+  document.querySelectorAll('.lib-cat-group').forEach(g => {
+    if(g.id === 'cat-group-'+cat) g.classList.toggle('open');
+    else g.classList.remove('open');
+  });
+}
+async function loadCustomBooks(){
+  const knownIds=BOOKS.map(b=>b.id);
+  const{data}=await sb.from('books').select('*');
+  if(!data)return;
+  data.forEach(row=>{
+    if(!knownIds.includes(row.id)){
+      BOOKS.push({id:row.id, category:row.category||'أخرى', title:row.title, author:row.author});
+      knownIds.push(row.id);
+    }
+  });
+}
 async function selectBook(bookId){document.querySelectorAll('.book-item').forEach(el=>el.classList.toggle('active',el.dataset.id===bookId));currentBook=BOOKS.find(b=>b.id===bookId);currentHadiths=[];currentChapters=[];activeChapter=null;activeHadith=null;document.getElementById('lib-empty').style.display='none';document.getElementById('lib-active').style.display='flex';document.getElementById('reader-title').textContent=currentBook.title;document.getElementById('lib-loading').style.display='block';document.getElementById('hadiths-container').innerHTML='';document.getElementById('toc-select').innerHTML='<option value="">كل الأبواب</option>';setMode('browse');try{if(currentBook.cdnId){const res=await fetch(`${CDN}/editions/${currentBook.cdnId}.min.json`);if(!res.ok)throw new Error();const json=await res.json();currentHadiths=json.hadiths||[];}else{const{data,error}=await sb.from('texts').select('*').eq('book_id',bookId).order('hadith_number');if(error)throw error;currentHadiths=(data||[]).map(t=>({text:t.matn,hadithnumber:t.hadith_number,chapter:t.chapter,isnad:t.isnad}));}const cm={};currentHadiths.forEach(h=>{const ch=h.chapter||h.chapterNumber||'عام';if(!cm[ch])cm[ch]=[];cm[ch].push(h);});currentChapters=Object.entries(cm);renderTOC();renderHadiths(currentHadiths.slice(0,30));}catch(e){document.getElementById('hadiths-container').innerHTML='<div style="text-align:center;padding:30px;color:#999">تعذّر تحميل الكتاب.</div>';}document.getElementById('lib-loading').style.display='none';loadSidePanels();}
 function renderTOC(){const sel=document.getElementById('toc-select');sel.innerHTML='<option value="">كل الأبواب</option>'+currentChapters.map(([ch,hs],i)=>`<option value="${i}">${ch} (${hs.length})</option>`).join('');}
 function selectChapterFromDropdown(val){if(val===''){activeChapter=null;renderHadiths(currentHadiths.slice(0,30));return;}activeChapter=parseInt(val);renderHadiths(currentChapters[activeChapter][1]);}
@@ -709,10 +767,13 @@ function setMode(mode){
   document.getElementById('panel-toggle-left').style.display = showPanels?'block':'none';
   document.getElementById('panel-toggle-right').style.display = showPanels?'block':'none';
 
-  if(!showPanels){
+  // If we were in tahqiq and panels were open, keep them open for editor
+  if(showPanels) {
+    document.getElementById('panel-mss').classList.toggle('open', openPanels.mss);
+    document.getElementById('panel-editions').classList.toggle('open', openPanels.editions);
+  } else {
     document.getElementById('panel-mss').classList.remove('open');
     document.getElementById('panel-editions').classList.remove('open');
-    openPanels={mss:false,editions:false};
   }
 
   document.getElementById('fn-toggles').style.display = isEditor?'none':'flex';
@@ -729,7 +790,79 @@ function setMode(mode){
 }
 function togglePanel(which){const key=which==='mss'?'mss':'editions';openPanels[key]=!openPanels[key];document.getElementById('panel-'+key).classList.toggle('open',openPanels[key]);const btn=which==='mss'?document.getElementById('panel-toggle-left'):document.getElementById('panel-toggle-right');btn.classList.toggle('open',openPanels[key]);btn.textContent=which==='mss'?(openPanels.mss?'‹':'›'):(openPanels.editions?'›':'‹');}
 function renderHadiths(hadiths){document.getElementById('fn-toggles').innerHTML=FN_CATS.map(c=>{const label=c.replace('_',' ');return `<button class="fn-toggle ${activeFnCats[c]?'active '+c:''}" onclick="toggleFnCat('${c}')">${label}</button>`;}).join('');const container=document.getElementById('hadiths-container');if(!hadiths.length){container.innerHTML='<div style="text-align:center;padding:30px;color:#999">لا أحاديث</div>';return;}container.innerHTML=hadiths.slice(0,50).map(hadithCardHTML).join('');Object.keys(activeFnCats).forEach(c=>{if(activeFnCats[c])loadFnMarkers(c);});}
-function hadithCardHTML(h){const text=h.text||h.hadith||'';const num=h.hadithnumber||h.number||'';const grade=h.grades?.[0]?.grade||'';const gc=grade.includes('صحيح')?'صحيح':grade.includes('حسن')?'حسن':grade.includes('ضعيف')?'ضعيف':'';const ts=JSON.stringify(escHtml(text)).replace(/"/g,'&quot;');const isVerified=currentProfile?.account_type==='verified';return `<div class="hadith-card" data-num="${num}"><div class="hadith-card-header"><span class="hadith-number">رقم ${num}</span>${grade?`<span class="hadith-grade ${gc}">${grade}</span>`:''}</div><div class="hadith-text" id="htext-${num}">${escHtml(text)}</div><div class="hadith-actions"><button onclick="openQC(${ts},${num})">تعليق</button><button onclick="setActiveHadithAndDrawer(${ts},${num})">💬 تعليقات القراء</button>${currentMode==='tahqiq'?`<button class="btn-tahqiq" onclick="setActiveHadith(${ts},${num})">تحديد للتحقيق</button>`:''}${isVerified?`<button class="btn-editor" onclick="sendToEditor(${ts},${num})">تحرير</button>`:''}</div></div>`;}
+function hadithCardHTML(h){
+  const text=h.text||h.hadith||'';
+  const num=h.hadithnumber||h.number||'';
+  const grade=h.grades?.[0]?.grade||'';
+  const gc=grade.includes('صحيح')?'صحيح':grade.includes('حسن')?'حسن':grade.includes('ضعيف')?'ضعيف':'';
+  const ts=JSON.stringify(escHtml(text)).replace(/"/g,'&quot;');
+  const isVerified=currentProfile?.account_type==='verified';
+  return `
+    <div class="hadith-card" data-num="${num}">
+      <div class="hadith-indicators">
+        <span class="h-indicator comm" id="ind-comm-${num}">💬 0</span>
+        <span class="h-indicator edit" id="ind-edit-${num}">📝 معدل</span>
+      </div>
+      <div class="hadith-card-header">
+        <span class="hadith-number">رقم ${num}</span>
+        ${grade?`<span class="hadith-grade ${gc}">${grade}</span>`:''}
+      </div>
+      <div class="hadith-text" id="htext-${num}">${escHtml(text)}</div>
+      <div class="hadith-actions">
+        <button onclick="openQC(${ts},${num})">تعليق</button>
+        <button onclick="setActiveHadithAndDrawer(${ts},${num})">💬 تعليقات القراء</button>
+        ${currentMode==='tahqiq'?`<button class="btn-tahqiq" onclick="setActiveHadith(${ts},${num})">تحديد للتحقيق</button>`:''}
+        ${isVerified?`<button class="btn-editor" onclick="sendToEditor(${ts},${num})">تحرير</button>`:''}
+      </div>
+    </div>`;
+}
+function renderHadiths(hadiths){
+  document.getElementById('fn-toggles').innerHTML=FN_CATS.map(c=>{
+    const label=c.replace('_',' ');
+    return `<button class="fn-toggle ${activeFnCats[c]?'active '+c:''}" onclick="toggleFnCat('${c}')">${label}</button>`;
+  }).join('');
+  const container=document.getElementById('hadiths-container');
+  if(!hadiths.length){
+    container.innerHTML='<div style="text-align:center;padding:30px;color:#999">لا أحاديث</div>';
+    return;
+  }
+  container.innerHTML=hadiths.slice(0,50).map(hadithCardHTML).join('');
+  Object.keys(activeFnCats).forEach(c=>{if(activeFnCats[c])loadFnMarkers(c);});
+  loadHadithIndicators(hadiths.slice(0,50).map(h=>h.hadithnumber||h.number));
+}
+async function loadHadithIndicators(nums){
+  if(!currentBook || !nums.length) return;
+  // Load comment counts (all users)
+  const {data: comms} = await sb.from('comments').select('hadith_number').eq('book_id', currentBook.id).in('hadith_number', nums);
+  if(comms){
+    const counts = {};
+    comms.forEach(c => { if(c.hadith_number) counts[c.hadith_number] = (counts[c.hadith_number]||0) + 1; });
+    Object.entries(counts).forEach(([num, count]) => {
+      const el = document.getElementById('ind-comm-'+num);
+      if(el) { el.textContent = '💬 ' + count; el.classList.add('active'); }
+    });
+  }
+  // Load user edits indicators (Approved edits + Current user's own drafts/pending)
+  let q = sb.from('user_edits').select('hadith_number, user_id, status').eq('book_id', currentBook.id).in('hadith_number', nums);
+  const {data: edits} = await q;
+  if(edits){
+    edits.forEach(e => {
+      const isApproved = e.status === 'approved';
+      const isMine = currentUser && e.user_id === currentUser.id;
+      if(isApproved || isMine) {
+        const el = document.getElementById('ind-edit-'+e.hadith_number);
+        if(el) {
+          el.classList.add('active');
+          if(isMine && e.status !== 'approved') {
+            el.textContent = '📝 مسودة';
+            el.style.background = 'var(--blue-light)';
+            el.style.color = 'var(--blue)';
+          }
+        }
+      }
+    });
+  }
+}
 function setActiveHadith(text,num){activeHadith={text,num};toast('تم تحديد الحديث رقم '+num);}
 function setActiveHadithAndDrawer(text,num){activeHadith={text,num};openCommentsDrawer();}
 function sendToEditor(text,num){activeHadith={text,num};setMode('editor');}
@@ -750,12 +883,53 @@ function searchHadiths(){const q=document.getElementById('hadith-search-input').
 async function loadSidePanels(){if(!currentBook)return;const{data:mss}=await sb.from('manuscripts').select('*').eq('book_id',currentBook.id);document.getElementById('mss-list').innerHTML=mss&&mss.length?mss.map(m=>`<div class="ms-item"><h4>${m.name}${m.status!=='approved'?' <span class="status-pill" style="background:var(--gold-light);color:var(--gold)">قيد المراجعة</span>':''}</h4><p>${m.library||''}</p>${m.image_url?`<img src="${m.image_url}" onclick="zoomImg('${m.image_url}')" loading="lazy">`:'</div>'}`).join(''):'<div style="font-size:12px;color:var(--text2);text-align:center;padding:14px">لا توجد مخطوطات مضافة</div>';const{data:eds}=await sb.from('editions').select('*').eq('book_id',currentBook.id);document.getElementById('editions-list').innerHTML=eds&&eds.length?eds.map(e=>`<div class="ed-item"><h4>${e.name}${e.status!=='approved'?' <span class="status-pill" style="background:var(--gold-light);color:var(--gold)">قيد المراجعة</span>':''}</h4><p>${e.publisher||''}</p>${e.image_url?`<img src="${e.image_url}" onclick="zoomImg('${e.image_url}')" loading="lazy">`:'</div>'}`).join(''):'<div style="font-size:12px;color:var(--text2);text-align:center;padding:14px">لا توجد طبعات مضافة</div>';}
 function openAddModal(type){if(currentProfile?.account_type!=='verified'){toast('يتطلب حساباً موثقاً');return;}addItemType=type;document.getElementById('add-item-title').textContent=type==='manuscript'?'إضافة مصورة مخطوط':'إضافة مصورة مطبوع';['ai-name','ai-meta','ai-image-url','ai-notes'].forEach(id=>document.getElementById(id).value='');openModal('add-item-modal');}
 async function submitAddItem(){const name=document.getElementById('ai-name').value.trim();const meta=document.getElementById('ai-meta').value.trim();const url=document.getElementById('ai-image-url').value.trim();const notes=document.getElementById('ai-notes').value.trim();if(!name)return toast('أدخل الاسم');if(addItemType==='manuscript'){await sb.from('manuscripts').insert({book_id:currentBook.id,name,library:meta,image_url:url,notes,author_id:currentUser.id,status:'pending_review'});}else{await sb.from('editions').insert({book_id:currentBook.id,name,publisher:meta,image_url:url,notes,author_id:currentUser.id,status:'pending_review'});}closeModal('add-item-modal');toast('أُرسلت الإضافة للجنة العلمية، وستظهر في صفحتك حتى الإقرار');loadSidePanels();}
-function openAddTextModal(){if(currentProfile?.account_type!=='verified'){toast('يتطلب حساباً موثقاً');return;}['at-title','at-author','at-content'].forEach(id=>document.getElementById(id).value='');openModal('add-text-modal');}
-async function submitAddText(){const title=document.getElementById('at-title').value.trim();const author=document.getElementById('at-author').value.trim();const content=document.getElementById('at-content').value.trim();if(!title||!content)return toast('أدخل العنوان والنص');if(currentProfile?.account_type!=='verified')return toast('يتطلب حساباً موثقاً');const newId='txt_'+Date.now().toString(36);const{error:bookErr}=await sb.from('books').insert({id:newId,title,author:author||'غير معروف',icon:'📜',category:'تحقيق'});if(bookErr)return toast('خطأ في إنشاء الكتاب');const{error:textErr}=await sb.from('texts').insert({book_id:newId,hadith_number:1,matn:content});if(textErr)return toast('خطأ في حفظ النص');BOOKS.push({id:newId,icon:'📜',title,author:author||'غير معروف'});renderBooks();closeModal('add-text-modal');toast('تم حفظ الكتاب');selectBook(newId);}
+function openAddTextModal(){
+  if(currentProfile?.account_type!=='verified'){toast('يتطلب حساباً موثقاً');return;}
+  ['at-title','at-author','at-content'].forEach(id=>document.getElementById(id).value='');
+  const sel = document.getElementById('at-category');
+  if(sel) sel.innerHTML = LIB_CATS.map(c => `<option value="${c}">${c}</option>`).join('');
+  openModal('add-text-modal');
+}
+async function submitAddText(){
+  const title=document.getElementById('at-title').value.trim();
+  const author=document.getElementById('at-author').value.trim();
+  const content=document.getElementById('at-content').value.trim();
+  const category=document.getElementById('at-category').value;
+  if(!title||!content)return toast('أدخل العنوان والنص');
+  if(currentProfile?.account_type!=='verified')return toast('يتطلب حساباً موثقاً');
+  const newId='txt_'+Date.now().toString(36);
+  const{error:bookErr}=await sb.from('books').insert({id:newId,title,author:author||'غير معروف',category:category});
+  if(bookErr)return toast('خطأ في إنشاء الكتاب');
+  const{error:textErr}=await sb.from('texts').insert({book_id:newId,hadith_number:1,matn:content});
+  if(textErr)return toast('خطأ في حفظ النص');
+  BOOKS.push({id:newId,category:category,title,author:author||'غير معروف'});
+  renderBooks();
+  closeModal('add-text-modal');
+  toast('تم حفظ الكتاب');
+  selectBook(newId);
+}
 function toggleCommentsDrawer(){commentsDrawerOpen=!commentsDrawerOpen;document.getElementById('comments-drawer').classList.toggle('open',commentsDrawerOpen);document.getElementById('comments-toggle-btn').classList.toggle('active',commentsDrawerOpen);if(commentsDrawerOpen)loadDrawerComments();}
 function openCommentsDrawer(){if(!commentsDrawerOpen)toggleCommentsDrawer();else loadDrawerComments();}
 async function loadDrawerComments(){const body=document.getElementById('comments-drawer-body');if(!activeHadith||!currentBook){body.innerHTML='<div style="font-size:12px;color:var(--text2);text-align:center;padding:14px">اختر حديثاً أولاً</div>';return;}body.innerHTML='جاري التحميل...';const{data:direct}=await sb.from('comments').select('*, profiles(full_name)').eq('book_id',currentBook.id).eq('hadith_number',activeHadith.num).order('created_at');let comments=direct&&direct.length?direct:[];if(!comments.length){const{data:fromPosts}=await sb.from('posts').select('*, profiles(full_name)').eq('book_id',currentBook.id).eq('text_id',activeHadith.num).order('created_at');comments=fromPosts||[];}body.innerHTML=comments.length?comments.map(c=>`<div style="font-size:12px;border-bottom:1px solid #f5f5f5;padding:6px 0"><b style="color:var(--green)">${c.profiles?.full_name||'مجهول'}</b><br>${escHtml(c.content)}</div>`).join(''):'<div style="font-size:12px;color:var(--text2);text-align:center;padding:14px">لا تعليقات على هذا الحديث بعد</div>';}
-async function submitDrawerComment(){if(!currentUser)return toast('يجب تسجيل الدخول');if(!activeHadith)return toast('اختر حديثاً أولاً');const input=document.getElementById('drawer-comment-input');const content=input.value.trim();if(!content)return;const{error}=await sb.from('comments').insert({post_id:null,author_id:currentUser.id,content,book_id:currentBook.id,hadith_number:activeHadith.num});if(error){toast('خطأ في إرسال التعليق: '+error.message);return;}input.value='';toast('تم نشر التعليق');loadDrawerComments();}
+async function submitDrawerComment(){
+  if(!currentUser)return toast('يجب تسجيل الدخول');
+  if(!activeHadith)return toast('اختر حديثاً أولاً');
+  const input=document.getElementById('drawer-comment-input');
+  const content=input.value.trim();
+  if(!content)return;
+  const{error}=await sb.from('comments').insert({post_id:null,author_id:currentUser.id,content,book_id:currentBook.id,hadith_number:activeHadith.num});
+  if(error){toast('خطأ في إرسال التعليق: '+error.message);return;}
+  input.value='';
+  toast('تم نشر التعليق');
+  loadDrawerComments();
+  // Update indicator immediately
+  const ind = document.getElementById('ind-comm-'+activeHadith.num);
+  if(ind){
+    const cur = parseInt(ind.textContent.replace(/\D/g,''))||0;
+    ind.textContent = '💬 ' + (cur+1);
+    ind.classList.add('active');
+  }
+}
 function initQCTypes(){document.querySelectorAll('#qc-types button').forEach(btn=>{btn.addEventListener('click',function(){document.querySelectorAll('#qc-types button').forEach(b=>b.classList.remove('active'));this.classList.add('active');});});}
 function openQC(text,num){qcHadith={text,num};document.getElementById('qc-hadith-preview').textContent=text.substring(0,150)+(text.length>150?'...':'');document.getElementById('qc-text').value='';openModal('quick-comment-modal');}
 function openTakhrijModal(){
@@ -848,7 +1022,19 @@ function openFnDialog(){document.getElementById('fn-text-input').value='';openMo
 function addFootnote(){const text=document.getElementById('fn-text-input').value.trim();if(!text)return toast('أدخل نص الحاشية');const sel=window.getSelection();fnCounter++;if(sel.rangeCount&&sel.toString()){const range=sel.getRangeAt(0);const ref=document.createElement('sup');ref.className='m-fn-ref';ref.textContent=fnCounter;range.collapse(false);range.insertNode(ref);}footnotes.push({num:fnCounter,text});renderFootnotes();closeModal('fn-dialog');}
 function deleteFootnote(num){footnotes=footnotes.filter(f=>f.num!==num);renderFootnotes();}
 function renderFootnotes(){const list=document.getElementById('fn-list');list.innerHTML=footnotes.length?footnotes.map(f=>`<div class="fn-item"><span class="fn-num">${f.num}</span><span class="fn-text">${escHtml(f.text)}</span><button class="fn-del" onclick="deleteFootnote(${f.num})">×</button></div>`).join(''):'<div style="font-size:12px;color:#bbb;padding:4px 0">لا حواشي شخصية بعد</div>';}
-async function saveDraft(){if(!currentUser||!activeHadith||!currentBook)return toast('لا يوجد حديث محدد');const matn=document.getElementById('editor-content').innerHTML;const payload={user_id:currentUser.id,book_id:currentBook.id,hadith_number:activeHadith.num,edited_matn:matn,custom_footnotes:footnotes,status:'draft',updated_at:new Date().toISOString()};let res;if(currentDraftId)res=await sb.from('user_edits').update(payload).eq('id',currentDraftId);else{res=await sb.from('user_edits').insert(payload).select().single();if(res.data)currentDraftId=res.data.id;}if(res.error)return toast('خطأ في الحفظ');setEditStatus('draft');toast('تم حفظ المسودة في صفحتك الشخصية');}
+async function saveDraft(){
+  if(!currentUser||!activeHadith||!currentBook)return toast('لا يوجد حديث محدد');
+  const matn=document.getElementById('editor-content').innerHTML;
+  const payload={user_id:currentUser.id,book_id:currentBook.id,hadith_number:activeHadith.num,edited_matn:matn,custom_footnotes:footnotes,status:'draft',updated_at:new Date().toISOString()};
+  let res;
+  if(currentDraftId)res=await sb.from('user_edits').update(payload).eq('id',currentDraftId);
+  else{res=await sb.from('user_edits').insert(payload).select().single();if(res.data)currentDraftId=res.data.id;}
+  if(res.error)return toast('خطأ في الحفظ');
+  setEditStatus('draft');
+  toast('تم حفظ المسودة في صفحتك الشخصية');
+  const ind = document.getElementById('ind-edit-'+activeHadith.num);
+  if(ind) { ind.classList.add('active'); ind.textContent = '📝 مسودة'; ind.style.background = 'var(--blue-light)'; ind.style.color = 'var(--blue)'; }
+}
 async function submitForReview(){await saveDraft();if(!currentDraftId)return;const{error}=await sb.from('user_edits').update({status:'pending_review'}).eq('id',currentDraftId);if(error)return toast('خطأ');setEditStatus('pending_review');toast('أُرسل للجنة العلمية للمراجعة');}
 async function loadProfilePage(){const uid=viewedProfileId||currentUser.id;viewedProfileId=null;const{data:prof}=await sb.from('profiles').select('*').eq('id',uid).single();if(!prof)return;const initial=(prof.full_name||'م').trim().charAt(0);document.getElementById('profile-avatar').textContent=initial;document.getElementById('profile-name').textContent=prof.full_name||prof.username||'مستخدم';const badge=document.getElementById('profile-acc-badge');badge.textContent=prof.account_type==='verified'?'حساب موثّق':'حساب زائر';badge.className='acc-badge'+(prof.account_type!=='verified'?' guest':'');document.getElementById('profile-bio-text').textContent=prof.bio||'';const isOwn=uid===currentUser.id;document.getElementById('profile-bio-edit').style.display=isOwn?'flex':'none';document.getElementById('profile-bio-input').value=prof.bio||'';document.getElementById('page-profile').dataset.uid=uid;switchProfileTab('posts');}
 async function saveBio(){const bio=document.getElementById('profile-bio-input').value.trim();await sb.from('profiles').update({bio}).eq('id',currentUser.id);document.getElementById('profile-bio-text').textContent=bio;if(currentProfile)currentProfile.bio=bio;toast('تم الحفظ');}
