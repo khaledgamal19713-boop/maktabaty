@@ -33,13 +33,13 @@ img{max-width:100%}
 #sub-bar button.active{background:var(--gold);color:#fff;border-color:var(--gold)}
 #auth-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:999;display:flex;align-items:center;justify-content:center;padding:16px}
 #auth-box{background:#fff;border-radius:10px;padding:28px;width:400px;max-width:100%;max-height:92vh;overflow-y:auto}
-#auth-box h2{color:var(--green);margin-bottom:18px;font-size:21px;text-align:center}
-#auth-tabs{display:flex;margin-bottom:18px;border-bottom:2px solid var(--border)}
-#auth-tabs button{flex:1;padding:8px;font-size:14px;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-2px}
-#auth-tabs button.active{color:var(--green);border-bottom-color:var(--green);font-weight:600}
-.auth-form{display:flex;flex-direction:column;gap:10px}
-.auth-form input{border:1px solid var(--border);border-radius:6px;padding:10px 12px;width:100%}
-.auth-form input:focus{border-color:var(--green)}
+#auth-box h2{color:var(--green);margin-bottom:18px;font-size:24px;text-align:center;font-weight:800}
+#auth-tabs{display:flex;margin-bottom:20px;background:var(--bg);border-radius:8px;padding:4px}
+#auth-tabs button{flex:1;padding:10px;font-size:14px;color:var(--text2);border-radius:6px;transition:0.2s}
+#auth-tabs button.active{background:var(--white);color:var(--green);box-shadow:0 2px 4px rgba(0,0,0,0.1);font-weight:700}
+.auth-form{display:flex;flex-direction:column;gap:12px}
+.auth-form input, .auth-form select{border:1px solid var(--border);border-radius:8px;padding:12px;width:100%;background:#f9f9f9}
+.auth-form input:focus{border-color:var(--green);background:#fff;box-shadow:0 0 0 3px var(--green-light)}
 .auth-form .btn-main{background:var(--green);color:#fff;padding:11px;border-radius:6px;font-size:15px;font-weight:600;margin-top:4px}
 .auth-form .btn-main:hover{background:#155530}
 #auth-msg{font-size:13px;color:#c0392b;text-align:center;min-height:18px;margin-top:6px}
@@ -312,12 +312,18 @@ img{max-width:100%}
         <div class="acc-type-card active" id="acc-guest" onclick="selectAccType('guest')"><h4>حساب زائر</h4><p>تصفح كامل، تعليقات، نشر فوائد عامة. تفعيل بالبريد فقط.</p></div>
         <div class="acc-type-card" id="acc-verified" onclick="selectAccType('verified')"><h4>حساب موثّق</h4><p>كامل الصلاحيات. يتطلب توثيق البريد.</p></div>
       </div>
-      <input type="text" id="reg-name" placeholder="الاسم الكامل">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
+        <input type="text" id="reg-fname" placeholder="الاسم الأول">
+        <input type="text" id="reg-lname" placeholder="اسم العائلة">
+      </div>
       <input type="text" id="reg-username" placeholder="اسم المستخدم">
       <input type="email" id="reg-email" placeholder="البريد الإلكتروني">
-      <input type="password" id="reg-pass" placeholder="كلمة المرور (6 أحرف على الأقل)">
-      <div class="field-soon"><input type="tel" id="reg-phone" placeholder="رقم الهاتف" disabled><span class="soon-badge">قريباً</span></div>
-      <button class="btn-main" onclick="doRegister()">إنشاء الحساب</button>
+      <input type="tel" id="reg-phone" placeholder="رقم الهاتف">
+      <input type="password" id="reg-pass" placeholder="كلمة المرور الجديدة">
+      <div style="font-size:12px; color:var(--text2); margin:4px 0">
+        بضغطك على إنشاء حساب، فإنك توافق على شروطنا وسياسة البيانات.
+      </div>
+      <button class="btn-main" onclick="doRegister()" style="background:#42b72a; border-radius:6px; padding:12px; font-size:18px">إنشاء حساب جديد</button>
     </div>
     <div id="auth-msg"></div>
   </div>
@@ -346,6 +352,7 @@ img{max-width:100%}
         <button data-type="سؤال">سؤال</button>
         <button data-type="اقتباس">اقتباس</button>
         <button data-type="تحقيق">تحقيق</button>
+        <button data-type="فيديو">فيديو</button>
       </div>
       <textarea id="post-content" placeholder="اكتب منشورك..."></textarea>
       <div id="composer-footer">
@@ -473,6 +480,9 @@ img{max-width:100%}
         <span class="acc-badge" id="profile-acc-badge"></span>
         <p id="profile-bio-text"></p>
         <div id="profile-bio-edit"><input id="profile-bio-input" placeholder="اكتب نبذة عنك..."><button onclick="saveBio()">حفظ</button></div>
+        <div id="profile-follow-wrap" style="margin-top:10px; display:none">
+          <button id="btn-follow" style="background:var(--green); color:#fff; padding:6px 16px; border-radius:6px; font-weight:600"></button>
+        </div>
       </div>
     </div>
     <div id="profile-tabs">
@@ -626,14 +636,17 @@ async function doLogin(){
   if(error)setAuthMsg(error.message==='Invalid login credentials'?'بيانات الدخول غير صحيحة':error.message);
 }
 async function doRegister(){
-  const name=document.getElementById('reg-name').value.trim();
+  const fname=document.getElementById('reg-fname').value.trim();
+  const lname=document.getElementById('reg-lname').value.trim();
+  const name = fname + ' ' + lname;
   const username=document.getElementById('reg-username').value.trim();
   const email=document.getElementById('reg-email').value.trim();
   const pass=document.getElementById('reg-pass').value;
   const phone=document.getElementById('reg-phone')?.value.trim();
 
-  if(!name||!username||!email||!pass)return setAuthMsg('يرجى ملء جميع الحقول');
-  if(pass.length<6)return setAuthMsg('كلمة المرور 6 أحرف على الأقل');
+  if(!fname||!lname||!username||!email||!pass)return setAuthMsg('يرجى ملء جميع الحقول');
+  if(selectedAccType === 'verified' && !phone) return setAuthMsg('الحساب الموثق يتطلب رقم الهاتف');
+  if(pass.length<6) return setAuthMsg('كلمة المرور 6 أحرف على الأقل');
 
   setAuthMsg('جاري إنشاء الحساب...');
   const signUpData = {
@@ -641,7 +654,8 @@ async function doRegister(){
     password:pass,
     options:{data:{full_name:name,username,account_type:selectedAccType}}
   };
-  if(phone) signUpData.phone = phone;
+  // Supabase might require phone format validation or specialized setup for phone auth
+  // For now, we store it in metadata and profiles.
 
   const{data,error}=await sb.auth.signUp(signUpData);
   if(error)return setAuthMsg(error.message);
@@ -664,7 +678,7 @@ function setAuthMsg(m){document.getElementById('auth-msg').textContent=m;}
 function goBack(){document.getElementById('page-profile').classList.remove('active');document.getElementById('nav-back-btn').style.display='none';document.getElementById('nav-toggle').style.display='flex';if(previousView==='library')switchMainView('library');else switchMainView('feed');}
 function showProfilePage(userId){previousView=mainView;viewedProfileId=userId;document.getElementById('page-feed').classList.remove('active');document.getElementById('page-library').classList.remove('active');document.getElementById('page-profile').classList.add('active');document.getElementById('sub-bar').style.display='none';document.getElementById('nav-back-btn').style.display='flex';document.getElementById('nav-toggle').style.display='none';loadProfilePage();}
 function switchMainView(view){mainView=view;document.getElementById('page-profile').classList.remove('active');document.getElementById('nav-back-btn').style.display='none';document.getElementById('nav-toggle').style.display='flex';document.querySelectorAll('#nav-toggle button').forEach((b,i)=>b.classList.toggle('active',view==='feed'?i===0:i===1));document.getElementById('page-feed').classList.toggle('active',view==='feed');document.getElementById('page-library').classList.toggle('active',view==='library');renderSubBar();if(view==='feed')loadPosts();}
-function renderSubBar(){const bar=document.getElementById('sub-bar');if(mainView==='feed'){bar.style.display='flex';const filters=[{label:'الكل',val:'الكل'},{label:'فوائد',val:'فائدة'},{label:'تحقيقات',val:'تحقيق'},{label:'أحاديث',val:'حديث'},{label:'أسئلة',val:'سؤال'},{label:'منشورات المكتبة',val:'مكتبة'}];bar.innerHTML=filters.map(({label,val})=>`<button class="${feedFilter===val?'active':''}" onclick="setFeedFilter('${val}')">${label}</button>`).join('');}else{bar.style.display='none';}}
+function renderSubBar(){const bar=document.getElementById('sub-bar');if(mainView==='feed'){bar.style.display='flex';const filters=[{label:'الكل',val:'الكل'},{label:'فيديو/ريلز',val:'فيديو'},{label:'فوائد',val:'فائدة'},{label:'تحقيقات',val:'تحقيق'},{label:'أحاديث',val:'حديث'},{label:'أسئلة',val:'سؤال'},{label:'منشورات المكتبة',val:'مكتبة'}];bar.innerHTML=filters.map(({label,val})=>`<button class="${feedFilter===val?'active':''}" onclick="setFeedFilter('${val}')">${label}</button>`).join('');}else{bar.style.display='none';}}
 function setFeedFilter(val){feedFilter=val;renderSubBar();loadPosts();}
 function initPostTypes(){document.querySelectorAll('#post-types button').forEach(btn=>{btn.addEventListener('click',function(){if(this.disabled)return;document.querySelectorAll('#post-types button').forEach(b=>b.classList.remove('active'));this.classList.add('active');currentPostType=this.dataset.type;});});}
 async function loadPosts(){document.getElementById('posts-loading').style.display='block';document.getElementById('posts-loading').textContent='جاري التحميل...';document.getElementById('posts-list').innerHTML='';let q=sb.from('posts').select('*, profiles(full_name,username,account_type)').order('created_at',{ascending:false}).limit(50);if(feedFilter==='مكتبة'){q=q.not('book_id','is',null);}else if(feedFilter!=='الكل'){q=q.eq('post_type',feedFilter);}const{data,error}=await q;document.getElementById('posts-loading').style.display='none';if(error||!data){document.getElementById('posts-loading').style.display='block';document.getElementById('posts-loading').textContent='حدث خطأ في التحميل';return;}document.getElementById('posts-list').innerHTML=data.length?data.map(postHTML).join(''):'<div id="posts-empty">لا توجد منشورات بعد</div>';}
@@ -712,16 +726,16 @@ function postHTML(p){
       </div>
       <div class="post-footer" style="display:flex; justify-content:space-between; align-items:center">
         <div style="display:flex; gap:14px">
-          <button onclick="toggleLike(${p.id},this)">♡ ${p.likes||0}</button>
-          <button onclick="toggleComments(${p.id})">تعليق</button>
+          <button onclick="toggleLike('${p.id}',this)">♡ ${p.likes||0}</button>
+          <button onclick="toggleComments('${p.id}')">تعليق</button>
         </div>
         ${hadithRef}
       </div>
       <div class="comments-section" id="comments-${p.id}">
         <div id="comments-list-${p.id}"></div>
         <div class="comment-input-row">
-          <input id="comment-input-${p.id}" placeholder="أضف تعليقاً..." onkeydown="if(event.key==='Enter')submitComment(${p.id})">
-          <button onclick="submitComment(${p.id})">إرسال</button>
+          <input id="comment-input-${p.id}" placeholder="أضف تعليقاً..." onkeydown="if(event.key==='Enter')submitComment('${p.id}')">
+          <button onclick="submitComment('${p.id}')">إرسال</button>
         </div>
       </div>
     </div>`;
@@ -908,7 +922,6 @@ function setMode(mode){
   document.getElementById('left-tools').style.display = showPanels?'flex':'none';
   document.getElementById('right-tools').style.display = showPanels?'flex':'none';
 
-  // If we were in tahqiq and panels were open, keep them open for editor
   if(showPanels) {
     document.getElementById('panel-mss').classList.toggle('open', openPanels.mss);
     document.getElementById('panel-editions').classList.toggle('open', openPanels.editions);
@@ -916,6 +929,9 @@ function setMode(mode){
     document.getElementById('panel-mss').classList.remove('open');
     document.getElementById('panel-editions').classList.remove('open');
   }
+
+  // Update UI for modes
+  document.getElementById('comments-toggle-btn').style.display = isBrowse ? 'inline-block' : 'none';
 
   document.getElementById('fn-toggles').style.display = isEditor?'none':'flex';
   document.getElementById('add-text-book-btn').style.display = (isTahqiq&&currentProfile?.account_type==='verified')?'inline-block':'none';
@@ -1364,7 +1380,50 @@ async function saveDraft(){
   if(ind) { ind.classList.add('active'); ind.textContent = '📝 مسودة'; ind.style.background = 'var(--blue-light)'; ind.style.color = 'var(--blue)'; }
 }
 async function submitForReview(){await saveDraft();if(!currentDraftId)return;const{error}=await sb.from('user_edits').update({status:'pending_review'}).eq('id',currentDraftId);if(error)return toast('خطأ');setEditStatus('pending_review');toast('أُرسل للجنة العلمية للمراجعة');}
-async function loadProfilePage(){const uid=viewedProfileId||currentUser.id;viewedProfileId=null;const{data:prof}=await sb.from('profiles').select('*').eq('id',uid).single();if(!prof)return;const initial=(prof.full_name||'م').trim().charAt(0);document.getElementById('profile-avatar').textContent=initial;document.getElementById('profile-name').textContent=prof.full_name||prof.username||'مستخدم';const badge=document.getElementById('profile-acc-badge');badge.textContent=prof.account_type==='verified'?'حساب موثّق':'حساب زائر';badge.className='acc-badge'+(prof.account_type!=='verified'?' guest':'');document.getElementById('profile-bio-text').textContent=prof.bio||'';const isOwn=uid===currentUser.id;document.getElementById('profile-bio-edit').style.display=isOwn?'flex':'none';document.getElementById('profile-bio-input').value=prof.bio||'';document.getElementById('page-profile').dataset.uid=uid;switchProfileTab('posts');}
+async function loadProfilePage(){
+  const uid=viewedProfileId||currentUser.id;
+  viewedProfileId=null;
+  const{data:prof}=await sb.from('profiles').select('*').eq('id',uid).single();
+  if(!prof)return;
+  const initial=(prof.full_name||'م').trim().charAt(0);
+  document.getElementById('profile-avatar').textContent=initial;
+  document.getElementById('profile-name').textContent=prof.full_name||prof.username||'مستخدم';
+  const badge=document.getElementById('profile-acc-badge');
+  badge.textContent=prof.account_type==='verified'?'حساب موثّق':'حساب زائر';
+  badge.className='acc-badge'+(prof.account_type!=='verified'?' guest':'');
+  document.getElementById('profile-bio-text').textContent=prof.bio||'';
+
+  const isOwn=uid===currentUser.id;
+  document.getElementById('profile-bio-edit').style.display=isOwn?'flex':'none';
+  document.getElementById('profile-bio-input').value=prof.bio||'';
+
+  // Follow button logic
+  const followBtnWrap = document.getElementById('profile-follow-wrap');
+  if(!isOwn && currentUser) {
+    followBtnWrap.style.display = 'block';
+    const {data: follow} = await sb.from('follows').select('*').eq('follower_id', currentUser.id).eq('followed_id', uid).maybeSingle();
+    const btn = document.getElementById('btn-follow');
+    btn.textContent = follow ? 'إلغاء المتابعة' : 'متابعة';
+    btn.onclick = () => toggleFollow(uid, !!follow);
+  } else {
+    followBtnWrap.style.display = 'none';
+  }
+
+  document.getElementById('page-profile').dataset.uid=uid;
+  switchProfileTab('posts');
+}
+
+async function toggleFollow(uid, isFollowing) {
+  if(isFollowing) {
+    await sb.from('follows').delete().eq('follower_id', currentUser.id).eq('followed_id', uid);
+    toast('تم إلغاء المتابعة');
+  } else {
+    await sb.from('follows').insert({follower_id: currentUser.id, followed_id: uid});
+    toast('تمت المتابعة');
+  }
+  viewedProfileId = uid;
+  loadProfilePage();
+}
 async function saveBio(){const bio=document.getElementById('profile-bio-input').value.trim();await sb.from('profiles').update({bio}).eq('id',currentUser.id);document.getElementById('profile-bio-text').textContent=bio;if(currentProfile)currentProfile.bio=bio;toast('تم الحفظ');}
 function switchProfileTab(tab){document.querySelectorAll('#profile-tabs button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));const uid=document.getElementById('page-profile').dataset.uid||currentUser.id;if(tab==='posts')loadProfilePosts(uid);else if(tab==='tahqiq')loadProfileTahqiq(uid);else loadProfileAdditions(uid);}
 async function loadProfilePosts(uid){const content=document.getElementById('profile-content');content.innerHTML='جاري التحميل...';const{data}=await sb.from('posts').select('*, profiles(full_name)').eq('author_id',uid).order('created_at',{ascending:false}).limit(30);content.innerHTML=data&&data.length?data.map(postHTML).join(''):'<div>لا توجد منشورات</div>';}
@@ -1394,18 +1453,18 @@ async function loadProfileAdditions(uid){
     // Pending user edits (Scholarly contributions)
     const{data:pedits}=await sb.from('user_edits').select('*, profiles(full_name)').eq('status','pending_review');
 
-    html+=`<h3 style="margin:20px 0 10px;color:var(--green);font-size:15px">لوحة اللجنة العلمية (${pending.length + (pedits?.length||0)})</h3>`;
+    html+=`<h3 style="margin:20px 0 10px;color:var(--green);font-size:15px; border-top: 2px solid var(--border); padding-top: 15px">🛡️ لوحة اللجنة العلمية (${pending.length + (pedits?.length||0)})</h3>`;
 
     if(pedits && pedits.length){
-      html += `<h4 style="font-size:13px; margin-bottom:8px">مراجعة التحقيقات النصية:</h4>`;
+      html += `<h4 style="font-size:13px; margin-bottom:10px; color:var(--gold)">⚖️ مراجعة التحقيقات النصية:</h4>`;
       html += pedits.map(it => `
-        <div class="tahqiq-item" style="border-right:3px solid var(--gold)">
+        <div class="tahqiq-item" style="border-right:4px solid var(--gold); background:var(--gold-light)">
           <div class="tahqiq-item-header"><h4>حديث ${it.hadith_number} — ${it.book_id}</h4></div>
-          <div class="preview">مُرسِل: ${it.profiles?.full_name||'مجهول'}</div>
-          <div style="display:flex;gap:6px;margin-top:8px">
-            <button style="background:var(--gold-light);color:var(--gold);padding:5px 12px;border-radius:4px;font-size:12px" onclick="viewEditComparison('${it.id}')">مراجعة الفروق</button>
-            <button style="background:var(--green-light);color:var(--green);padding:5px 12px;border-radius:4px;font-size:12px" onclick="reviewItem('user_edits','${it.id}','approved')">اعتماد سريع</button>
-            <button style="background:#fde8e8;color:#c0392b;padding:5px 12px;border-radius:4px;font-size:12px" onclick="reviewItem('user_edits','${it.id}','rejected')">رفض</button>
+          <div class="preview" style="font-weight:600">مُرسِل: ${it.profiles?.full_name||'مجهول'}</div>
+          <div style="display:flex;gap:6px;margin-top:10px">
+            <button style="background:var(--gold); color:#fff; padding:6px 14px; border-radius:6px; font-size:12px; font-weight:700" onclick="viewEditComparison('${it.id}')">🔍 مراجعة الفروق</button>
+            <button style="background:var(--green); color:#fff; padding:6px 14px; border-radius:6px; font-size:12px" onclick="reviewItem('user_edits','${it.id}','approved')">✅ اعتماد</button>
+            <button style="background:#c0392b; color:#fff; padding:6px 14px; border-radius:6px; font-size:12px" onclick="reviewItem('user_edits','${it.id}','rejected')">❌ رفض</button>
           </div>
         </div>
       `).join('');
@@ -1472,6 +1531,11 @@ async function reviewItem(kind,id,status){
         }
       }
     }
+  }
+
+  if(kind === 'manuscript' || kind === 'edition') {
+     // Re-fetch images to update the UI
+     loadSidePanels();
   }
 
   toast(status==='approved'?'تم الاعتماد':'تم الرفض');
