@@ -210,6 +210,7 @@ img{max-width:100%}
 #fn-popover .fn-cat-label.غريب{color:var(--purple)}
 #comments-drawer{width:0;overflow:hidden;transition:width .2s;background:#fff;border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
 #comments-drawer.open{width:280px;min-width:240px}
+#lib-pane-d.open{width:22%;min-width:240px;border-right:1px solid var(--border)}
 #comments-drawer-header{padding:10px 12px;font-size:13px;font-weight:600;color:var(--green);border-bottom:1px solid var(--border);display:flex;justify-content:space-between}
 #comments-drawer-body{flex:1;overflow-y:auto;padding:10px}
 #comments-drawer-input{padding:10px;border-top:1px solid var(--border);display:flex;gap:6px}
@@ -481,7 +482,7 @@ img{max-width:100%}
         <div id="comments-drawer-input"><input id="drawer-comment-input" placeholder="أضف تعليقاً..."><button onclick="submitDrawerComment()">إرسال</button></div>
       </div>
     </div>
-    <div id="lib-pane-d" style="width:0; background:#fff; border-right:none; display:flex; flex-direction:column; overflow:hidden; transition:width .3s">
+    <div id="lib-pane-d" style="width:0; background:#f9f9f9; border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; transition:width .3s; box-shadow: -2px 0 5px rgba(0,0,0,0.05)">
       <div style="padding:10px 12px; background:var(--green-light); color:var(--green); font-weight:700; font-size:13px; border-bottom:1px solid var(--border)">📝 مساحة العمل البحثي</div>
       <div id="pane-d-content" style="flex:1; overflow-y:auto; padding:12px">
         <div id="editor-search-tool">
@@ -638,11 +639,45 @@ function showApp(){
   switchMainView('feed');
 }
 function applyAccountRestrictions(){
-  const isGuest=currentProfile?.account_type!=='verified';
-  document.getElementById('guest-notice').style.display=isGuest?'block':'none';
-  document.querySelectorAll('#post-types button').forEach(b=>{b.disabled=isGuest&&b.dataset.type!=='فائدة';});
-  if(isGuest){document.querySelectorAll('#post-types button').forEach(b=>b.classList.remove('active'));document.querySelector('#post-types button[data-type="فائدة"]').classList.add('active');currentPostType='فائدة';}
-  document.querySelectorAll('#mode-bar .modes button').forEach(b=>{if(isGuest&&b.dataset.mode!=='browse'){b.disabled=true;b.title='يتطلب حساباً موثقاً';}else{b.disabled=false;b.title='';}});
+  const isGuest = currentProfile?.account_type !== 'verified';
+  document.getElementById('guest-notice').style.display = isGuest ? 'block' : 'none';
+
+  // Feed Composer restrictions
+  document.querySelectorAll('#post-types button').forEach(b => {
+    const type = b.dataset.type;
+    const restricted = isGuest && type !== 'فائدة';
+    b.disabled = restricted;
+    if(restricted) b.title = 'يتطلب حساباً موثقاً';
+    else b.title = '';
+  });
+
+  if(isGuest && currentPostType !== 'فائدة'){
+    document.querySelectorAll('#post-types button').forEach(b => b.classList.remove('active'));
+    const fawBtn = document.querySelector('#post-types button[data-type="فائدة"]');
+    if(fawBtn) { fawBtn.classList.add('active'); currentPostType = 'فائدة'; }
+  }
+
+  // Library mode restrictions
+  document.querySelectorAll('#mode-bar .modes button').forEach(b => {
+    const mode = b.dataset.mode;
+    const restricted = isGuest && mode !== 'browse';
+    b.disabled = restricted;
+    if(restricted) b.title = 'يتطلب حساباً موثقاً';
+    else b.title = '';
+  });
+
+  if(isGuest && currentMode !== 'browse') {
+    setMode('browse');
+  }
+
+  // Profile restrictions (Editing Bio)
+  const bioInput = document.getElementById('profile-bio-input');
+  const bioBtn = document.querySelector('#profile-bio-edit button');
+  if(bioInput) bioInput.disabled = isGuest;
+  if(bioBtn) {
+    bioBtn.disabled = isGuest;
+    bioBtn.title = isGuest ? 'يتطلب حساباً موثقاً لتعديل النبذة' : '';
+  }
 }
 function switchAuthTab(tab){document.querySelectorAll('#auth-tabs button').forEach((b,i)=>b.classList.toggle('active',tab==='login'?i===0:i===1));document.getElementById('tab-login').style.display=tab==='login'?'flex':'none';document.getElementById('tab-register').style.display=tab==='register'?'flex':'none';document.getElementById('auth-msg').textContent='';}
 let selectedAccType='guest';
@@ -711,7 +746,58 @@ function renderSubBar(){const bar=document.getElementById('sub-bar');if(mainView
 function setFeedFilter(val){feedFilter=val;renderSubBar();loadPosts();}
 function initPostTypes(){document.querySelectorAll('#post-types button').forEach(btn=>{btn.addEventListener('click',function(){if(this.disabled)return;document.querySelectorAll('#post-types button').forEach(b=>b.classList.remove('active'));this.classList.add('active');currentPostType=this.dataset.type;document.getElementById('media-upload-wrap').style.display=currentPostType==='فيديو'?'block':'none';});});}
 function handleMediaSelect(input){if(input.files && input.files[0]) document.getElementById('media-file-name').textContent = input.files[0].name;}
-async function loadPosts(){document.getElementById('posts-loading').style.display='block';document.getElementById('posts-loading').textContent='جاري التحميل...';document.getElementById('posts-list').innerHTML='';let q=sb.from('posts').select('*, profiles(full_name,username,account_type)').order('created_at',{ascending:false}).limit(50);if(feedFilter==='مكتبة'){q=q.not('book_id','is',null);}else if(feedFilter!=='الكل'){q=q.eq('post_type',feedFilter);}const{data,error}=await q;document.getElementById('posts-loading').style.display='none';if(error||!data){document.getElementById('posts-loading').style.display='block';document.getElementById('posts-loading').textContent='حدث خطأ في التحميل';return;}document.getElementById('posts-list').innerHTML=data.length?data.map(postHTML).join(''):'<div id="posts-empty">لا توجد منشورات بعد</div>';}
+async function loadPosts(){
+  const loading = document.getElementById('posts-loading');
+  loading.style.display='block';
+  loading.textContent='جاري التحميل...';
+  const list = document.getElementById('posts-list');
+  list.innerHTML='';
+
+  let q = sb.from('posts').select('*, profiles(full_name,username,account_type)').order('created_at',{ascending:false}).limit(50);
+
+  if(feedFilter==='مكتبة'){
+    q = q.not('book_id','is',null);
+  } else if(feedFilter!=='الكل'){
+    q = q.eq('post_type',feedFilter);
+  }
+
+  const {data, error} = await q;
+  loading.style.display='none';
+
+  if(error) {
+    console.error('Fetch posts error:', error);
+    loading.style.display='block';
+    loading.textContent='حدث خطأ في التحميل';
+    return;
+  }
+
+  if(!data || data.length === 0) {
+    list.innerHTML = '<div id="posts-empty">لا توجد منشورات في هذا القسم بعد</div>';
+    return;
+  }
+
+  // Real-time check for user likes to highlight buttons
+  let userLikes = [];
+  if(currentUser) {
+    const {data: likes} = await sb.from('likes').select('post_id').eq('user_id', currentUser.id);
+    if(likes) userLikes = likes.map(l => l.post_id);
+  }
+
+  list.innerHTML = data.map(p => {
+    const html = postHTML(p);
+    // Use a temporary div to manipulate the HTML string
+    const temp = document.createElement('div');
+    temp.innerHTML = html;
+    if(userLikes.includes(p.id)) {
+      const btn = temp.querySelector('.post-footer button:first-child');
+      if(btn) {
+        btn.classList.add('liked');
+        btn.textContent = btn.textContent.replace('♡', '❤️');
+      }
+    }
+    return temp.innerHTML;
+  }).join('');
+}
 function postHTML(p){
   const date = new Date(p.created_at).toLocaleDateString('ar-SA', {year:'numeric', month:'short', day:'numeric'});
   const author = p.profiles?.full_name || 'مجهول';
@@ -780,7 +866,12 @@ async function publishPost(){
   const content=document.getElementById('post-content').value.trim();
   if(!content)return toast('أدخل محتوى المنشور');
   if(!currentUser)return toast('يجب تسجيل الدخول');
-  if(currentProfile?.account_type!=='verified'&&currentPostType!=='فائدة')return toast('الحساب الزائر يسمح فقط بنشر فائدة');
+
+  // Real check based on memory requirements: Visitor (Guest) only 'Benefits'
+  const isGuest = currentProfile?.account_type === 'guest';
+  if(isGuest && currentPostType !== 'فائدة') {
+    return toast('حساب الزائر يسمح فقط بنشر فوائد عامة. يرجى توثيق الحساب للمزيد.');
+  }
 
   const btn = document.getElementById('btn-publish');
   btn.disabled=true;
@@ -788,10 +879,18 @@ async function publishPost(){
 
   const track=document.getElementById('post-track').value;
   let mediaUrl = null;
-  const mediaFile = document.getElementById('post-media-file').files[0];
+
+  // Try to find file if it's a video/reels post
+  const mediaInput = document.getElementById('post-media-file');
+  const mediaFile = mediaInput ? mediaInput.files[0] : null;
+
   if(currentPostType === 'فيديو' && mediaFile) {
     mediaUrl = await uploadMedia(mediaFile);
-    if(!mediaUrl) { btn.disabled=false; btn.textContent='نشر'; return; }
+    if(!mediaUrl) {
+      btn.disabled=false;
+      btn.textContent='نشر';
+      return;
+    }
   }
 
   const postData = {
@@ -803,14 +902,21 @@ async function publishPost(){
     likes:0
   };
 
-  const{error}=await sb.from('posts').insert(postData);
+  const {error} = await sb.from('posts').insert(postData);
   btn.disabled=false;
   btn.textContent = 'نشر';
 
-  if(error)return toast('خطأ في النشر: '+error.message);
+  if(error) {
+    console.error('Publish error:', error);
+    return toast('خطأ في النشر: ' + error.message);
+  }
 
   document.getElementById('post-content').value='';
-  toast('تم النشر');
+  if(mediaInput) mediaInput.value = '';
+  const fileNameDisplay = document.getElementById('media-file-name');
+  if(fileNameDisplay) fileNameDisplay.textContent = '';
+
+  toast('تم النشر بنجاح');
   feedFilter='الكل';
   renderSubBar();
   loadPosts();
@@ -825,7 +931,35 @@ async function uploadMedia(file) {
   const { data: { publicUrl } } = sb.storage.from('media').getPublicUrl(path);
   return publicUrl;
 }
-async function toggleLike(postId,btn){if(!currentUser)return toast('يجب تسجيل الدخول');const liked=btn.classList.contains('liked');if(liked){await sb.from('likes').delete().eq('user_id',currentUser.id).eq('post_id',postId);await sb.from('posts').update({likes:Math.max(0,(parseInt(btn.textContent.replace(/\D/g,''))||1)-1)}).eq('id',postId);btn.classList.remove('liked');}else{await sb.from('likes').insert({user_id:currentUser.id,post_id:postId});const cur=parseInt(btn.textContent.replace(/\D/g,''))||0;await sb.from('posts').update({likes:cur+1}).eq('id',postId);btn.classList.add('liked');}loadPosts();}
+async function toggleLike(postId, btn){
+  if(!currentUser) return toast('يجب تسجيل الدخول للتفاعل مع المنشورات');
+  const liked = btn.classList.contains('liked');
+
+  // Optimistic UI update
+  const countSpan = btn.textContent.match(/\d+/);
+  let count = countSpan ? parseInt(countSpan[0]) : 0;
+
+  if(liked) {
+    btn.classList.remove('liked');
+    count = Math.max(0, count - 1);
+    btn.textContent = `♡ ${count}`;
+    const {error} = await sb.from('likes').delete().eq('user_id', currentUser.id).eq('post_id', postId);
+    if(!error) await sb.from('posts').update({likes: count}).eq('id', postId);
+  } else {
+    btn.classList.add('liked');
+    count = count + 1;
+    btn.textContent = `❤️ ${count}`;
+    const {error} = await sb.from('likes').insert({user_id: currentUser.id, post_id: postId});
+    if(!error) await sb.from('posts').update({likes: count}).eq('id', postId);
+    else if(error.code === '23505') { /* Already liked, ignore */ }
+    else {
+        // Rollback on error
+        btn.classList.remove('liked');
+        btn.textContent = `♡ ${count - 1}`;
+        return toast('خطأ في التفاعل');
+    }
+  }
+}
 async function toggleComments(postId){const s=document.getElementById('comments-'+postId);if(s.style.display==='block'){s.style.display='none';return;}s.style.display='block';const list=document.getElementById('comments-list-'+postId);list.innerHTML='<div style="font-size:12px;color:#999;padding:6px">جاري تحميل التعليقات...</div>';const{data}=await sb.from('comments').select('*, profiles(full_name)').eq('post_id',postId).order('created_at');list.innerHTML=data&&data.length?data.map(c=>`<div class="comment-item"><span class="comment-author" onclick="showProfilePage('${c.author_id}')" style="cursor:pointer">${c.profiles?.full_name||'مجهول'}: </span>${escHtml(c.content)}</div>`).join(''):'<div style="font-size:12px;color:#999;padding:6px">لا تعليقات بعد</div>';}
 async function submitComment(postId){const input=document.getElementById('comment-input-'+postId);const content=input.value.trim();if(!content||!currentUser)return;const{error}=await sb.from('comments').insert({post_id:postId,author_id:currentUser.id,content});if(error){toast('خطأ في إرسال التعليق: '+error.message);return;}input.value='';toggleComments(postId);setTimeout(()=>toggleComments(postId),100);}
 function togglePostMenu(id){document.querySelectorAll('.post-menu-dropdown.open').forEach(d=>{if(d.id!=='dropdown-'+id)d.classList.remove('open');});document.getElementById('dropdown-'+id)?.classList.toggle('open');}
@@ -986,7 +1120,9 @@ function setMode(mode){
   // Update UI for modes
   document.getElementById('comments-toggle-btn').style.display = isBrowse ? 'inline-block' : 'none';
 
-  document.getElementById('fn-toggles').style.display = isEditor?'none':'flex';
+  const fnTog = document.getElementById('fn-toggles-side');
+  if(fnTog) fnTog.style.display = isEditor?'none':'flex';
+
   document.getElementById('add-text-book-btn').style.display = (isTahqiq&&currentProfile?.account_type==='verified')?'inline-block':'none';
   document.getElementById('lib-pane-d').classList.toggle('open', isEditor);
 
@@ -1006,7 +1142,14 @@ function togglePanel(which){
   const btn=which==='mss'?document.getElementById('panel-toggle-left'):document.getElementById('panel-toggle-right');
   btn.classList.toggle('open',openPanels[key]);
 }
-function renderHadiths(hadiths){document.getElementById('fn-toggles').innerHTML=FN_CATS.map(c=>{const label=c.replace('_',' ');return `<button class="fn-toggle ${activeFnCats[c]?'active '+c:''}" onclick="toggleFnCat('${c}')">${label}</button>`;}).join('');const container=document.getElementById('hadiths-container');if(!hadiths.length){container.innerHTML='<div style="text-align:center;padding:30px;color:#999">لا أحاديث</div>';return;}container.innerHTML=hadiths.slice(0,50).map(hadithCardHTML).join('');Object.keys(activeFnCats).forEach(c=>{if(activeFnCats[c])loadFnMarkers(c);});}
+function renderHadiths(hadiths){
+  const fnTog = document.getElementById('fn-toggles-side');
+  if(fnTog) fnTog.innerHTML=FN_CATS.map(c=>{const label=c.replace('_',' ');return `<button class="fn-toggle ${activeFnCats[c]?'active '+c:''}" onclick="toggleFnCat('${c}')">${label}</button>`;}).join('');
+  const container=document.getElementById('hadiths-container');
+  if(!hadiths.length){container.innerHTML='<div style="text-align:center;padding:30px;color:#999">لا أحاديث</div>';return;}
+  container.innerHTML=hadiths.slice(0,50).map(hadithCardHTML).join('');
+  Object.keys(activeFnCats).forEach(c=>{if(activeFnCats[c])loadFnMarkers(c);});
+}
 function hadithCardHTML(h){
   const text=h.text||h.hadith||'';
   const num=h.hadithnumber||h.number||'';
@@ -1039,7 +1182,8 @@ function renderHadiths(hadiths){
     pageHadiths[num] = h.text || h.hadith || '';
   });
 
-  document.getElementById('fn-toggles').innerHTML=FN_CATS.map(c=>{
+  const fnTog = document.getElementById('fn-toggles-side');
+  if(fnTog) fnTog.innerHTML=FN_CATS.map(c=>{
     const label=c.replace('_',' ');
     return `<button class="fn-toggle ${activeFnCats[c]?'active '+c:''}" onclick="toggleFnCat('${c}')">${label}</button>`;
   }).join('');
@@ -1277,15 +1421,17 @@ function insertTakhrijFromPane(type) {
     }
 
     if(type === 'short') return `${book} (${num})`;
-    if(type === 'medium') return `${book} ${vol?vol+'/':''}${page?page+' ':''}(${num})`;
-    return `${book} ${vol?vol+'/':''}${page?page+' ':''}(${num}) كتاب ${chapter || 'عام'}`;
+    if(type === 'medium') return `${book} ${vol ? vol+'/' : ''}${page || ''} (${num})`;
+    // Expanded: Book Vol/Page (Num) Book Section - Chapter
+    return `${book} ${vol ? vol+'/' : ''}${page || ''} (${num}) كتاب ${chapter || 'عام'}`;
   });
 
-  // Arabic listing logic: "أخرجه البخاري (1)، ومسلم (2)، وأبو داود (3)"
+  // Strict format: "أخرجه البخاري (1583)، ومسلم (1266) ... من طريق [الراوي] بنحوه."
   let str = "أخرجه ";
   for(let i=0; i<parts.length; i++) {
     if(i === 0) str += parts[i];
-    else str += "، و" + parts[i];
+    else if(i === parts.length - 1) str += "، و" + parts[i];
+    else str += "، " + parts[i];
   }
 
   if(commonNarrator) str += ` من طريق ${commonNarrator} بنحوه.`;
@@ -1693,13 +1839,23 @@ async function reviewItem(kind,id,status){
       // Transfer footnotes to the public footnotes table
       if(edit.custom_footnotes && edit.custom_footnotes.length) {
         for(const fn of edit.custom_footnotes) {
-          await sb.from('footnotes').insert({
-            book_id: edit.book_id,
-            hadith_number: edit.hadith_number,
-            category: 'تخريج',
-            content: fn.text,
-            author_id: edit.user_id
-          });
+          // Check if this specific footnote already exists to avoid duplication on re-approval
+          const {data: existingFn} = await sb.from('footnotes')
+            .select('id')
+            .eq('book_id', edit.book_id)
+            .eq('hadith_number', edit.hadith_number)
+            .eq('content', fn.text)
+            .maybeSingle();
+
+          if(!existingFn) {
+            await sb.from('footnotes').insert({
+              book_id: edit.book_id,
+              hadith_number: edit.hadith_number,
+              category: 'تخريج',
+              content: fn.text,
+              author_id: edit.user_id
+            });
+          }
         }
       }
       // Create a public announcement post about the new verification
