@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>مكتبتي</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -18,7 +19,8 @@ button{cursor:pointer;border:none;outline:none;font-family:inherit;font-size:14p
 input,textarea,select{font-family:inherit;font-size:14px;outline:none}
 img{max-width:100%}
 #nav{background:var(--green);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:50px;position:sticky;top:0;z-index:100;box-shadow:0 2px 6px rgba(0,0,0,.15)}
-#nav .logo{font-size:19px;font-weight:700;letter-spacing:.5px;flex-shrink:0}
+#nav .logo{font-size:19px;font-weight:700;letter-spacing:.5px;flex-shrink:0;display:flex;align-items:center;gap:8px}
+#nav .logo img{height:32px;width:auto}
 #nav-toggle{display:flex;background:rgba(0,0,0,.15);border-radius:20px;padding:2px;margin:0 12px}
 #nav-toggle button{padding:6px 18px;border-radius:18px;color:rgba(255,255,255,.8);font-size:13px;font-weight:600}
 #nav-toggle button.active{background:#fff;color:var(--green)}
@@ -33,7 +35,8 @@ img{max-width:100%}
 #sub-bar button.active{background:var(--gold);color:#fff;border-color:var(--gold)}
 #auth-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:999;display:flex;align-items:center;justify-content:center;padding:16px}
 #auth-box{background:#fff;border-radius:10px;padding:28px;width:400px;max-width:100%;max-height:92vh;overflow-y:auto}
-#auth-box h2{color:var(--green);margin-bottom:18px;font-size:24px;text-align:center;font-weight:800}
+#auth-box h2{color:var(--green);margin-bottom:18px;font-size:24px;text-align:center;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:10px}
+#auth-box h2 img{height:60px;width:auto}
 #auth-tabs{display:flex;margin-bottom:20px;background:var(--bg);border-radius:8px;padding:4px}
 #auth-tabs button{flex:1;padding:10px;font-size:14px;color:var(--text2);border-radius:6px;transition:0.2s}
 #auth-tabs button.active{background:var(--white);color:var(--green);box-shadow:0 2px 4px rgba(0,0,0,0.1);font-weight:700}
@@ -79,7 +82,10 @@ img{max-width:100%}
 .post-type-badge.سؤال{background:#fdf3e8;color:#b85c0b}
 .post-type-badge.اقتباس{background:var(--gold-light);color:var(--gold)}
 .post-type-badge.تحقيق{background:var(--purple-light);color:var(--purple)}
+.post-type-badge.فيديو{background:#e8fdf5;color:#1ab86b}
 .post-content{line-height:1.7;font-size:15px;white-space:pre-wrap;margin-bottom:4px}
+.post-media{margin-top:10px;border-radius:8px;overflow:hidden;background:#000}
+.post-media video{width:100%;display:block;max-height:450px}
 .post-footer{display:flex;gap:14px;margin-top:10px;padding-top:8px;border-top:1px solid #f3f3f3}
 .post-footer button{color:var(--text2);font-size:13px;padding:3px 6px;border-radius:4px}
 .post-footer button:hover{background:var(--green-light);color:var(--green)}
@@ -106,9 +112,9 @@ img{max-width:100%}
 .comment-input-row input{flex:1;border:1px solid var(--border);border-radius:20px;padding:7px 12px;font-size:13px}
 .comment-input-row button{background:var(--green);color:#fff;padding:7px 14px;border-radius:20px;font-size:13px}
 #posts-loading,#posts-empty{text-align:center;padding:30px;color:var(--text2)}
-#page-library{display:grid;grid-template-columns:auto 1fr;height:calc(100vh - 50px);overflow:hidden;background:var(--bg)}
-#lib-sidebar{width:64px;background:#fff;border-left:1px solid var(--border);overflow-y:auto;transition:width .3s cubic-bezier(0.4, 0, 0.2, 1);display:flex;flex-direction:column;z-index:110;position:relative}
-#lib-sidebar.expanded{width:260px;box-shadow:2px 0 10px rgba(0,0,0,0.1)}
+#page-library{display:grid;grid-template-columns:auto 1fr auto;height:calc(100vh - 50px);overflow:hidden;background:var(--bg)}
+#lib-sidebar{width:64px;background:#fff;border-left:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column;z-index:110;position:relative;background: #fcfcfc;transition:width .2s}
+#lib-sidebar.expanded{width:220px}
 #sidebar-toggle{padding:12px;text-align:center;border-bottom:1px solid var(--border);color:var(--green);font-size:18px;cursor:pointer;background:var(--white);position:sticky;top:0;z-index:10}
 #sidebar-toggle:hover{background:var(--green-light)}
 .lib-cat-group{border-bottom:1px solid var(--border)}
@@ -116,15 +122,14 @@ img{max-width:100%}
 .lib-cat-header small{background:var(--green);color:#fff;padding:2px 6px;border-radius:10px;font-size:10px}
 .lib-cat-books{display:none;background:#fff}
 .lib-cat-group.open .lib-cat-books{display:block}
-.book-item{padding:10px 8px;cursor:pointer;border-bottom:1px solid #f5f5f5;text-align:center;border-right:3px solid transparent;font-size:11px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.book-item:hover{background:var(--green-light)}
-.book-item.active{background:var(--green-light);border-right-color:var(--green)}
-#lib-sidebar.expanded .book-item{text-align:right;padding:12px 16px;font-size:14px}
+.book-item{padding:12px 4px;cursor:pointer;border-bottom:1px solid #eee;text-align:center;font-size:11px;font-weight:700;color:var(--green);background:#fff;margin:4px;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,0.1);transition:0.2s;line-height:1.2}
+.book-item:hover{background:var(--green-light);transform:translateY(-1px)}
+.book-item.active{background:var(--green);color:#fff;box-shadow:inset 0 2px 4px rgba(0,0,0,0.2)}
 #lib-sidebar:not(.expanded) .lib-cat-header span { display: none; }
 #lib-sidebar:not(.expanded) .lib-cat-header { justify-content: center; padding: 12px 0; }
 #lib-sidebar:not(.expanded) .lib-cat-header small { display: none; }
 
-#lib-main{display:flex;flex-direction:column;overflow:hidden;min-width:0;position:relative}
+#lib-main{display:flex;flex-direction:column;overflow:hidden;min-width:0;position:relative;border-left:1px solid var(--border)}
 #lib-empty{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;color:var(--text2);text-align:center}
 #lib-empty p:first-child{font-size:32px;margin-bottom:10px}
 
@@ -144,10 +149,10 @@ img{max-width:100%}
 #comments-toggle-btn.active{background:var(--green-light);color:var(--green);border-color:var(--green)}
 
 #lib-active{display:none;flex-direction:column;flex:1;overflow:hidden}
-#lib-content{flex:1;display:flex;overflow:hidden;position:relative;background:#eee}
+#lib-content{flex:1;display:flex;overflow:hidden;position:relative;background:#fff}
 
-.side-panel{width:0;min-width:0;overflow:hidden;transition:width .3s cubic-bezier(0.4, 0, 0.2, 1);background:#fff;border:none;display:flex;flex-direction:column;z-index:90;height:100%}
-.side-panel.open{width:300px;min-width:200px;border-left:1px solid var(--border);border-right:1px solid var(--border)}
+.side-panel{width:0;min-width:0;overflow:hidden;transition:width .3s;background:#fff;border:none;display:flex;flex-direction:column;z-index:90;height:100%}
+.side-panel.open{width:260px;min-width:200px;border-left:1px solid var(--border);border-right:1px solid var(--border)}
 .side-panel-header{padding:10px 12px;font-size:13px;font-weight:700;color:var(--green);background:var(--green-light);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
 .side-panel-body{flex:1;overflow-y:auto;padding:12px;background:#fafafa}
 .side-panel-body .ms-item,.side-panel-body .ed-item{border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:12px;background:#fff;font-size:13px;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
@@ -158,11 +163,11 @@ img{max-width:100%}
 .add-item-btn{width:100%;padding:10px;border:2px dashed var(--border);border-radius:8px;font-size:12px;color:var(--green);margin-top:8px;font-weight:600;background:#fff;transition:.2s}
 .add-item-btn:hover{background:var(--green-light);border-color:var(--green)}
 
-#panel-toggle-left,#panel-toggle-right{background:#fff;border:1px solid var(--border);border-radius:50%;width:32px;height:32px;font-size:16px;color:var(--green);margin:12px 6px;flex-shrink:0;align-self:flex-start;position:relative;z-index:100;box-shadow:0 2px 4px rgba(0,0,0,0.1);transition:.2s}
+#panel-toggle-left,#panel-toggle-right{background:#fff;border:1px solid var(--border);border-radius:50%;width:32px;height:32px;font-size:16px;color:var(--green);margin:12px 6px;flex-shrink:0;align-self:flex-start;position:relative;z-index:100;box-shadow:0 2px 4px rgba(0,0,0,0.1);transition:.2s;display:none}
 #panel-toggle-left:hover,#panel-toggle-right:hover{background:var(--green-light);transform:scale(1.1)}
 #panel-toggle-left.open,#panel-toggle-right.open{background:var(--green);color:#fff;border-color:var(--green)}
 
-#reader-panel{flex:1;overflow-y:auto;padding:24px;min-width:300px;background:var(--white);position:relative;z-index:10;box-shadow:inset 0 0 10px rgba(0,0,0,0.02)}
+#reader-panel{flex:1;overflow-y:auto;padding:30px;min-width:300px;background:var(--white);position:relative;z-index:10;border-left:1px solid #f0f0f0;border-right:1px solid #f0f0f0}
 #lib-content.layout-horizontal { flex-direction: column; }
 #lib-content.layout-horizontal .side-panel.open { width: 100%; min-width: 100%; height: 35vh; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
 #lib-content.layout-horizontal #reader-panel { height: 60vh; }
@@ -297,7 +302,7 @@ img{max-width:100%}
 <body>
 <div id="auth-overlay">
   <div id="auth-box">
-    <h2>مكتبتي</h2>
+    <h2><img src="https://uqfqpqjarofbcdzkrdgs.supabase.co/storage/v1/object/public/assets/logo.png" onerror="this.style.display='none'">مكتبتي</h2>
     <div id="auth-tabs">
       <button class="active" onclick="switchAuthTab('login')">تسجيل الدخول</button>
       <button onclick="switchAuthTab('register')">إنشاء حساب</button>
@@ -330,7 +335,7 @@ img{max-width:100%}
 </div>
 <div id="app">
   <nav id="nav">
-    <div class="logo">مكتبتي</div>
+    <div class="logo"><img src="https://uqfqpqjarofbcdzkrdgs.supabase.co/storage/v1/object/public/assets/logo.png" onerror="this.style.display='none'">مكتبتي</div>
     <button id="nav-back-btn" onclick="goBack()">&#8592; رجوع</button>
     <div id="nav-toggle">
       <button class="active" onclick="switchMainView('feed')">عام</button>
@@ -359,6 +364,11 @@ img{max-width:100%}
         <div style="display:flex;gap:8px;align-items:center;font-size:13px;color:var(--text2)">المسار:
           <select id="post-track"><option value="عام">عام</option><option value="حديث">علم الحديث</option><option value="فقه">الفقه</option><option value="تفسير">التفسير</option><option value="تحقيق">التحقيق</option></select>
         </div>
+        <div id="media-upload-wrap" style="display:none">
+          <input type="file" id="post-media-file" accept="video/*" style="display:none" onchange="handleMediaSelect(this)">
+          <button onclick="document.getElementById('post-media-file').click()" style="background:#f0f0f0; padding:6px 12px; border-radius:6px; font-size:12px">📎 إضافة فيديو</button>
+          <span id="media-file-name" style="font-size:11px; color:var(--text2)"></span>
+        </div>
         <button id="btn-publish" onclick="publishPost()">نشر</button>
       </div>
     </div>
@@ -380,8 +390,7 @@ img{max-width:100%}
             <button data-mode="editor" onclick="setMode('editor')">المحرر</button>
           </div>
           <div class="toc-and-fn">
-            <select id="toc-select" onchange="selectChapterFromDropdown(this.value)"></select>
-            <span id="fn-toggles" style="display:flex;gap:4px"></span>
+            <select id="toc-select" onchange="selectChapterFromDropdown(this.value)" style="max-width:150px"></select>
             <button id="add-text-book-btn" onclick="openAddTextModal()" style="display:none;padding:5px 12px;border-radius:6px;border:1px solid var(--border);font-size:12px;color:var(--green)">+ كتاب نصي</button>
             <button id="comments-toggle-btn" onclick="toggleCommentsDrawer()">💬 تعليقات</button>
             <button id="layout-toggle-btn" onclick="toggleLibLayout()" style="padding:5px 10px; border-radius:6px; border:1px solid var(--border); font-size:12px; color:var(--text2)">🔄 عرض</button>
@@ -396,9 +405,10 @@ img{max-width:100%}
             <div class="side-panel-body"><div id="editions-list"></div><button class="add-item-btn" onclick="openAddModal('edition')">+ إضافة مصورة مطبوع</button></div>
           </div>
 
-          <div id="right-tools" style="display:flex; flex-direction:column; gap:4px; background:#f0f0f0; border-left:1px solid var(--border); border-right:1px solid var(--border); z-index:100">
-            <button id="panel-toggle-right" onclick="togglePanel('editions')" title="فتح الطبعات" style="width:32px; height:40px; background:#fff; border-bottom:1px solid var(--border)">📚</button>
-            <button onclick="toggleService('takhrij')" title="التخريج" style="width:32px; height:40px; background:#fff; border-bottom:1px solid var(--border)">🎓</button>
+          <div id="right-tools" style="display:flex; flex-direction:column; gap:6px; background:#f8f9fa; border-left:1px solid var(--border); padding:4px; z-index:100">
+            <button onclick="togglePanel('editions')" title="الطبعات" style="width:36px; height:36px; background:#fff; border:1px solid var(--border); border-radius:4px">📚</button>
+            <div id="fn-toggles-side" style="display:flex; flex-direction:column; gap:4px; margin-top:10px"></div>
+            <button onclick="toggleService('takhrij')" title="التخريج" style="width:36px; height:36px; background:#fff; border:1px solid var(--border); border-radius:4px; margin-top:auto">🎓</button>
           </div>
 
           <div id="reader-panel">
@@ -471,6 +481,24 @@ img{max-width:100%}
         <div id="comments-drawer-input"><input id="drawer-comment-input" placeholder="أضف تعليقاً..."><button onclick="submitDrawerComment()">إرسال</button></div>
       </div>
     </div>
+    <div id="lib-pane-d" style="width:0; background:#fff; border-right:none; display:flex; flex-direction:column; overflow:hidden; transition:width .3s">
+      <div style="padding:10px 12px; background:var(--green-light); color:var(--green); font-weight:700; font-size:13px; border-bottom:1px solid var(--border)">📝 مساحة العمل البحثي</div>
+      <div id="pane-d-content" style="flex:1; overflow-y:auto; padding:12px">
+        <div id="editor-search-tool">
+          <h4 style="font-size:12px; margin-bottom:8px">أداة التخريج والبحث:</h4>
+          <div style="display:flex; gap:4px; margin-bottom:10px">
+            <input type="text" id="ed-search-input" placeholder="ابحث في الكتب..." style="flex:1; padding:6px; border:1px solid var(--border); border-radius:4px; font-size:12px">
+            <button onclick="doEdSearch()" style="background:var(--green); color:#fff; padding:0 10px; border-radius:4px; font-size:12px">بحث</button>
+          </div>
+          <div id="ed-search-results" style="font-size:11px"></div>
+          <div id="ed-search-actions" style="display:none; margin-top:10px; border-top:1px solid var(--border); padding-top:8px; gap:4px">
+            <button onclick="insertTakhrijFromPane('short')" style="flex:1; background:var(--green-light); color:var(--green); font-size:10px; padding:4px">عزو مختصر</button>
+            <button onclick="insertTakhrijFromPane('medium')" style="flex:1; background:var(--blue-light); color:var(--blue); font-size:10px; padding:4px">عزو متوسط</button>
+            <button onclick="insertTakhrijFromPane('long')" style="flex:1; background:var(--gold-light); color:var(--gold); font-size:10px; padding:4px">عزو موسع</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <div id="page-profile" class="page">
     <div id="profile-header">
@@ -486,9 +514,10 @@ img{max-width:100%}
       </div>
     </div>
     <div id="profile-tabs">
-      <button class="active" data-tab="posts" onclick="switchProfileTab('posts')">منشوراتي</button>
-      <button data-tab="tahqiq" onclick="switchProfileTab('tahqiq')">تحقيقاتي</button>
-      <button data-tab="additions" onclick="switchProfileTab('additions')">إضافاتي</button>
+      <button class="active" data-tab="posts" onclick="switchProfileTab('posts')">النشاط العام</button>
+      <button data-tab="tahqiq" onclick="switchProfileTab('tahqiq')">المساهمات العلمية</button>
+      <button data-tab="additions" onclick="switchProfileTab('additions')">أصول المكتبة</button>
+      <button data-tab="social" onclick="switchProfileTab('social')">المتابعة</button>
     </div>
     <div id="profile-content"></div>
   </div>
@@ -680,7 +709,8 @@ function showProfilePage(userId){previousView=mainView;viewedProfileId=userId;do
 function switchMainView(view){mainView=view;document.getElementById('page-profile').classList.remove('active');document.getElementById('nav-back-btn').style.display='none';document.getElementById('nav-toggle').style.display='flex';document.querySelectorAll('#nav-toggle button').forEach((b,i)=>b.classList.toggle('active',view==='feed'?i===0:i===1));document.getElementById('page-feed').classList.toggle('active',view==='feed');document.getElementById('page-library').classList.toggle('active',view==='library');renderSubBar();if(view==='feed')loadPosts();}
 function renderSubBar(){const bar=document.getElementById('sub-bar');if(mainView==='feed'){bar.style.display='flex';const filters=[{label:'الكل',val:'الكل'},{label:'فيديو/ريلز',val:'فيديو'},{label:'فوائد',val:'فائدة'},{label:'تحقيقات',val:'تحقيق'},{label:'أحاديث',val:'حديث'},{label:'أسئلة',val:'سؤال'},{label:'منشورات المكتبة',val:'مكتبة'}];bar.innerHTML=filters.map(({label,val})=>`<button class="${feedFilter===val?'active':''}" onclick="setFeedFilter('${val}')">${label}</button>`).join('');}else{bar.style.display='none';}}
 function setFeedFilter(val){feedFilter=val;renderSubBar();loadPosts();}
-function initPostTypes(){document.querySelectorAll('#post-types button').forEach(btn=>{btn.addEventListener('click',function(){if(this.disabled)return;document.querySelectorAll('#post-types button').forEach(b=>b.classList.remove('active'));this.classList.add('active');currentPostType=this.dataset.type;});});}
+function initPostTypes(){document.querySelectorAll('#post-types button').forEach(btn=>{btn.addEventListener('click',function(){if(this.disabled)return;document.querySelectorAll('#post-types button').forEach(b=>b.classList.remove('active'));this.classList.add('active');currentPostType=this.dataset.type;document.getElementById('media-upload-wrap').style.display=currentPostType==='فيديو'?'block':'none';});});}
+function handleMediaSelect(input){if(input.files && input.files[0]) document.getElementById('media-file-name').textContent = input.files[0].name;}
 async function loadPosts(){document.getElementById('posts-loading').style.display='block';document.getElementById('posts-loading').textContent='جاري التحميل...';document.getElementById('posts-list').innerHTML='';let q=sb.from('posts').select('*, profiles(full_name,username,account_type)').order('created_at',{ascending:false}).limit(50);if(feedFilter==='مكتبة'){q=q.not('book_id','is',null);}else if(feedFilter!=='الكل'){q=q.eq('post_type',feedFilter);}const{data,error}=await q;document.getElementById('posts-loading').style.display='none';if(error||!data){document.getElementById('posts-loading').style.display='block';document.getElementById('posts-loading').textContent='حدث خطأ في التحميل';return;}document.getElementById('posts-list').innerHTML=data.length?data.map(postHTML).join(''):'<div id="posts-empty">لا توجد منشورات بعد</div>';}
 function postHTML(p){
   const date = new Date(p.created_at).toLocaleDateString('ar-SA', {year:'numeric', month:'short', day:'numeric'});
@@ -701,6 +731,11 @@ function postHTML(p){
     <button class="post-hadith-ref" onclick="goToHadith('${p.book_id}', '${p.text_id||''}')" style="background:var(--blue-light); color:var(--blue); padding:6px 16px; border-radius:20px; font-size:12px; font-weight:700; border:1px solid var(--blue)">📖 استعراض في المكتبة</button>
   ` : '';
 
+  const mediaHTML = (p.post_type === 'فيديو' && p.media_url) ? `
+    <div class="post-media">
+      <video src="${p.media_url}" controls></video>
+    </div>` : '';
+
   return `
     <div class="post-card" id="post-${p.id}">
       <div class="post-header">
@@ -717,6 +752,7 @@ function postHTML(p){
         </div>
       </div>
       <div class="post-content" id="content-${p.id}">${escHtml(p.content)}</div>
+      ${mediaHTML}
       <div class="post-edit-box" id="edit-box-${p.id}" style="display:none">
         <textarea id="edit-textarea-${p.id}">${escHtml(p.content)}</textarea>
         <div class="post-edit-actions">
@@ -751,12 +787,19 @@ async function publishPost(){
   btn.textContent = 'جاري النشر...';
 
   const track=document.getElementById('post-track').value;
+  let mediaUrl = null;
+  const mediaFile = document.getElementById('post-media-file').files[0];
+  if(currentPostType === 'فيديو' && mediaFile) {
+    mediaUrl = await uploadMedia(mediaFile);
+    if(!mediaUrl) { btn.disabled=false; btn.textContent='نشر'; return; }
+  }
 
   const postData = {
     author_id:currentUser.id,
     post_type:currentPostType,
     content,
     track,
+    media_url: mediaUrl,
     likes:0
   };
 
@@ -771,6 +814,16 @@ async function publishPost(){
   feedFilter='الكل';
   renderSubBar();
   loadPosts();
+}
+
+async function uploadMedia(file) {
+  if(!currentUser) return null;
+  const ext = file.name.split('.').pop();
+  const path = `${currentUser.id}/${Date.now()}.${ext}`;
+  const { data, error } = await sb.storage.from('media').upload(path, file);
+  if(error) { toast('خطأ في الرفع: ' + error.message); return null; }
+  const { data: { publicUrl } } = sb.storage.from('media').getPublicUrl(path);
+  return publicUrl;
 }
 async function toggleLike(postId,btn){if(!currentUser)return toast('يجب تسجيل الدخول');const liked=btn.classList.contains('liked');if(liked){await sb.from('likes').delete().eq('user_id',currentUser.id).eq('post_id',postId);await sb.from('posts').update({likes:Math.max(0,(parseInt(btn.textContent.replace(/\D/g,''))||1)-1)}).eq('id',postId);btn.classList.remove('liked');}else{await sb.from('likes').insert({user_id:currentUser.id,post_id:postId});const cur=parseInt(btn.textContent.replace(/\D/g,''))||0;await sb.from('posts').update({likes:cur+1}).eq('id',postId);btn.classList.add('liked');}loadPosts();}
 async function toggleComments(postId){const s=document.getElementById('comments-'+postId);if(s.style.display==='block'){s.style.display='none';return;}s.style.display='block';const list=document.getElementById('comments-list-'+postId);list.innerHTML='<div style="font-size:12px;color:#999;padding:6px">جاري تحميل التعليقات...</div>';const{data}=await sb.from('comments').select('*, profiles(full_name)').eq('post_id',postId).order('created_at');list.innerHTML=data&&data.length?data.map(c=>`<div class="comment-item"><span class="comment-author" onclick="showProfilePage('${c.author_id}')" style="cursor:pointer">${c.profiles?.full_name||'مجهول'}: </span>${escHtml(c.content)}</div>`).join(''):'<div style="font-size:12px;color:#999;padding:6px">لا تعليقات بعد</div>';}
@@ -935,6 +988,7 @@ function setMode(mode){
 
   document.getElementById('fn-toggles').style.display = isEditor?'none':'flex';
   document.getElementById('add-text-book-btn').style.display = (isTahqiq&&currentProfile?.account_type==='verified')?'inline-block':'none';
+  document.getElementById('lib-pane-d').classList.toggle('open', isEditor);
 
   if(isEditor){
     if(!activeHadith){
@@ -1164,18 +1218,81 @@ async function doTakhrijSearch(){
   resultsDiv.innerHTML = data.map(h => `
     <div style="display:flex; gap:8px; border-bottom:1px solid #eee; padding:8px 0; align-items:center">
       <input type="checkbox" class="takhrij-check"
-        data-book="${h.books?.title||h.book_id}"
+        data-book="${h.books?.short_title||h.books?.title||h.book_id}"
         data-num="${h.hadith_number}"
         data-chapter="${h.chapter||''}"
         data-isnad="${h.isnad||''}"
         data-vol="${h.volume||''}"
         data-page="${h.page||''}">
       <div style="font-size:12px; flex:1; display:flex; justify-content:space-between">
-        <span><b>${h.books?.title||h.book_id} (${h.hadith_number})</b>: ${h.matn.substring(0,60)}...</span>
+        <span><b>${h.books?.short_title||h.books?.title||h.book_id} (${h.hadith_number})</b>: ${h.matn.substring(0,60)}...</span>
         <span style="color:var(--text3)">${h.volume ? h.volume+'/'+h.page : ''} ${h.chapter||''}</span>
       </div>
     </div>
   `).join('');
+}
+
+async function doEdSearch(){
+  const q = document.getElementById('ed-search-input').value.trim();
+  if(!q) return;
+  const resultsDiv = document.getElementById('ed-search-results');
+  resultsDiv.innerHTML = 'جاري البحث...';
+
+  const {data, error} = await sb.from('texts').select('*, books(title, short_title)').ilike('matn', `%${q}%`).limit(20);
+  if(error || !data) return resultsDiv.innerHTML = 'حدث خطأ أو لا توجد نتائج';
+
+  resultsDiv.innerHTML = data.map(h => `
+    <div style="display:flex; gap:6px; border-bottom:1px solid #eee; padding:6px 0; align-items:flex-start">
+      <input type="checkbox" class="ed-takhrij-check"
+        data-book="${h.books?.short_title||h.books?.title||h.book_id}"
+        data-num="${h.hadith_number}"
+        data-chapter="${h.chapter||''}"
+        data-isnad="${h.isnad||''}"
+        data-vol="${h.volume||''}"
+        data-page="${h.page||''}">
+      <div style="flex:1">
+        <div style="color:var(--green); font-weight:700">${h.books?.short_title||h.books?.title||h.book_id} (${h.hadith_number})</div>
+        <div>${h.matn.substring(0,80)}...</div>
+        <div style="color:var(--text3); font-size:10px">${h.volume ? 'مج '+h.volume+' ص '+h.page : ''} ${h.chapter ? ' - '+h.chapter : ''}</div>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('ed-search-actions').style.display = 'flex';
+}
+
+function insertTakhrijFromPane(type) {
+  const checks = Array.from(document.querySelectorAll('.ed-takhrij-check:checked'));
+  if(!checks.length) return toast('اختر نتائج أولاً');
+
+  let commonNarrator = "";
+  const parts = checks.map(c => {
+    const book = c.dataset.book;
+    const num = c.dataset.num;
+    const chapter = c.dataset.chapter;
+    const vol = c.dataset.vol;
+    const page = c.dataset.page;
+    if(!commonNarrator && c.dataset.isnad) {
+        const isnadArr = c.dataset.isnad.split('،');
+        commonNarrator = isnadArr[isnadArr.length - 1].trim();
+    }
+
+    if(type === 'short') return `${book} (${num})`;
+    if(type === 'medium') return `${book} ${vol?vol+'/':''}${page?page+' ':''}(${num})`;
+    return `${book} ${vol?vol+'/':''}${page?page+' ':''}(${num}) كتاب ${chapter || 'عام'}`;
+  });
+
+  // Arabic listing logic: "أخرجه البخاري (1)، ومسلم (2)، وأبو داود (3)"
+  let str = "أخرجه ";
+  for(let i=0; i<parts.length; i++) {
+    if(i === 0) str += parts[i];
+    else str += "، و" + parts[i];
+  }
+
+  if(commonNarrator) str += ` من طريق ${commonNarrator} بنحوه.`;
+  else str += ".";
+
+  insertText(str);
+  toast('تم إدراج العزو في المحرر');
 }
 function insertTakhrij(type){
   const checks = Array.from(document.querySelectorAll('.takhrij-check:checked'));
@@ -1197,9 +1314,10 @@ function insertTakhrij(type){
     return `${book} ${vol?vol+'/':''}${page?page+' ':''}(${num}) ${chapter ? ' كتاب ' + chapter : ''}`;
   });
 
-  str += parts.join('، ');
-  if(commonIsnad) str += ` من طريق ${commonIsnad} بنحوه.`;
-  else str += ".";
+  const combined = parts.join('، ');
+  if(type === 'short') str = combined;
+  else if(commonIsnad) str = combined + ` من طريق ${commonIsnad} بنحوه.`;
+  else str = combined + ".";
 
   if(currentMode === 'editor'){
     insertText(str);
@@ -1405,9 +1523,19 @@ async function loadProfilePage(){
     const btn = document.getElementById('btn-follow');
     btn.textContent = follow ? 'إلغاء المتابعة' : 'متابعة';
     btn.onclick = () => toggleFollow(uid, !!follow);
+    btn.style.background = follow ? '#f0f0f0' : 'var(--green)';
+    btn.style.color = follow ? 'var(--text)' : '#fff';
   } else {
     followBtnWrap.style.display = 'none';
   }
+
+  // Load follower/following counts
+  const {count: followers} = await sb.from('follows').select('*', {count:'exact', head:true}).eq('followed_id', uid);
+  const {count: following} = await sb.from('follows').select('*', {count:'exact', head:true}).eq('follower_id', uid);
+  const bioPara = document.getElementById('profile-bio-text');
+  bioPara.innerHTML += `<div style="margin-top:8px; font-size:12px; color:var(--text2)">
+    <b>${followers||0}</b> متابعين &nbsp; · &nbsp; <b>${following||0}</b> يتابعهم
+  </div>`;
 
   document.getElementById('page-profile').dataset.uid=uid;
   switchProfileTab('posts');
@@ -1425,7 +1553,45 @@ async function toggleFollow(uid, isFollowing) {
   loadProfilePage();
 }
 async function saveBio(){const bio=document.getElementById('profile-bio-input').value.trim();await sb.from('profiles').update({bio}).eq('id',currentUser.id);document.getElementById('profile-bio-text').textContent=bio;if(currentProfile)currentProfile.bio=bio;toast('تم الحفظ');}
-function switchProfileTab(tab){document.querySelectorAll('#profile-tabs button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));const uid=document.getElementById('page-profile').dataset.uid||currentUser.id;if(tab==='posts')loadProfilePosts(uid);else if(tab==='tahqiq')loadProfileTahqiq(uid);else loadProfileAdditions(uid);}
+function switchProfileTab(tab){
+  document.querySelectorAll('#profile-tabs button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  const uid=document.getElementById('page-profile').dataset.uid||currentUser.id;
+  if(tab==='posts') loadProfilePosts(uid);
+  else if(tab==='tahqiq') loadProfileTahqiq(uid);
+  else if(tab==='additions') loadProfileAdditions(uid);
+  else loadProfileSocial(uid);
+}
+
+async function loadProfileSocial(uid) {
+  const content = document.getElementById('profile-content');
+  content.innerHTML = 'جاري التحميل...';
+
+  const {data: followers} = await sb.from('follows').select('follower_id, profiles!follows_follower_id_fkey(full_name, username)').eq('followed_id', uid);
+  const {data: following} = await sb.from('follows').select('followed_id, profiles!follows_followed_id_fkey(full_name, username)').eq('follower_id', uid);
+
+  let html = `<div style="display:grid; grid-template-columns:1fr 1fr; gap:20px">`;
+
+  html += `<div><h4 style="font-size:13px; color:var(--green); margin-bottom:10px">المتابعون (${followers?.length||0})</h4>`;
+  html += followers?.length ? followers.map(f => `
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; background:#fff; padding:8px; border-radius:6px; border:1px solid #eee; cursor:pointer" onclick="showProfilePage('${f.follower_id}')">
+      <div class="avatar" style="width:28px; height:28px; font-size:11px">${f.profiles?.full_name?.charAt(0)||'م'}</div>
+      <div style="font-size:12px"><b>${f.profiles?.full_name}</b></div>
+    </div>
+  `).join('') : '<div style="font-size:12px; color:var(--text3)">لا يوجد متابعون بعد</div>';
+  html += `</div>`;
+
+  html += `<div><h4 style="font-size:13px; color:var(--green); margin-bottom:10px">يتابعهم (${following?.length||0})</h4>`;
+  html += following?.length ? following.map(f => `
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; background:#fff; padding:8px; border-radius:6px; border:1px solid #eee; cursor:pointer" onclick="showProfilePage('${f.followed_id}')">
+      <div class="avatar" style="width:28px; height:28px; font-size:11px">${f.profiles?.full_name?.charAt(0)||'م'}</div>
+      <div style="font-size:12px"><b>${f.profiles?.full_name}</b></div>
+    </div>
+  `).join('') : '<div style="font-size:12px; color:var(--text3)">لا يتابع أحداً بعد</div>';
+  html += `</div>`;
+
+  html += `</div>`;
+  content.innerHTML = html;
+}
 async function loadProfilePosts(uid){const content=document.getElementById('profile-content');content.innerHTML='جاري التحميل...';const{data}=await sb.from('posts').select('*, profiles(full_name)').eq('author_id',uid).order('created_at',{ascending:false}).limit(30);content.innerHTML=data&&data.length?data.map(postHTML).join(''):'<div>لا توجد منشورات</div>';}
 async function loadProfileTahqiq(uid){const content=document.getElementById('profile-content');content.innerHTML='جاري التحميل...';const isOwn=uid===currentUser.id;let q=sb.from('user_edits').select('*').eq('user_id',uid).order('updated_at',{ascending:false});if(!isOwn)q=q.eq('status','approved');const{data}=await q;if(!data||!data.length){content.innerHTML='<div>لا توجد تحقيقات شخصية بعد</div>';return;}const labels={draft:['مسودة','#f0f0f0','var(--text2)'],pending_review:['قيد المراجعة','var(--gold-light)','var(--gold)'],approved:['معتمد ✓','var(--green-light)','var(--green)'],rejected:['مرفوض','#fde8e8','#c0392b']};content.innerHTML=data.map(t=>{const book=BOOKS.find(b=>b.id===t.book_id);const[lbl,bg,fg]=labels[t.status]||['','#eee','#666'];const plain=(t.edited_matn||'').replace(/<[^>]+>/g,'');return `<div class="tahqiq-item"><div class="tahqiq-item-header"><h4>${book?.title||t.book_id} — حديث ${t.hadith_number}</h4><span class="status-pill" style="background:${bg};color:${fg}">${lbl}</span></div><div class="preview">${escHtml(plain.substring(0,160))}...</div></div>`;}).join('');}
 async function loadProfileAdditions(uid){
@@ -1517,19 +1683,33 @@ async function reviewItem(kind,id,status){
     const {data: edit} = await sb.from('user_edits').select('*').eq('id', id).single();
     if(edit) {
       // Update the main library text
-      await sb.from('texts').update({matn: edit.edited_matn}).eq('book_id', edit.book_id).eq('hadith_number', edit.hadith_number);
+      const {error: updateErr} = await sb.from('texts').update({matn: edit.edited_matn}).eq('book_id', edit.book_id).eq('hadith_number', edit.hadith_number);
+      if(updateErr) {
+        // If it doesn't exist, might need insert
+        const {data: exists} = await sb.from('texts').select('id').eq('book_id', edit.book_id).eq('hadith_number', edit.hadith_number).maybeSingle();
+        if(!exists) await sb.from('texts').insert({book_id: edit.book_id, hadith_number: edit.hadith_number, matn: edit.edited_matn});
+      }
+
       // Transfer footnotes to the public footnotes table
       if(edit.custom_footnotes && edit.custom_footnotes.length) {
         for(const fn of edit.custom_footnotes) {
           await sb.from('footnotes').insert({
             book_id: edit.book_id,
             hadith_number: edit.hadith_number,
-            category: 'تخريج', // Default category for user footnotes
+            category: 'تخريج',
             content: fn.text,
             author_id: edit.user_id
           });
         }
       }
+      // Create a public announcement post about the new verification
+      await sb.from('posts').insert({
+        author_id: currentUser.id,
+        post_type: 'تحقيق',
+        content: `تم اعتماد تحقيق جديد للحديث رقم (${edit.hadith_number}) في كتاب (${edit.book_id}) بواسطة الباحث الموثق.`,
+        book_id: edit.book_id,
+        text_id: edit.hadith_number
+      });
     }
   }
 
