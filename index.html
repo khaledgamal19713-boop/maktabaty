@@ -154,23 +154,34 @@
     let user = null, layer = 'browsing', book = null;
 
     async function init() {
-        const { data: { session } } = await sb.auth.getSession();
-        if(window.location.hash === '#profile') switchView('profile');
-        if (session) {
-            user = session.user;
-            document.getElementById('app').style.display = 'block';
-            const { data: prof } = await sb.from('profiles').select('full_name').eq('id', user.id).single();
-            document.getElementById('username').textContent = prof?.full_name || 'باحث';
-            loadPosts();
-            renderBooks();
-        } else {
-            document.getElementById('auth-page').style.display = 'block';
-        }
+        sb.auth.onAuthStateChange(async (event, session) => {
+            if (session) {
+                user = session.user;
+                document.getElementById('auth-page').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+
+                const { data: prof } = await sb.from('profiles').select('full_name').eq('id', user.id).single();
+                document.getElementById('username').textContent = prof?.full_name || 'باحث';
+
+                if(!prof) {
+                    await sb.from('profiles').upsert({ id: user.id, full_name: 'باحث جديد' });
+                }
+
+                loadPosts();
+                renderBooks();
+                if(window.location.hash === '#profile') showProfile();
+            } else {
+                document.getElementById('app').style.display = 'none';
+                document.getElementById('auth-page').style.display = 'block';
+            }
+        });
     }
 
     function switchView(v) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById('page-' + v).classList.add('active');
+        const target = document.getElementById('page-' + v);
+        if(target) target.classList.add('active');
+
         document.querySelectorAll('#nav-toggle button').forEach(b => b.classList.remove('active'));
         const btn = document.getElementById('btn-' + v);
         if(btn) btn.classList.add('active');
@@ -197,7 +208,6 @@
         applySandbox();
     }
 
-
     function setLayer(l) {
         layer = l;
         const container = document.getElementById('lib-content');
@@ -216,7 +226,6 @@
         document.querySelectorAll('.editor-only').forEach(b => b.style.display = (l === 'editor' ? 'inline-block' : 'none'));
         showToast('الطبقة الحالية: ' + (l==='browsing'?'تصفح': l==='editor'?'تحقيق':'توثيق'));
     }
-
 
     async function openEditor(num) {
         const text = document.getElementById('htext-' + num).innerText;
@@ -241,7 +250,7 @@
         const start = ta.selectionStart;
         const end = ta.selectionEnd;
         const text = ta.value;
-        const count = (text.match(/\[\d+\]/g) || []).length + 1;
+        const count = (text.match(/\\[\\d+\\]/g) || []).length + 1;
         ta.value = text.substring(0, start) + `[${count}]` + text.substring(end);
         ta.focus();
     }
@@ -287,8 +296,10 @@
 
     function showToast(m) {
         const t = document.getElementById('toast');
-        t.textContent = m; t.style.display = 'block';
-        setTimeout(() => t.style.display = 'none', 2000);
+        if(t) {
+            t.textContent = m; t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 2000);
+        }
     }
 
     function checkEmail() {
@@ -314,7 +325,6 @@
     }
 
     function showQuickGuest() {
-        // Bypass for immediate preview
         document.getElementById('auth-page').style.display='none';
         document.getElementById('app').style.display='block';
         document.getElementById('username').textContent = 'زائر (معاينة)';
@@ -325,19 +335,68 @@
     async function login(type) {
         const email = document.getElementById('auth-email').value;
         const phone = document.getElementById('auth-phone').value;
+        if(!email) return alert('يرجى إدخال البريد');
 
-        // In this phase, we make it smooth as requested.
-        // We simulate a successful login to allow immediate preview.
-        const { error } = await sb.auth.signInWithOtp({ email });
+        showToast('جاري إرسال الطلب...');
+        const { error } = await sb.auth.signInWithOtp({
+            email,
+            options: {
+                emailRedirectTo: window.location.origin,
+                data: { account_type: type, phone: phone }
+            }
+        });
+
         if (error) {
-            alert(error.message);
+            alert('خطأ: ' + error.message);
         } else {
-            // For smooth tracking, we can store metadata in profiles later.
-            alert('تم إرسال رابط الدخول لبريدك. للمعاينة الفورية، المساعد سيقوم بتفعيل الجلسة لك.');
+            alert('تم إرسال رابط الدخول إلى بريدك الإلكتروني. يرجى الضغط عليه للدخول.');
         }
     }
 
     async function logout() { await sb.auth.signOut(); location.reload(); }
+
+    async function showProfile() {
+        switchView('profile');
+        if(!user) {
+            document.getElementById('profile-name').textContent = 'زائر (معاينة)';
+            document.getElementById('profile-content-list').innerHTML = '<div class="text-muted">هذا الحساب للمعاينة فقط. سجل دخولك لإنشاء تحقيقات حقيقية.</div>';
+            return;
+        }
+        const { data: prof } = await sb.from('profiles').select('*').eq('id', user.id).single();
+        document.getElementById('profile-name').textContent = prof?.full_name || 'باحث';
+        showProfileEdits();
+    }
+
+    async function showProfileEdits() {
+        const list = document.getElementById('profile-content-list');
+        list.innerHTML = 'جاري تحميل التحقيقات...';
+        const { data } = await sb.from('user_edits').select('*').eq('user_id', user.id);
+        if(!data || data.length === 0) {
+            list.innerHTML = '<div class="text-muted">لا توجد تحقيقات بعد. ابدأ بالتحقيق من المكتبة!</div>';
+            return;
+        }
+        list.innerHTML = data.map(e => `
+            <div class="card p-3 mb-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6>كتاب: ${e.book_id} (حديث ${e.hadith_number})</h6>
+                    <span class="badge bg-warning text-dark">قيد الانتظار</span>
+                </div>
+                <div class="small text-muted text-truncate">${e.edited_matn}</div>
+            </div>
+        `).join('');
+    }
+
+    async function showProfilePosts() {
+        const list = document.getElementById('profile-content-list');
+        list.innerHTML = 'جاري تحميل المنشورات...';
+        const { data } = await sb.from('posts').select('*').eq('author_id', user.id);
+        list.innerHTML = (data||[]).map(p => `
+            <div class="card p-3 mb-2">
+                <div>${p.content}</div>
+                <div class="small text-muted mt-1">${new Date(p.created_at).toLocaleString('ar-EG')}</div>
+            </div>
+        `).join('');
+    }
 
     async function showChain(hNum) {
         const pane = document.getElementById('pane-c');
@@ -380,52 +439,6 @@
         }
         ta.value += citation;
         showToast('تم إضافة العزو للمسودة');
-    }
-
-
-
-    async function showProfile() {
-        switchView('profile');
-        if(!user) {
-            document.getElementById('profile-name').textContent = 'زائر (معاينة)';
-            document.getElementById('profile-content-list').innerHTML = '<div class="text-muted">هذا الحساب للمعاينة فقط. سجل دخولك لإنشاء تحقيقات حقيقية.</div>';
-            return;
-        }
-        const { data: prof } = await sb.from('profiles').select('*').eq('id', user.id).single();
-        document.getElementById('profile-name').textContent = prof?.full_name || 'باحث';
-        showProfileEdits();
-    }
-
-
-    async function showProfileEdits() {
-        const list = document.getElementById('profile-content-list');
-        list.innerHTML = 'جاري تحميل التحقيقات...';
-        const { data } = await sb.from('user_edits').select('*').eq('user_id', user.id);
-        if(!data || data.length === 0) {
-            list.innerHTML = '<div class="text-muted">لا توجد تحقيقات بعد. ابدأ بالتحقيق من المكتبة!</div>';
-            return;
-        }
-        list.innerHTML = data.map(e => `
-            <div class="card p-3 mb-2">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h6>كتاب: ${e.book_id} (حديث ${e.hadith_number})</h6>
-                    <span class="badge bg-warning text-dark">قيد الانتظار</span>
-                </div>
-                <div class="small text-muted text-truncate">${e.edited_matn}</div>
-            </div>
-        `).join('');
-    }
-
-    async function showProfilePosts() {
-        const list = document.getElementById('profile-content-list');
-        list.innerHTML = 'جاري تحميل المنشورات...';
-        const { data } = await sb.from('posts').select('*').eq('author_id', user.id);
-        list.innerHTML = data.map(p => `
-            <div class="card p-3 mb-2">
-                <div>${p.content}</div>
-                <div class="small text-muted mt-1">${new Date(p.created_at).toLocaleString('ar-EG')}</div>
-            </div>
-        `).join('');
     }
 
     init();
