@@ -557,7 +557,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
   const{data:{session}}=await sb.auth.getSession();
   if(session){currentUser=session.user;await loadProfile();showApp();}
   sb.auth.onAuthStateChange(async(event,session)=>{
-    if(event==='SIGNED_IN'&&session){currentUser=session.user;await loadProfile();showApp();}
+    if((event==='SIGNED_IN'||event==='INITIAL_SESSION')&&session){currentUser=session.user;await loadProfile();showApp();}
     if(event==='SIGNED_OUT'){currentUser=null;currentProfile=null;document.getElementById('auth-overlay').style.display='flex';document.getElementById('app').style.display='none';}
   });
   initPostTypes();initQCTypes();await loadCustomBooks();renderBooks();
@@ -567,22 +567,21 @@ window.addEventListener('DOMContentLoaded',async()=>{
 
 // ===== FIX: loadProfile ينشئ profile تلقائياً إن لم يوجد =====
 async function loadProfile(){
-  let{data}=await sb.from('profiles').select('*').eq('id',currentUser.id).single();
-  if(!data){
-    const meta=currentUser.user_metadata||{};
-    const fallbackName=meta.full_name||meta.name||currentUser.email.split('@')[0];
-    const fallbackUsername=meta.username||currentUser.email.split('@')[0];
-    await sb.from('profiles').upsert({
-      id:currentUser.id,
-      full_name:fallbackName,
-      username:fallbackUsername,
-      account_type:'verified',
-      is_scholar:false
-    });
-    const res=await sb.from('profiles').select('*').eq('id',currentUser.id).single();
-    data=res.data;
+  try {
+    let{data,error}=await sb.from('profiles').select('*').eq('id',currentUser.id).single();
+    if(error||!data){
+      const meta=currentUser.user_metadata||{};
+      const fallbackName=meta.full_name||meta.name||currentUser.email.split('@')[0];
+      const fallbackUsername=meta.username||currentUser.email.split('@')[0];
+      const profileData={id:currentUser.id,full_name:fallbackName,username:fallbackUsername,account_type:'verified',is_scholar:false};
+      await sb.from('profiles').upsert(profileData);
+      const res=await sb.from('profiles').select('*').eq('id',currentUser.id).single();
+      data=res.data||profileData;
+    }
+    currentProfile=data;
+  } catch(e) {
+    currentProfile={full_name:currentUser.email.split('@')[0]};
   }
-  currentProfile=data;
 }
 
 function showApp(){
@@ -843,7 +842,7 @@ function hadithCardHTML(h){
   const num=h.hadithnumber||h.number||'';
   const grade=h.grades?.[0]?.grade||'';
   const gc=grade.includes('صحيح')?'صحيح':grade.includes('حسن')?'حسن':grade.includes('ضعيف')?'ضعيف':'';
-  const ts=JSON.stringify(escHtml(text)).replace(/"/g,'&quot;');
+  const ts=JSON.stringify(text).replace(/"/g,'&quot;');
   const isVerified=currentProfile?.account_type==='verified';
 
   // Multimedia Support (Adapted from AL-MA3ARF)
