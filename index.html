@@ -65,8 +65,8 @@ input:focus{border-color:var(--green);background:#fff}
 .post-actions button.liked{color:var(--green)}
 
 /* --- Library 4-Pane (Layer 3) --- */
-#page-library{display:grid;grid-template-columns:auto 1fr auto;height:calc(100vh - 56px);background:#fff;overflow:hidden}
-#lib-sidebar{width:56px;background:#fff;border-left:1px solid #ddd;transition:0.3s;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden}
+#page-library{display:grid;grid-template-columns:auto 1fr auto;height:calc(100vh - 56px);background:var(--bg);overflow:hidden}
+#lib-sidebar{width:56px;background:#fff;border-left:1px solid var(--border);transition:0.3s;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;z-index:20}
 #lib-sidebar.expanded{width:260px}
 #sidebar-toggle{padding:15px;color:var(--green);cursor:pointer;text-align:center;font-size:22px;border-bottom:1px solid #f0f2f5}
 .book-item{padding:12px 15px;cursor:pointer;white-space:nowrap;font-weight:700;color:var(--text2);display:flex;align-items:center;gap:12px;transition:0.2s}
@@ -84,19 +84,19 @@ input:focus{border-color:var(--green);background:#fff}
 .side-panel.open{width:300px;border-left:1px solid #eee;border-right:1px solid #eee}
 .panel-header{padding:12px;font-weight:800;color:var(--green);background:#fff;border-bottom:1px solid #eee;font-size:14px}
 
-#reader-panel{flex:1;overflow-y:auto;padding:30px;background:#fff;max-width:850px;margin:0 auto;width:100%}
+#reader-panel{flex:1;overflow-y:auto;padding:40px;background:#fff;max-width:900px;margin:0 auto;width:100%;box-shadow:0 0 20px rgba(0,0,0,0.05);min-height:100%}
 .hadith-card-lib{margin-bottom:30px;padding-bottom:15px;border-bottom:1px solid #f0f2f5}
 .hadith-text-lib{font-size:22px;line-height:2.3;font-family:'Amiri', serif;color:#1c1e21;text-align:justify}
 
 /* --- Research Workspace (Pane D) --- */
-#lib-pane-d{width:0;background:#fff;border-right:1px solid #ddd;overflow:hidden;transition:0.3s;display:flex;flex-direction:column}
+#lib-pane-d{width:0;background:#fff;border-right:1px solid var(--border);overflow:hidden;transition:0.3s;display:flex;flex-direction:column;z-index:20}
 #lib-pane-d.open{width:320px}
 .takhrij-item{padding:10px;border-bottom:1px solid #eee;display:flex;gap:8px;font-size:13px}
 
 /* --- Editor --- */
-#editor-toolbar{background:#f0f2f5;padding:10px;border-radius:10px;margin-bottom:15px;display:flex;gap:6px;flex-wrap:wrap;position:sticky;top:0;z-index:10}
-#editor-toolbar button{padding:6px 10px;background:#fff;border:1px solid #ddd;border-radius:4px;font-weight:700}
-#editor-content{min-height:500px;padding:30px;font-size:22px;line-height:2.3;font-family:'Amiri', serif;outline:none;border:1px solid #ddd;border-radius:12px;background:#fff}
+#editor-toolbar{background:#fff;padding:10px;border-bottom:1px solid var(--border);margin-bottom:15px;display:flex;gap:6px;flex-wrap:wrap;position:sticky;top:0;z-index:100;box-shadow:0 2px 5px rgba(0,0,0,0.05)}
+#editor-toolbar button{padding:6px 12px;background:#fff;border:1px solid #ddd;border-radius:4px;font-weight:700;font-size:12px}
+#editor-content{min-height:600px;padding:20px;font-size:22px;line-height:2.3;font-family:'Amiri', serif;outline:none;border:1px solid var(--border);border-radius:8px;background:#fff;box-shadow:inset 0 2px 4px rgba(0,0,0,0.02)}
 .m-fn-ref{background:var(--gold-light);color:var(--gold);font-weight:900;padding:0 3px;border-radius:3px;vertical-align:super;font-size:11px;cursor:pointer}
 
 /* --- Profile --- */
@@ -138,15 +138,23 @@ input:focus{border-color:var(--green);background:#fff}
 
     <div id="auth-form-register" class="auth-form" style="display:none">
       <div style="display:flex;gap:10px;margin-bottom:5px">
-        <button id="acc-guest" class="active" onclick="selectAccType('guest')" style="flex:1;border:1px solid var(--border);padding:10px;border-radius:8px;font-size:13px;font-weight:700">زائر</button>
-        <button id="acc-verified" onclick="selectAccType('verified')" style="flex:1;border:1px solid var(--border);padding:10px;border-radius:8px;font-size:13px;font-weight:700">باحث موثق</button>
+        <div id="acc-guest" class="active" onclick="selectAccType('guest')" style="flex:1;border:2px solid var(--border);padding:10px;border-radius:8px;font-size:12px;cursor:pointer;text-align:center">
+          <div style="font-weight:900">حساب زائر</div>
+          <div style="font-size:10px;color:var(--text2)">تصفح وتفاعل ونشر فوائد عامة</div>
+        </div>
+        <div id="acc-verified" onclick="selectAccType('verified')" style="flex:1;border:2px solid var(--border);padding:10px;border-radius:8px;font-size:12px;cursor:pointer;text-align:center">
+          <div style="font-weight:900">باحث موثق</div>
+          <div style="font-size:10px;color:var(--text2)">تحقيق وتحرير ومساهمة كاملة</div>
+        </div>
       </div>
       <div style="display:flex;gap:10px"><input type="text" id="reg-fname" placeholder="الاسم الأول" style="flex:1"><input type="text" id="reg-lname" placeholder="العائلة" style="flex:1"></div>
       <input type="text" id="reg-username" placeholder="اسم المستخدم">
       <input type="email" id="reg-email" placeholder="البريد الإلكتروني">
-      <input type="password" id="reg-pass" placeholder="كلمة السر">
-      <input type="tel" id="reg-phone" placeholder="رقم الهاتف (للموثقين)">
-      <button class="btn-register" onclick="doRegister()" style="width:100%;margin-top:10px">تسجيل الحساب</button>
+      <input type="password" id="reg-pass" placeholder="كلمة السر (6 خانات فأكثر)">
+      <div id="phone-field-wrapper" style="display:none">
+        <input type="tel" id="reg-phone" placeholder="رقم الهاتف (للتوثيق)" style="width:100%">
+      </div>
+      <button class="btn-register" onclick="doRegister()" style="width:100%;margin-top:10px">إنشاء الحساب</button>
     </div>
     <div id="auth-msg" style="color:red;font-size:13px;margin-top:10px"></div>
   </div>
@@ -171,10 +179,11 @@ input:focus{border-color:var(--green);background:#fff}
   <!-- Layer 1: Feed -->
   <div id="page-feed" class="page active">
     <div id="feed-filter-bar">
-      <button class="active" onclick="filterFeed('الكل')">الكل</button>
-      <button onclick="filterFeed('فائدة')">فوائد علمية</button>
-      <button onclick="filterFeed('تحقيق')">تحقيقات</button>
-      <button onclick="filterFeed('مكتبة')">المكتبة</button>
+      <button class="active" onclick="filterFeed('الكل', this)">الكل</button>
+      <button onclick="filterFeed('فائدة', this)">فوائد علمية</button>
+      <button onclick="filterFeed('تحقيق', this)">تحقيقات</button>
+      <button onclick="filterFeed('مكتبة', this)">المكتبة</button>
+      <button onclick="filterFeed('فيديو', this)">فيديو وريلز</button>
     </div>
 
     <div id="composer">
@@ -215,19 +224,20 @@ input:focus{border-color:var(--green);background:#fff}
 
           <div id="editor-view" style="display:none">
             <div id="editor-toolbar">
-              <button onclick="fmt('bold')">B</button><button onclick="fmt('italic')">I</button>
-              <button onclick="insertMark('tashif')" style="color:red">تصحيف</button>
-              <button onclick="insertMark('ziyada')" style="color:green">زيادة</button>
+              <button onclick="fmt('bold')" title="خط عريض">B</button><button onclick="fmt('italic')" title="خط مائل">I</button>
+              <div style="width:1px;background:#ddd;margin:0 4px"></div>
+              <button onclick="insertMark('tashif')" style="color:#c0392b">تصحيف</button>
+              <button onclick="insertMark('ziyada')" style="color:#27ae60">زيادة</button>
               <button onclick="addFootnote()" style="color:var(--gold)">+ حاشية</button>
-              <div style="width:1px;background:#ccc;margin:0 5px"></div>
+              <div style="width:1px;background:#ddd;margin:0 4px"></div>
               <button onclick="insertText('َ')">َ</button><button onclick="insertText('ُ')">ُ</button><button onclick="insertText('ِ')">ِ</button><button onclick="insertText('ّ')">ّ</button>
+              <div style="margin-right:auto; display:flex; gap:5px">
+                <button onclick="saveDraft()" style="background:var(--bg)">حفظ</button>
+                <button onclick="submitForReview()" style="background:var(--green);color:#fff">إرسال</button>
+              </div>
             </div>
             <div id="editor-content" contenteditable="true" spellcheck="false"></div>
-            <div id="editor-footnotes" style="margin-top:20px;border-top:1px solid #eee;padding-top:10px"></div>
-            <div style="display:flex;gap:10px;margin-top:20px">
-              <button onclick="saveDraft()" style="background:#f0f2f5;flex:1;padding:12px;border-radius:8px">حفظ كمسودة</button>
-              <button onclick="submitForReview()" style="background:var(--green);color:#fff;flex:1;padding:12px;border-radius:8px;font-weight:700">إرسال للمراجعة</button>
-            </div>
+            <div id="editor-footnotes" style="margin-top:40px;border-top:2px solid var(--gold);padding-top:15px; font-size:14px; color:var(--text2)"></div>
           </div>
         </div>
 
@@ -239,8 +249,15 @@ input:focus{border-color:var(--green);background:#fff}
       <div class="panel-header">مساحة البحث والتخريج</div>
       <div style="padding:15px">
         <input type="text" id="takhrij-search" placeholder="ابحث في فهارس المكتبة..." style="width:100%">
-        <button onclick="doTakhrij()" style="width:100%;margin-top:10px;background:var(--green);color:#fff;padding:8px;border-radius:8px;font-weight:700">بحث سريع</button>
-        <div id="takhrij-results" style="margin-top:20px"></div>
+        <button onclick="doTakhrij()" style="width:100%;margin-top:10px;background:var(--green);color:#fff;padding:8px;border-radius:8px;font-weight:700">بحث واستخراج عزو</button>
+
+        <div id="takhrij-tools" style="display:none; margin-top:15px; border-top:1px solid #eee; padding-top:10px">
+          <div style="display:flex; gap:4px; margin-bottom:10px">
+            <button onclick="genCitation('short')" style="flex:1; background:var(--green-light); color:var(--green); font-size:11px; font-weight:700; padding:5px">عزو مختصر</button>
+            <button onclick="genCitation('medium')" style="flex:1; background:var(--gold-light); color:var(--gold); font-size:11px; font-weight:700; padding:5px">عزو متوسط</button>
+          </div>
+          <div id="takhrij-results" style="max-height:400px; overflow-y:auto"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -282,7 +299,17 @@ input:focus{border-color:var(--green);background:#fff}
 
 <script>
 const SUPA_URL='https://uqfqpqjarofbcdzkrdgs.supabase.co', SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVxZnFwcWphcm9mYmNkemtyZGdzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4ODUwMzUsImV4cCI6MjA5MzQ2MTAzNX0.8z2Nc8t14txttepiRV5yhhkBfDdE77FJ7rx1dxQrICI';
-const BOOKS=[{id:'bukhari',title:'صحيح البخاري'},{id:'muslim',title:'صحيح مسلم'},{id:'abudawud',title:'سنن أبي داود'},{id:'tirmidhi',title:'سنن الترمذي'},{id:'nasai',title:'سنن النسائي'},{id:'ibnmajah',title:'سنن ابن ماجه'}];
+const CDN='https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1';
+const BOOKS=[
+  {id:'bukhari',title:'صحيح البخاري',cdnId:'ara-bukhari',cat:'كتب الحديث'},
+  {id:'muslim',title:'صحيح مسلم',cdnId:'ara-muslim',cat:'كتب الحديث'},
+  {id:'abudawud',title:'سنن أبي داود',cdnId:'ara-abudawud',cat:'كتب الحديث'},
+  {id:'tirmidhi',title:'سنن الترمذي',cdnId:'ara-tirmidhi',cat:'كتب الحديث'},
+  {id:'nasai',title:'سنن النسائي',cdnId:'ara-nasai',cat:'كتب الحديث'},
+  {id:'ibnmajah',title:'سنن ابن ماجه',cdnId:'ara-ibnmajah',cat:'كتب الحديث'},
+  {id:'tafsir-tabari',title:'تفسير الطبري',cat:'التفسير'},
+  {id:'aqidah-tahawiyah',title:'العقيدة الطحاوية',cat:'العقيدة'}
+];
 const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
 let currentUser=null,currentProfile=null,currentBook=null,activeHadith=null,footnotes=[],selectedAccType='guest',currentEditId=null;
 
@@ -323,10 +350,12 @@ async function doLogin(){
 }
 async function doRegister(){
   const n=document.getElementById('reg-fname').value+' '+document.getElementById('reg-lname').value, u=document.getElementById('reg-username').value, e=document.getElementById('reg-email').value, p=document.getElementById('reg-pass').value;
-  const{data,error}=await sb.auth.signUp({email:e,password:p,options:{data:{full_name:n,username:u,account_type:selectedAccType}}});
+  const ph=document.getElementById('reg-phone').value;
+  if(selectedAccType==='verified' && !ph) return toast('رقم الهاتف مطلوب للموثقين');
+  const{data,error}=await sb.auth.signUp({email:e,password:p,options:{data:{full_name:n,username:u,account_type:selectedAccType,phone:ph}}});
   if(error) return document.getElementById('auth-msg').textContent=error.message;
-  await sb.from('profiles').upsert({id:data.user.id, full_name:n, username:u, account_type:selectedAccType});
-  toast('تم إنشاء الحساب، يرجى الدخول'); switchAuthTab('login');
+  await sb.from('profiles').upsert({id:data.user.id, full_name:n, username:u, account_type:selectedAccType, phone:ph});
+  toast('تم إنشاء الحساب بنجاح'); switchAuthTab('login');
 }
 
 // Social & Feed
@@ -337,22 +366,28 @@ async function publishPost(){
 }
 async function loadPosts(filter='الكل'){
   let q=sb.from('posts').select('*, profiles(full_name, username)').order('created_at',{ascending:false});
-  if(filter!=='الكل') q=q.eq('post_type',filter);
+  if(filter==='مكتبة') q=q.not('book_id','is',null);
+  else if(filter!=='الكل') q=q.eq('post_type',filter);
   const{data}=await q;
-  document.getElementById('posts-list').innerHTML=data.map(p=>`
+  document.getElementById('posts-list').innerHTML=data.map(p=>{
+    const libBtn = p.book_id ? `<button onclick="goToHadith('${p.book_id}', '${p.text_id}')" style="background:var(--gold-light);color:var(--gold);padding:4px 10px;border-radius:4px;font-size:12px;margin-bottom:10px">📖 عرض في المكتبة</button>` : '';
+    const video = p.media_url ? `<div style="background:#000;border-radius:8px;margin:10px 0;height:300px;display:flex;align-items:center;justify-content:center;color:#fff">▶️ فيديو/ريلز قيد التطوير</div>` : '';
+    return `
     <div class="post-card">
       <div class="post-header">
         <div class="avatar">${p.profiles.full_name[0]}</div>
         <div><div class="post-author" onclick="showProfilePage('${p.author_id}')">${p.profiles.full_name}</div><div class="post-meta">${p.created_at.split('T')[0]} · ${p.post_type}</div></div>
       </div>
       <div class="post-content">${p.content}</div>
+      ${video}
+      ${libBtn}
       <div class="post-actions">
         <button onclick="toggleLike('${p.id}',this)">👍 ${p.likes||0} إعجاب</button>
         <button onclick="toggleComments('${p.id}')">💬 تعليق</button>
       </div>
       <div id="comments-${p.id}" style="display:none;padding:10px;background:#f8f9fa"></div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 async function toggleLike(id,btn){
   const cur=parseInt(btn.innerText.match(/\d+/)[0]);
@@ -369,11 +404,28 @@ async function addComment(id){
 }
 
 // Library Logic
-function renderBooks(){ document.getElementById('books-list').innerHTML=BOOKS.map(b=>`<div class="book-item" onclick="selectBook('${b.id}')">📚 ${b.title}</div>`).join(''); }
+function renderBooks(){
+  const cats = [...new Set(BOOKS.map(b=>b.cat))];
+  document.getElementById('books-list').innerHTML=cats.map(c=>`
+    <div style="padding:10px 15px; font-weight:900; color:var(--green); font-size:11px; text-transform:uppercase; border-bottom:1px solid #eee">${c}</div>
+    ${BOOKS.filter(b=>b.cat===c).map(b=>`<div class="book-item" onclick="selectBook('${b.id}')">📚 ${b.title}</div>`).join('')}
+  `).join('');
+}
 async function selectBook(id){
   currentBook=id; document.querySelectorAll('.book-item').forEach(el=>el.classList.toggle('active', BOOKS.find(b=>b.id===id).title===el.innerText.replace('📚 ','')));
-  const{data}=await sb.from('texts').select('*').eq('book_id',id).order('hadith_number').limit(50);
-  document.getElementById('hadiths-container').innerHTML=data.map(h=>`<div class="hadith-card-lib" data-num="${h.hadith_number}"><div style="font-weight:800;color:var(--gold);font-size:13px">حديث ${h.hadith_number}</div><div class="hadith-text-lib">${h.matn}</div><button onclick="openEditor('${h.hadith_number}')" style="color:var(--green);font-weight:700;margin-top:10px;background:var(--green-light);padding:8px 15px">📝 تحقيق</button></div>`).join('');
+  const bk = BOOKS.find(b=>b.id===id);
+  let hadiths = [];
+  try {
+    const{data}=await sb.from('texts').select('*').eq('book_id',id).order('hadith_number');
+    if(data && data.length > 0) hadiths = data;
+    else if(bk.cdnId) {
+      const res = await fetch(`${CDN}/editions/${bk.cdnId}.min.json`);
+      const json = await res.json();
+      hadiths = json.hadiths.map(h=>({hadith_number: h.hadithnumber, matn: h.text}));
+    }
+  } catch(e) { toast('خطأ في تحميل البيانات'); }
+
+  document.getElementById('hadiths-container').innerHTML=hadiths.slice(0,100).map(h=>`<div class="hadith-card-lib" data-num="${h.hadith_number}"><div style="font-weight:800;color:var(--gold);font-size:13px">حديث ${h.hadith_number}</div><div class="hadith-text-lib">${h.matn}</div><button onclick="openEditor('${h.hadith_number}')" style="color:var(--green);font-weight:700;margin-top:10px;background:var(--green-light);padding:8px 15px">📝 تحقيق</button></div>`).join('');
 }
 function setMode(m){
   if(m!=='browse'&&currentProfile.account_type!=='verified') return toast('للباحثين الموثقين فقط');
@@ -384,10 +436,15 @@ function setMode(m){
   if(m==='tahqiq') { togglePanel('mss'); togglePanel('editions'); }
 }
 async function openEditor(num){
-  activeHadith={num, text:document.querySelector(`[data-num="${num}"] .hadith-text-lib`).textContent}; setMode('editor');
+  const card = document.querySelector(`[data-num="${num}"]`);
+  activeHadith={num, text:card.querySelector('.hadith-text-lib').textContent};
+  setMode('editor');
   const{data}=await sb.from('user_edits').select('*').eq('user_id',currentUser.id).eq('book_id',currentBook).eq('hadith_number',num).maybeSingle();
   document.getElementById('editor-content').innerHTML = data ? data.edited_matn : activeHadith.text;
-  footnotes = data ? data.custom_footnotes : []; reindexFootnotes();
+  footnotes = data ? data.custom_footnotes : [];
+  reindexFootnotes();
+  // Scroll to top of editor
+  document.getElementById('reader-panel').scrollTop = 0;
 }
 function reindexFootnotes(){
   const refs=document.getElementById('editor-content').querySelectorAll('.m-fn-ref'), list=document.getElementById('editor-footnotes');
@@ -417,33 +474,133 @@ async function loadAdminPending(){
   document.getElementById('pending-reviews-list').innerHTML=data.map(e=>`<div class="post-card"><b>الباحث: ${e.profiles.full_name}</b> - ${e.book_id} (${e.hadith_number}) <button onclick="openReview('${e.id}')" style="float:left;color:var(--green);font-weight:800">مراجعة</button></div>`).join('')||'لا توجد طلبات معلقة';
 }
 async function openReview(id){
-  currentEditId=id; const{data:e}=await sb.from('user_edits').select('*').eq('id',id).single(); const{data:o}=await sb.from('texts').select('matn').eq('book_id',e.book_id).eq('hadith_number',e.hadith_number).single();
+  currentEditId=id; const{data:e}=await sb.from('user_edits').select('*, profiles(full_name)').eq('id',id).single(); const{data:o}=await sb.from('texts').select('matn').eq('book_id',e.book_id).eq('hadith_number',e.hadith_number).single();
   document.getElementById('comp-orig').textContent=o?.matn||'الأصل غير مسجل'; document.getElementById('comp-edit').innerHTML=e.edited_matn; document.getElementById('comp-fn').innerHTML=e.custom_footnotes.map(f=>f.num+': '+f.text).join('<br>');
   openModal('comp-modal');
 }
 async function approveEdit(){
-  const{data:e}=await sb.from('user_edits').select('*').eq('id',currentEditId).single();
+  const{data:e}=await sb.from('user_edits').select('*, profiles(full_name)').eq('id',currentEditId).single();
+  // Update canonical text
   await sb.from('texts').update({matn:e.edited_matn}).eq('book_id',e.book_id).eq('hadith_number',e.hadith_number);
+  // Mark as approved
   await sb.from('user_edits').update({status:'approved'}).eq('id',currentEditId);
-  toast('تم الاعتماد والنشر'); closeModal('comp-modal'); loadAdminPending();
+  // Create attribution post
+  await sb.from('posts').insert({
+    author_id: e.user_id,
+    post_type: 'تحقيق',
+    content: `تم اعتماد تحقيق جديد للباحث ${e.profiles?.full_name || 'باحث'} في كتاب ${e.book_id} (حديث ${e.hadith_number})`,
+    book_id: e.book_id,
+    text_id: e.hadith_number
+  });
+  toast('تم الاعتماد والنشر ونسبته للمحقق'); closeModal('comp-modal'); loadAdminPending();
 }
 
 // Utils
 function switchMainView(v){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('page-'+v).classList.add('active'); document.querySelectorAll('#nav-toggle button').forEach((b,i)=>b.classList.toggle('active',(v==='feed'&&i===0)||(v==='library'&&i===1))); }
 function switchAuthTab(t){ document.getElementById('auth-form-login').style.display=t==='login'?'flex':'none'; document.getElementById('auth-form-register').style.display=t==='register'?'flex':'none'; document.getElementById('tab-btn-login').classList.toggle('active',t==='login'); document.getElementById('tab-btn-register').classList.toggle('active',t==='register'); }
-function selectAccType(t){selectedAccType=t; document.getElementById('acc-guest').classList.toggle('active',t==='guest'); document.getElementById('acc-verified').classList.toggle('active',t==='verified');}
+function selectAccType(t){
+  selectedAccType=t;
+  document.getElementById('acc-guest').classList.toggle('active',t==='guest');
+  document.getElementById('acc-verified').classList.toggle('active',t==='verified');
+  document.getElementById('phone-field-wrapper').style.display = t==='verified' ? 'block' : 'none';
+  document.getElementById('acc-guest').style.borderColor = t==='guest' ? 'var(--green)' : 'var(--border)';
+  document.getElementById('acc-verified').style.borderColor = t==='verified' ? 'var(--green)' : 'var(--border)';
+}
 function openModal(id){document.getElementById(id).style.display='flex';}
 function closeModal(id){document.getElementById(id).style.display='none';}
 function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
 function toggleSidebar(){document.getElementById('lib-sidebar').classList.toggle('expanded');}
-function togglePanel(p){document.getElementById('panel-'+p).classList.toggle('open');}
+function togglePanel(p){
+  const el = document.getElementById('panel-'+p);
+  el.classList.toggle('open');
+  // Adjust reader padding or shadow if needed
+}
 function doLogout(){sb.auth.signOut();}
 function fmt(c){document.execCommand(c,false,null);}
-function insertMark(m){ const sel=window.getSelection(); const span=document.createElement('span'); span.className='mark-'+m; span.textContent=sel.toString(); sel.getRangeAt(0).deleteContents(); sel.getRangeAt(0).insertNode(span); reindexFootnotes(); }
+function insertMark(m){
+  const sel=window.getSelection();
+  if(!sel.toString()) return toast('حدد نصاً أولاً');
+  const span=document.createElement('span');
+  span.className='mark-'+m;
+  span.textContent=sel.toString();
+  const range = sel.getRangeAt(0);
+  range.deleteContents();
+  range.insertNode(span);
+  reindexFootnotes();
+}
 function addFootnote(){ const range=window.getSelection().getRangeAt(0); const sup=document.createElement('sup'); sup.className='m-fn-ref'; sup.textContent='*'; range.collapse(false); range.insertNode(sup); reindexFootnotes(); }
 function insertText(t){ const range=window.getSelection().getRangeAt(0); range.insertNode(document.createTextNode(t)); }
-function filterFeed(f){ loadPosts(f); }
-function doTakhrij(){ toast('البحث المتقدم جاري ربطه بالمكتبة'); }
+function filterFeed(f, btn){
+  document.querySelectorAll('#feed-filter-bar button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  loadPosts(f);
+}
+function goToHadith(bid, num){
+  switchMainView('library');
+  selectBook(bid).then(() => {
+    if(num) {
+      setTimeout(() => {
+        const el = document.querySelector(`[data-num="${num}"]`);
+        if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
+      }, 500);
+    }
+  });
+}
+function doTakhrij(){
+  const q = document.getElementById('takhrij-search').value.trim();
+  if(!q) return toast('أدخل كلمة للبحث');
+  const results = [];
+  const cards = document.querySelectorAll('.hadith-card-lib');
+  cards.forEach(card => {
+    const text = card.querySelector('.hadith-text-lib').textContent;
+    if(text.includes(q)) {
+      results.push({num: card.dataset.num, text: text.substring(0, 60) + '...'});
+    }
+  });
+
+  document.getElementById('takhrij-tools').style.display = 'block';
+  const container = document.getElementById('takhrij-results');
+  if(results.length === 0) {
+    container.innerHTML = '<div style="font-size:12px;color:var(--text2);padding:10px">لا نتائج في الكتاب الحالي</div>';
+  } else {
+    container.innerHTML = results.map(r => `
+      <div style="display:flex; gap:8px; padding:8px; border-bottom:1px solid #f0f2f5; align-items:start">
+        <input type="checkbox" class="t-check" data-num="${r.num}">
+        <div onclick="scrollToHadith('${r.num}')" style="cursor:pointer; flex:1">
+          <div style="font-weight:700; font-size:12px; color:var(--green)">حديث ${r.num}</div>
+          <div style="font-size:11px; color:var(--text2)">${r.text}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+function genCitation(type){
+  const selected = Array.from(document.querySelectorAll('.t-check:checked')).map(cb => cb.dataset.num);
+  if(selected.length === 0) return toast('اختر أحاديث من النتائج أولاً');
+  const bkTitle = BOOKS.find(b=>b.id===currentBook).title;
+  let text = 'أخرجه ' + bkTitle + ' ';
+  if(type === 'short') {
+    text += '(' + selected.join(')، و(') + ')';
+  } else {
+    text += selected.map(n => n + ' [الباب: ' + (document.querySelector(`[data-num="${n}"]`).previousElementSibling?.textContent || 'عام') + ']').join('، و');
+  }
+  text += ' من طريق ' + (currentProfile.full_name || 'الباحث') + ' بنحوه.';
+
+  // Auto-insert into editor if open
+  if(document.getElementById('editor-view').style.display === 'block') {
+    const content = document.getElementById('editor-content');
+    content.innerHTML += '<div style="color:var(--blue); font-size:18px; margin-top:10px">' + text + '</div>';
+    toast('تمت إضافة العزو للمحرر');
+  } else {
+    navigator.clipboard.writeText(text);
+    toast('تم نسخ العزو للحافظة');
+  }
+}
+function scrollToHadith(num){
+  const el = document.querySelector(`[data-num="${num}"]`);
+  if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
+}
 </script>
 </body>
 </html>
