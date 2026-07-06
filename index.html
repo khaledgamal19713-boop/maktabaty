@@ -4,114 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>مكتبتي</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-async function runSmartTakhrij() {
-    const editor = document.getElementById('editor-content');
-    const text = editor.innerText.substring(0, 60).trim();
-    if(!text) return toast('المحرر فارغ');
-    toast('جاري البحث في المكتبة...');
-    try {
-        const { data, error } = await sb.from('hadiths').select('*, book_id').ilike('text', '%' + text + '%').limit(5);
-        if(error) throw error;
-        if(!data || data.length === 0) return toast('لم يتم العثور على شواهد مطابقة');
-        let msg = '📚 شواهد مقترحة:\n' + data.map(h => `- ${h.book_id} (${h.hadithnumber})`).join('\n');
-        if(confirm(msg + '\n\nهل تريد إدراج العزو المختصر؟')) {
-            editor.focus();
-            document.execCommand('insertText', false, '\n[أخرجه ' + data[0].book_id + ' (' + data[0].hadithnumber + ')]');
-        }
-    } catch(e) { toast('خطأ في التخريج: ' + e.message); }
-}
-
-function reIndexFootnotes() {
-    const editor = document.getElementById('editor-content');
-    const markers = editor.querySelectorAll('.m-fn-ref');
-    markers.forEach((m, i) => { m.textContent = (i + 1); });
-    renderFootnotes();
-}
-
-window.addFootnote = function() {
-    const text = document.getElementById('fn-text-input').value.trim();
-    if(!text) return toast('أدخل نص الحاشية');
-    const sel = window.getSelection();
-    if(!sel.rangeCount) return toast('حدد مكاناً في النص');
-    const range = sel.getRangeAt(0);
-    const sup = document.createElement('sup');
-    sup.className = 'm-fn-ref';
-    sup.textContent = '*';
-    range.insertNode(sup);
-    footnotes.push({text});
-    reIndexFootnotes();
-    closeModal('fn-dialog');
-};
-
-window.deleteFootnote = function(idx) {
-    const editor = document.getElementById('editor-content');
-    const markers = editor.querySelectorAll('.m-fn-ref');
-    if(markers[idx]) markers[idx].remove();
-    footnotes.splice(idx, 1);
-    reIndexFootnotes();
-};
-
-window.renderFootnotes = function() {
-    const list = document.getElementById('fn-list');
-    const editor = document.getElementById('editor-content');
-    if(!list || !editor) return;
-    const markers = editor.querySelectorAll('.m-fn-ref');
-    list.innerHTML = markers.length ? Array.from({length: markers.length}).map((_, i) => `
-        <div class="fn-item" id="fn-item-${i+1}">
-            <span class="fn-num">${i+1}</span>
-            <span class="fn-text">${escHtml(footnotes[i]?.text || '...') }</span>
-            <button class="fn-del" onclick="deleteFootnote(${i})">×</button>
-        </div>`).join('') : '<div style="font-size:12px;color:#bbb;padding:4px 0">لا حواشي شخصية بعد</div>';
-};
-
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --green:#1a6b3c;--green-light:#e8f5ee;--green-dark:#114d30;--gold:#b8860b;--gold-light:#fdf8e8;
-  --blue:#1a6b3c;--blue-light:#e8f5ee;--text:#1a1a1a;--text2:#666;--text3:#999;
+  --green:#1a6b3c;--green-light:#e8f5ee;--gold:#b8860b;--gold-light:#fdf8e8;
+  --blue:#1a3a6b;--blue-light:#e8f0fd;--text:#1a1a1a;--text2:#666;--text3:#999;
   --border:#e0e0e0;--bg:#f7f7f5;--white:#fff;--purple:#6b1ab8;--purple-light:#f3e8fd;
-  --deep-blue: #0A192F; --gold-accent: #C5A059;
 }
-@keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
-@keyframes pulse-gold { 0% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0.4); } 70% { box-shadow: 0 0 0 25px rgba(197, 160, 89, 0); } 100% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0); } }
-@keyframes fade-in { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes shine { from { left: -100%; } to { left: 100%; } }
-.cinematic-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); position: relative; overflow: hidden; }
-.cinematic-card::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent); transform: skewX(-25deg); transition: 0.5s; }
-.cinematic-card:hover::after { animation: shine 1.2s infinite; }
-.cinematic-card:hover { transform: translateY(-12px); border-color: var(--gold-accent); background: rgba(255,255,255,0.07); box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
-.knowledge-gate-num { font-size: 4rem; color: var(--gold); margin-bottom: 20px; font-family: serif; opacity: 0.3; transition: all 0.4s; }
-.cinematic-card:hover .knowledge-gate-num { opacity: 0.8; transform: scale(1.1) translateX(-10px); }
-.maarif-input-box { background: rgba(0,0,0,0.3); border-radius: 20px; padding: 25px; border: 1px solid rgba(255,255,255,0.05); transition: all 0.3s; }
-.maarif-input-box:focus-within { border-color: var(--gold-accent); background: rgba(0,0,0,0.4); }
-.scientific-rank-badge { position: absolute; top: 30px; right: 50px; display: flex; align-items: center; gap: 18px; background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); padding: 12px 24px; border-radius: 40px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-.scientific-rank-badge:hover { transform: scale(1.05); border-color: var(--gold-accent); }
-.maarif-isnad-node { background: #fff; color: var(--deep-blue); padding: 18px 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); min-width: 240px; text-align: center; margin-bottom: 35px; position: relative; transition: all 0.3s; }
-.maarif-isnad-node:hover { transform: scale(1.04); box-shadow: 0 15px 40px rgba(0,0,0,0.3); }
-.maarif-isnad-node.sahabi { border-right: 8px solid var(--gold-accent); }
-.maarif-isnad-node.thabit { border-right: 8px solid var(--green); }
-.maarif-isnad-node .node-role { font-size: 10px; color: var(--gold-accent); margin-top: 5px; font-weight: 800; text-transform: uppercase; }
-.isnad-connector { position: absolute; bottom: -35px; width: 2px; height: 35px; background: linear-gradient(to bottom, var(--gold-accent), transparent); opacity: 0.3; }
-.scholarly-player { background: rgba(255,255,255,0.03); border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); padding: 25px; display: flex; align-items: center; gap: 20px; transition: all 0.3s; }
-.scholarly-player:hover { background: rgba(255,255,255,0.05); border-color: var(--gold-accent); }
-.audio-overlay { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); width: 450px; max-width: 90vw; background: rgba(10,25,47,0.95); backdrop-filter: blur(20px); border: 1px solid var(--gold-accent); border-radius: 25px; padding: 20px; z-index: 1000; box-shadow: 0 20px 50px rgba(0,0,0,0.5); transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1); display: flex; align-items: center; gap: 15px; }
-.audio-overlay.active { transform: translateX(-50%) translateY(0); }
-.audio-visualizer { flex: 1; height: 40px; display: flex; align-items: center; gap: 3px; }
-.v-bar { flex: 1; background: var(--gold-accent); border-radius: 2px; transition: height 0.2s; min-height: 4px; }
-body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6}
-h1,h2,h3,h4,h5,h6{font-family:'Segoe UI',Tahoma,serif;letter-spacing:-0.5px}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.5}
 a{text-decoration:none;color:inherit}
 button{cursor:pointer;border:none;outline:none;font-family:inherit;font-size:14px;background:none}
 input,textarea,select{font-family:inherit;font-size:14px;outline:none}
 img{max-width:100%}
 #nav{background:var(--green);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:50px;position:sticky;top:0;z-index:100;box-shadow:0 2px 6px rgba(0,0,0,.15)}
-#nav .logo{font-size:20px;font-weight:900;letter-spacing:-0.5px;flex-shrink:0}
-#nav-toggle{display:flex;background:rgba(0,0,0,.15);border-radius:24px;padding:3px;margin:0 12px;border:1px solid rgba(255,255,255,0.1)}
-#nav-toggle button{padding:7px 22px;border-radius:21px;color:rgba(255,255,255,.7);font-size:13px;font-weight:700;transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);letter-spacing:0.5px}
-#nav-toggle button.active{background:#fff;color:var(--green);box-shadow:0 4px 10px rgba(0,0,0,0.2)}
-#nav-toggle button.maarif-btn.active { background: var(--gold-accent); color: var(--deep-blue); box-shadow: 0 0 15px rgba(197, 160, 89, 0.4); }
+#nav .logo{font-size:19px;font-weight:700;letter-spacing:.5px;flex-shrink:0}
+#nav-toggle{display:flex;background:rgba(0,0,0,.15);border-radius:20px;padding:2px;margin:0 12px}
+#nav-toggle button{padding:6px 18px;border-radius:18px;color:rgba(255,255,255,.8);font-size:13px;font-weight:600}
+#nav-toggle button.active{background:#fff;color:var(--green)}
 #nav .nav-user{display:flex;align-items:center;gap:8px;font-size:13px;flex-shrink:0}
 #nav .nav-user span{color:rgba(255,255,255,.9);cursor:pointer;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #nav .nav-user button{background:rgba(255,255,255,.15);color:#fff;padding:5px 10px;border-radius:4px;font-size:12px}
@@ -141,7 +51,7 @@ img{max-width:100%}
 .field-soon{position:relative}
 .field-soon input{background:#f5f5f5;color:#aaa}
 .field-soon .soon-badge{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:10px;color:var(--gold);background:var(--gold-light);padding:2px 8px;border-radius:10px}
-#app{display:block}
+#app{display:none}
 .page{display:none;min-height:calc(100vh - 50px)}
 .page.active{display:block}
 #page-feed{max-width:680px;margin:0 auto;padding:16px}
@@ -174,19 +84,6 @@ img{max-width:100%}
 .post-footer button{color:var(--text2);font-size:13px;padding:3px 6px;border-radius:4px}
 .post-footer button:hover{background:var(--green-light);color:var(--green)}
 .post-footer button.liked{color:var(--green);font-weight:600}
-.post-menu{position:relative}
-.post-menu-btn{color:var(--text2);font-size:20px;padding:0 8px;line-height:1;border-radius:4px}
-.post-menu-btn:hover{background:var(--green-light);color:var(--green)}
-.post-menu-dropdown{position:absolute;left:0;top:30px;background:#fff;border:1px solid var(--border);border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,.15);min-width:120px;z-index:200;display:none;overflow:hidden}
-.post-menu-dropdown.open{display:block}
-.post-menu-dropdown button{display:block;width:100%;text-align:right;padding:9px 14px;font-size:13px;color:var(--text)}
-.post-menu-dropdown button:hover{background:var(--green-light)}
-.post-menu-dropdown .danger{color:#c0392b}
-.post-menu-dropdown .danger:hover{background:#fde8e8}
-.post-edit-box{margin-top:8px}
-.post-edit-box textarea{width:100%;border:1px solid var(--border);border-radius:6px;padding:10px;min-height:80px;font-size:15px;line-height:1.7;resize:vertical;font-family:inherit}
-.post-edit-actions{display:flex;gap:8px;margin-top:6px}
-.post-edit-actions button{padding:6px 18px;border-radius:6px;font-size:13px}
 .post-hadith-ref{font-size:12px;color:var(--blue);background:var(--blue-light);padding:3px 10px;border-radius:4px;cursor:pointer}
 .post-hadith-ref:hover{text-decoration:underline}
 .comments-section{margin-top:10px;border-top:1px solid #f3f3f3;padding-top:8px;display:none}
@@ -197,7 +94,7 @@ img{max-width:100%}
 .comment-input-row button{background:var(--green);color:#fff;padding:7px 14px;border-radius:20px;font-size:13px}
 #posts-loading,#posts-empty{text-align:center;padding:30px;color:var(--text2)}
 #page-library{display:flex;height:calc(100vh - 50px);overflow:hidden}
-#lib-sidebar{width:5%;min-width:5%;background:#fff;border-left:1px solid var(--border);overflow-y:auto;transition:width .2s;display:flex;flex-direction:column;flex-shrink:0}
+#lib-sidebar{width:64px;min-width:64px;background:#fff;border-left:1px solid var(--border);overflow-y:auto;transition:width .2s;display:flex;flex-direction:column;flex-shrink:0}
 #lib-sidebar.expanded{width:200px;min-width:200px}
 #sidebar-toggle{padding:10px;text-align:center;border-bottom:1px solid var(--border);color:var(--green);font-size:16px}
 #sidebar-toggle:hover{background:var(--green-light)}
@@ -278,8 +175,10 @@ img{max-width:100%}
 #comments-drawer-input{padding:10px;border-top:1px solid var(--border);display:flex;gap:6px}
 #comments-drawer-input input{flex:1;border:1px solid var(--border);border-radius:18px;padding:7px 12px;font-size:13px}
 #comments-drawer-input button{background:var(--green);color:#fff;padding:7px 14px;border-radius:18px;font-size:12px}
-#editor-toolbar{padding:8px 14px;border-bottom:1px solid var(--border);display:flex;gap:6px;flex-wrap:wrap;background:#fff;align-items:center}
-#editor-toolbar button{padding:5px 10px;border:1px solid var(--border);border-radius:4px;background:#fff;font-size:12px;color:var(--text)}
+#editor-toolbar{padding:6px 10px;border-bottom:1px solid var(--border);display:flex;gap:3px;flex-wrap:wrap;background:#f9f9f9;align-items:center;flex-shrink:0}
+#editor-toolbar button{padding:4px 7px;border:1px solid transparent;border-radius:4px;background:none;font-size:13px;color:var(--text);min-width:26px;text-align:center;line-height:1.2}
+#editor-toolbar button:hover{background:var(--green-light);border-color:var(--border);color:var(--green)}
+#editor-toolbar select{border:1px solid var(--border);border-radius:4px;padding:3px 5px;font-size:12px;background:#fff;max-width:95px}
 #editor-toolbar button:hover{background:var(--green-light);border-color:var(--green);color:var(--green)}
 #editor-toolbar .sep{width:1px;background:var(--border);align-self:stretch;margin:0 2px}
 #editor-toolbar .status-badge{font-size:11px;padding:3px 10px;border-radius:10px;margin-right:auto}
@@ -330,418 +229,4 @@ img{max-width:100%}
 .tahqiq-item .preview{font-size:13px;color:var(--text2);line-height:1.7;max-height:60px;overflow:hidden}
 .status-pill{font-size:11px;padding:2px 10px;border-radius:10px}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:none;align-items:center;justify-content:center;padding:16px}
-.modal-box{background:#fff;border-radius:8px;padding:22px;width:460px;max-width:100%;max-height:90vh;overflow-y:auto}
-.modal-box h3{color:var(--green);margin-bottom:6px;font-size:16px}
-.modal-box textarea,.modal-box input{width:100%;border:1px solid var(--border);border-radius:6px;padding:9px;margin-bottom:10px;font-size:13px}
-.modal-box textarea{min-height:80px;resize:vertical}
-.modal-types{display:flex;gap:6px;margin-bottom:10px}
-.modal-types button{padding:4px 12px;border-radius:20px;border:1px solid var(--border);font-size:12px;background:#fff}
-.modal-types button.active{background:var(--green);color:#fff;border-color:var(--green)}
-.modal-footer{display:flex;justify-content:flex-end;gap:8px}
-.modal-footer button{padding:8px 18px;border-radius:6px;font-size:13px}
-.modal-cancel{background:var(--bg);color:var(--text2);border:1px solid var(--border)}
-.modal-submit{background:var(--green);color:#fff}
-#img-zoom{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:none;align-items:center;justify-content:center}
-#img-zoom img{max-width:90vw;max-height:90vh;border-radius:4px}
-#img-zoom-close{position:absolute;top:20px;left:20px;background:rgba(255,255,255,.2);color:#fff;padding:8px 14px;border-radius:4px;font-size:14px}
-#toast{position:fixed;bottom:24px;right:24px;background:#333;color:#fff;padding:10px 18px;border-radius:6px;font-size:13px;z-index:999;opacity:0;transition:.3s;pointer-events:none;max-width:90vw}
-#toast.show{opacity:1}
-::-webkit-scrollbar{width:6px;height:6px}
-::-webkit-scrollbar-track{background:#f0f0f0}
-::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
-@media(max-width:768px){.side-panel.open{position:absolute;height:100%;z-index:50;width:70%}#comments-drawer.open{position:absolute;right:0;height:100%;z-index:51;width:80%}#lib-sidebar.expanded{position:absolute;height:100%;z-index:52}}
-</style>
-</head>
-<body>
-<div id="auth-overlay" style="display:none" style="display:none" style="display:none">
-  <div id="auth-box">
-    <h2>مكتبتي</h2>
-    <div id="auth-tabs">
-      <button class="active" onclick="switchAuthTab('login')">تسجيل الدخول</button>
-      <button onclick="switchAuthTab('register')">إنشاء حساب</button>
-    </div>
-    <div id="tab-login" class="auth-form">
-      <input type="email" id="login-email" placeholder="البريد الإلكتروني">
-      <input type="password" id="login-pass" placeholder="كلمة المرور">
-      <button class="btn-main" onclick="doLogin()">دخول</button>
-    </div>
-    <div id="tab-register" class="auth-form" style="display:none">
-      <input type="text" id="reg-name" placeholder="الاسم الكامل">
-      <input type="text" id="reg-username" placeholder="اسم المستخدم">
-      <input type="email" id="reg-email" placeholder="البريد الإلكتروني">
-      <input type="password" id="reg-pass" placeholder="كلمة المرور (6 أحرف على الأقل)">
-      <button class="btn-main" onclick="doRegister()">إنشاء الحساب</button>
-    </div>
-    <div id="auth-msg"></div>
-  </div>
-</div>
-<div id="app" style="display:block">
-  <nav id="nav">
-    <div class="logo" style="display:flex;align-items:center;gap:8px"><svg width="34" height="34" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="white"/><text x="50" y="55" font-family="Arial" font-size="35" fill="#1a6b3c" text-anchor="middle" font-weight="bold">م</text><text x="50" y="75" font-family="Arial" font-size="10" fill="#1a6b3c" text-anchor="middle">مكتبتي</text><text x="50" y="88" font-family="Arial" font-size="8" fill="#1a6b3c" text-anchor="middle">MKTBTY</text></svg>مكتبتي</div>
-    <button id="nav-back-btn" onclick="goBack()">&#8592; رجوع</button>
-    <div id="nav-toggle">
-      <button class="active" onclick="switchMainView('feed')">عام</button>
-      <button onclick="switchMainView('library')">مكتبتي</button>
-      <button class="maarif-btn" onclick="switchMainView('maarif')">المعارف</button>
-    </div>
-    <div class="nav-user">
-      <span id="nav-username" onclick="showProfilePage(null)"></span>
-      <button onclick="showProfilePage(null)" title="حسابي">👤</button>
-      <button onclick="doLogout()">خروج</button>
-    </div>
-  </nav>
-  <div id="sub-bar" style="display:none"></div>
-  <div id="page-feed" class="page active">
-    <div id="composer">
-      <div id="guest-notice" style="display:none">حساب زائر: يمكنك نشر فائدة عامة فقط، والتعليق على كل المحتوى.</div>
-      <div id="post-types">
-        <button class="active" data-type="حديث">حديث</button>
-        <button data-type="فائدة">فائدة</button>
-        <button data-type="سؤال">سؤال</button>
-        <button data-type="اقتباس">اقتباس</button>
-        <button data-type="تحقيق">تحقيق</button>
-      </div>
-      <textarea id="post-content" placeholder="اكتب منشورك..."></textarea>
-      <div id="composer-footer">
-        <div style="display:flex;gap:8px;align-items:center;font-size:13px;color:var(--text2)">المسار:
-          <select id="post-track"><option value="عام">عام</option><option value="حديث">علم الحديث</option><option value="فقه">الفقه</option><option value="تفسير">التفسير</option><option value="تحقيق">التحقيق</option></select>
-        </div>
-        <button id="btn-publish" onclick="publishPost()">نشر</button>
-      </div>
-    </div>
-    <div id="posts-loading">جاري التحميل...</div>
-    <div id="posts-list"></div>
-  </div>
-  <div id="page-library" class="page">
-    <div id="lib-sidebar">
-      <div id="sidebar-toggle" onclick="toggleSidebar()">☰</div>
-      <div id="books-list"></div>
-    </div>
-    <div id="lib-main">
-      <div id="lib-empty"><p>📚</p><p>اختر كتاباً من القائمة الجانبية</p></div>
-      <div id="lib-active" style="display:none;flex-direction:column;flex:1;overflow:hidden">
-        <div id="mode-bar">
-          <div class="modes">
-            <button class="active" data-mode="browse" onclick="setMode('browse')">تصفح</button>
-            <button data-mode="tahqiq" onclick="setMode('tahqiq')">تحقيق</button>
-            <button data-mode="editor" onclick="setMode('editor')">المحرر</button>
-          </div>
-          <div class="toc-and-fn">
-            <select id="toc-select" onchange="selectChapterFromDropdown(this.value)"></select>
-            <span id="fn-toggles" style="display:flex;gap:4px"></span>
-            <button id="takhrij-tool-btn" onclick="togglePaneD()" style="display:none;padding:5px 12px;border-radius:6px;border:1px solid var(--border);font-size:12px;color:var(--green);font-weight:600">🔍 التخريج</button>
-            <button id="add-text-book-btn" onclick="openAddTextModal()" style="display:none;padding:5px 12px;border-radius:6px;border:1px solid var(--border);font-size:12px;color:var(--green)">+ كتاب نصي</button>
-            <button id="comments-toggle-btn" onclick="toggleCommentsDrawer()">💬 تعليقات</button>
-          </div>
-        </div>
-        <div id="lib-content">
-          <button id="panel-toggle-right" onclick="togglePanel('editions')">‹</button>
-          <div class="side-panel" id="panel-editions">
-            <div class="side-panel-header"><span>الطبعات المطبوعة</span></div>
-            <div class="side-panel-body"><div id="editions-list"></div><button class="add-item-btn" onclick="openAddModal('edition')">+ إضافة مصورة مطبوع</button></div>
-          </div>
-          <div id="reader-panel">
-            <div id="reader-header">
-              <h2 id="reader-title"></h2>
-              <div id="hadith-search-bar"><input id="hadith-search-input" placeholder="بحث..."><button onclick="searchHadiths()">بحث</button></div>
-            </div>
-            <div id="lib-loading" style="display:none;text-align:center;padding:40px;color:var(--text2)">جاري تحميل الأحاديث...</div>
-            <div id="hadiths-container"></div>
-            <div id="editor-view" style="display:none">
-              <div id="editor-toolbar">
-                <button onclick="fmt('bold')"><b>B</b></button>
-                <button onclick="fmt('italic')"><i>I</i></button>
-                <button onclick="fmt('underline')"><u>U</u></button>
-                <div class="sep"></div>
-                <button onclick="insertTxt('َ')">َ</button>
-                <button onclick="insertTxt('ُ')">ُ</button>
-                <button onclick="insertTxt('ِ')">ِ</button>
-                <button onclick="insertTxt('ّ')">ّ</button>
-                <div class="sep"></div>
-                <button class="mark-btn tashif" onclick="insertMark('tashif')">تصحيف</button>
-                <button class="mark-btn ziyada" onclick="insertMark('ziyada')">زيادة</button>
-                <button class="mark-btn naqs" onclick="insertMark('naqs')">نقص</button>
-                <button class="mark-btn shahid" onclick="insertMark('shahid')">شاهد</button>
-                <button class="btn btn-sm btn-outline-primary" style="font-size:11px; margin-right:5px; border:1px solid var(--border); border-radius:4px" onclick="runSmartTakhrij()">🔍 تخريج ذكي</button>
-                <div class="sep"></div>
-                <span class="status-badge" id="edit-status-badge"></span>
-              </div>
-              <div style="padding:14px">
-                <div id="editor-content" contenteditable="true" spellcheck="false"></div>
-                <div id="editor-footnotes"><h5>الحواشي الشخصية</h5><div id="fn-list"></div><button id="btn-add-fn" onclick="openFnDialog()">+ إضافة حاشية مرقّمة</button></div>
-                <div id="editor-actions">
-                  <button class="btn-save" onclick="saveDraft()">حفظ كمسودة</button>
-                  <button class="btn-submit" onclick="submitForReview()">إرسال للجنة العلمية</button>
-                </div>
-                <p style="font-size:12px;color:var(--text2);margin-top:10px">ملاحظة: تعديلاتك تظهر في صفحتك الشخصية ولدى متابعيك فقط، ولا تغيّر النص الأصلي حتى تُراجَع وتُعتمد.</p>
-              </div>
-            </div>
-          </div>
-          <button id="panel-toggle-left" onclick="togglePanel('mss')">›</button>
-          <div class="side-panel" id="panel-mss">
-            <div class="side-panel-header"><span>المخطوطات</span></div>
-            <div class="side-panel-body"><div id="mss-list"></div><button class="add-item-btn" onclick="openAddModal('manuscript')">+ إضافة مصورة مخطوط</button></div>
-          </div>
-        </div>
-      </div>
-      <div id="comments-drawer">
-        <div id="comments-drawer-header"><span>تعليقات القرّاء</span><button onclick="toggleCommentsDrawer()">✕</button></div>
-        <div id="comments-drawer-body"></div>
-        <div id="comments-drawer-input"><input id="drawer-comment-input" placeholder="أضف تعليقاً..."><button onclick="submitDrawerComment()">إرسال</button></div>
-      </div>
-      <div id="pane-d" style="width:0;overflow:hidden;transition:width .2s;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0">
-        <div style="padding:10px 12px;font-size:13px;font-weight:600;color:var(--blue);border-bottom:1px solid var(--border);display:flex;justify-content:space-between"><span>مساحة التخريج</span><button onclick="togglePaneD()">✕</button></div>
-        <div style="padding:10px;flex:1;overflow-y:auto">
-           <input type="text" id="takhrij-search" placeholder="ابحث في فهارس الكتاب..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px;margin-bottom:10px">
-           <button onclick="doTakhrij()" style="width:100%;background:var(--blue);color:#fff;padding:8px;border-radius:6px;font-size:13px">بحث واستخراج عزو</button>
-           <div id="takhrij-results" style="margin-top:15px"></div>
-           <div id="takhrij-actions" style="display:none;margin-top:10px;gap:6px;flex-direction:column">
-              <button onclick="genCitation('short')" style="background:var(--blue-light);color:var(--blue);padding:6px;border-radius:4px;font-size:11px">عزو مختصر</button>
-              <button onclick="genCitation('medium')" style="background:var(--gold-light);color:var(--gold);padding:6px;border-radius:4px;font-size:11px">عزو متوسط</button>
-              <button onclick="genCitation('long')" style="background:var(--green-light);color:var(--green);padding:6px;border-radius:4px;font-size:11px">عزو موسع</button>
-           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div id="page-profile" class="page">
-    <div id="profile-header">
-      <div class="avatar" id="profile-avatar"></div>
-      <div id="profile-info">
-        <h2 id="profile-name"></h2>
-        <span class="acc-badge" id="profile-acc-badge"></span>
-        <p id="profile-bio-text"></p>
-        <div id="profile-bio-edit"><input id="profile-bio-input" placeholder="اكتب نبذة عنك..."><button onclick="saveBio()">حفظ</button></div>
-      </div>
-    </div>
-    <div id="profile-tabs">
-      <button class="active" data-tab="posts" onclick="switchProfileTab('posts')">منشوراتي</button>
-      <button data-tab="tahqiq" onclick="switchProfileTab('tahqiq')">تحقيقاتي</button>
-      <button data-tab="additions" onclick="switchProfileTab('additions')">إضافاتي</button>
-    </div>
-    <div id="profile-content"></div>
-  </div>
-  <div id="page-maarif" class="page" style="background:#0a192f;color:#fff;min-height:100vh;padding:0;overflow-x:hidden">
-    <!-- Cinematic Header -->
-    <div style="background:radial-gradient(circle at top, rgba(197,160,89,0.1) 0%, transparent 70%), linear-gradient(to bottom, rgba(26,107,60,0.4), transparent);padding:120px 20px;text-align:center;position:relative;border-bottom:1px solid rgba(255,255,255,0.05)">
-      <div class="scientific-rank-badge">
-        <div style="text-align:right">
-          <div style="font-size:9px;opacity:0.4;text-transform:uppercase;letter-spacing:1.5px;font-weight:900">الرتبة العلمية</div>
-          <div id="maarif-rank-title" style="font-size:13px;font-weight:900;color:var(--gold-accent);letter-spacing:0.5px">باحث أكاديمي مستجد</div>
-        </div>
-        <div id="maarif-rank-num" style="width:44px;height:44px;border-radius:50%;border:2px solid var(--gold-accent);display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--gold-accent);box-shadow:0 0 15px rgba(197,160,89,0.2)">١</div>
-      </div>
-
-      <h1 style="font-size:4.5rem;font-weight:900;margin-bottom:25px;letter-spacing:-3px;animation:float 6s ease-in-out infinite;text-shadow:0 10px 30px rgba(0,0,0,0.5)">المعارف <span style="color:var(--gold-accent);font-style:italic;font-weight:200;font-family:serif">AL-MA3ARF</span></h1>
-      <p style="font-size:1.7rem;opacity:0.7;max-width:900px;margin:0 auto 60px;line-height:1.8;font-weight:300;font-style:italic;color:rgba(255,255,255,0.9)">"نحن لا نقدم دروساً، بل نهيئ بوابات ونوافذ معرفية جذابة، ينساب من خلالها العلم مدعوماً بذكاء اصطناعي يدرك احتياجاتك ويستبق تساؤلاتك."</p>
-      <button onclick="document.getElementById('maarif-gates').scrollIntoView({behavior:'smooth'})" style="background:var(--gold-accent);color:var(--deep-blue);padding:20px 60px;border-radius:100px;font-weight:900;font-size:1.3rem;box-shadow:0 0 40px rgba(197,160,89,0.4);border:1px solid rgba(255,255,255,0.2);cursor:pointer;transition:all 0.3s;animation:pulse-gold 3s infinite">ارتقِ بالبصيرة</button>
-    </div>
-
-    <!-- Knowledge Gates -->
-    <div id="maarif-gates" style="max-width:1300px;margin:0 auto;padding:80px 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:40px">
-      <!-- Gate 1: Smart Analysis -->
-      <div class="cinematic-card" style="padding:50px;border-radius:40px;position:relative;overflow:hidden">
-        <div class="knowledge-gate-num">٠١</div>
-        <h3 style="font-size:1.8rem;font-weight:800;margin-bottom:20px">بوابة الاستيعاب الفوري</h3>
-        <p style="opacity:0.7;line-height:1.8;margin-bottom:40px;font-size:1.1rem">ارفع مادتك المعرفية (نص الإسناد) ليقوم النموذج بتحويلها فوراً إلى مسار تفاعلي وشجرة سند رقمية متكاملة.</p>
-        <div class="maarif-input-box">
-          <textarea id="maarif-isnad-input" placeholder="أدخل نص الإسناد لتحليله..." style="width:100%;height:120px;background:none;border:none;color:#fff;outline:none;font-family:inherit;resize:none;font-size:15px;line-height:1.6"></textarea>
-          <button onclick="analyzeIsnadMaarif()" style="width:100%;background:var(--green);color:#fff;padding:15px;border-radius:15px;margin-top:15px;font-weight:900;letter-spacing:1px;box-shadow:0 10px 20px rgba(0,0,0,0.2)">بدء التحليل الذكي</button>
-        </div>
-        <div id="maarif-isnad-results" style="margin-top:30px;display:none;background:rgba(255,255,255,0.05);padding:25px;border-radius:20px;border-right:5px solid var(--green)"></div>
-      </div>
-
-      <!-- Gate 2: Interactive Narrators -->
-      <div class="cinematic-card" style="padding:50px;border-radius:40px">
-        <div class="knowledge-gate-num">٠٢</div>
-        <h3 style="font-size:1.8rem;font-weight:800;margin-bottom:20px">فضاء التفاعل الحي</h3>
-        <p style="opacity:0.7;line-height:1.8;margin-bottom:40px;font-size:1.1rem">الذكاء الاصطناعي هنا هو رفيقك الحكيم؛ يناقشك في تراجم الرواة ويستكشف معك خبايا الجرح والتعديل بأسلوب تفاعلي.</p>
-        <div style="display:flex;gap:12px;margin-bottom:25px">
-          <input type="text" id="maarif-narrator-search" placeholder="ابحث عن راوٍ..." style="flex:1;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:15px;padding:15px;color:#fff;outline:none;font-size:15px">
-          <button onclick="searchNarratorMaarif()" style="background:var(--gold);color:#0a192f;padding:0 25px;border-radius:15px;font-weight:900">بحث</button>
-        </div>
-        <div id="maarif-narrator-results" style="max-height:300px;overflow-y:auto;padding-left:10px"></div>
-      </div>
-
-      <!-- Gate 3: Dynamic Assets -->
-      <div class="cinematic-card" style="padding:50px;border-radius:40px">
-        <div class="knowledge-gate-num">٠٣</div>
-        <h3 style="font-size:1.8rem;font-weight:800;margin-bottom:20px">مكتبة الأصول الديناميكية</h3>
-        <p style="opacity:0.7;line-height:1.8;margin-bottom:40px;font-size:1.1rem">مستودع ذكي يتوقع احتياجاتك المستقبلية؛ حيث تندمج المخطوطات والوسائط السمعية والبصرية لتكوين تجربة غامرة.</p>
-        <div style="text-align:center;padding:40px;border:2px dashed rgba(255,255,255,0.1);border-radius:30px;background:rgba(255,255,255,0.02)">
-          <div style="font-size:3rem;margin-bottom:20px;opacity:0.8">🔊</div>
-          <p style="font-size:14px;color:var(--gold);font-weight:600;margin-bottom:20px">الاستماع للرواية والتعليق العلمي</p>
-          <button onclick="switchMainView('library')" style="background:none;border:2px solid var(--gold);color:var(--gold);padding:12px 30px;border-radius:15px;font-weight:900;font-size:13px;transition:all 0.3s hover:bg-var(--gold) hover:color-deep-blue">فتح أرشيف الوسائط</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Philosophy Section -->
-    <div style="max-width:900px;margin:100px auto;padding:60px;background:rgba(255,255,255,0.02);border-radius:50px;border:1px solid rgba(184,134,11,0.1);text-align:center">
-      <h2 style="font-size:2rem;font-weight:800;color:var(--gold);margin-bottom:30px;font-style:italic">منظومة معرفية انسيابية ومحفزة</h2>
-      <p style="font-size:1.4rem;line-height:2;opacity:0.8;font-weight:300">نعتمد فلسفة التدرج والمكافأة المعرفية في بيئة متكاملة؛ حيث صممت النوافذ والواجهات لترشد المتلقي تلقائياً بأسلوب بديهي دون الحاجة لتوجيه مباشر، محولةً العلم إلى تجربة غامرة لا تُنسى.</p>
-    </div>
-  </div>
-  <div id="audio-player-overlay" class="audio-overlay">
-    <button id="audio-play-btn" onclick="toggleScholarlyAudio()" style="width:50px;height:50px;border-radius:50%;background:var(--gold-accent);color:var(--deep-blue);display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 0 15px rgba(197,160,89,0.3)">▶</button>
-    <div style="flex:1">
-      <div id="audio-title" style="font-size:12px;font-weight:900;color:var(--gold-accent);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">جاري التحميل...</div>
-      <div class="audio-visualizer" id="maarif-visualizer">
-        <div class="v-bar" style="height:30%"></div><div class="v-bar" style="height:60%"></div><div class="v-bar" style="height:90%"></div><div class="v-bar" style="height:50%"></div><div class="v-bar" style="height:80%"></div><div class="v-bar" style="height:40%"></div><div class="v-bar" style="height:70%"></div><div class="v-bar" style="height:20%"></div>
-      </div>
-    </div>
-    <button onclick="closeScholarlyAudio()" style="color:rgba(255,255,255,0.5);font-size:18px;padding:5px">✕</button>
-  </div>
-</div>
-<div class="modal-overlay" id="quick-comment-modal"><div class="modal-box"><h3>تعليق على الحديث</h3><div id="qc-hadith-preview" style="font-size:13px;color:var(--text2);background:var(--bg);padding:10px;border-radius:6px;margin-bottom:10px;max-height:80px;overflow:hidden"></div><div class="modal-types" id="qc-types"><button class="active" data-type="حديث">حديث</button><button data-type="فائدة">فائدة</button><button data-type="تحقيق">تحقيق</button></div><textarea id="qc-text" placeholder="اكتب تعليقك..."></textarea><div class="modal-footer"><button class="modal-cancel" onclick="closeModal('quick-comment-modal')">إلغاء</button><button class="modal-submit" onclick="submitQC()">نشر في الرئيسية</button></div></div></div>
-<div class="modal-overlay" id="fn-dialog"><div class="modal-box"><h3>إضافة حاشية مرقّمة</h3><p style="font-size:12px;color:var(--text2);margin-bottom:8px">حدد كلمة في النص أولاً.</p><textarea id="fn-text-input" placeholder="نص الحاشية..."></textarea><div class="modal-footer"><button class="modal-cancel" onclick="closeModal('fn-dialog')">إلغاء</button><button class="modal-submit" onclick="addFootnote()">إضافة</button></div></div></div>
-<div class="modal-overlay" id="add-item-modal"><div class="modal-box"><h3 id="add-item-title">إضافة مصورة</h3><input type="text" id="ai-name" placeholder="الاسم"><input type="text" id="ai-meta" placeholder="معلومات إضافية"><input type="text" id="ai-image-url" placeholder="رابط الصورة (URL)"><textarea id="ai-notes" placeholder="ملاحظات..."></textarea><div class="modal-footer"><button class="modal-cancel" onclick="closeModal('add-item-modal')">إلغاء</button><button class="modal-submit" onclick="submitAddItem()">إضافة</button></div></div></div>
-<div class="modal-overlay" id="add-text-modal"><div class="modal-box"><h3>إضافة كتاب نصي</h3><input type="text" id="at-title" placeholder="عنوان الكتاب"><input type="text" id="at-author" placeholder="المؤلف"><textarea id="at-content" placeholder="النص..." style="min-height:160px"></textarea><div class="modal-footer"><button class="modal-cancel" onclick="closeModal('add-text-modal')">إلغاء</button><button class="modal-submit" onclick="submitAddText()">حفظ</button></div></div></div>
-<div id="img-zoom" onclick="closeZoom()"><button id="img-zoom-close" onclick="closeZoom()">إغلاق</button><img id="zoom-img" src="" alt=""></div>
-<div id="fn-popover"></div>
-<div id="toast"></div>
-<script>
-const SUPA_URL='https://uqfqpqjarofbcdzkrdgs.supabase.co';
-const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVxZnFwcWphcm9mYmNkemtyZGdzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4ODUwMzUsImV4cCI6MjA5MzQ2MTAzNX0.8z2Nc8t14txttepiRV5yhhkBfDdE77FJ7rx1dxQrICI';
-const CDN='https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1';
-const BOOKS=[{id:'bukhari',cdnId:'ara-bukhari',icon:'📗',short:'البخاري',title:'صحيح البخاري',author:'البخاري'},{id:'muslim',cdnId:'ara-muslim',icon:'📘',short:'مسلم',title:'صحيح مسلم',author:'مسلم'},{id:'abudawud',cdnId:'ara-abudawud',icon:'📙',short:'أبو داود',title:'سنن أبي داود',author:'أبو داود'},{id:'tirmidhi',cdnId:'ara-tirmidhi',icon:'📕',short:'الترمذي',title:'سنن الترمذي',author:'الترمذي'},{id:'nasai',cdnId:'ara-nasai',icon:'📔',short:'النسائي',title:'سنن النسائي',author:'النسائي'},{id:'ibnmajah',cdnId:'ara-ibnmajah',icon:'📓',short:'ابن ماجه',title:'سنن ابن ماجه',author:'ابن ماجه'}];
-const FN_CATS=['تخريج','فروق_نسخ','غريب'];
-const FN_CAT_DB={'تخريج':'تخريج','فروق_نسخ':'فروق نسخ','غريب':'غريب'};
-const{createClient}=supabase;
-const sb=createClient(SUPA_URL,SUPA_KEY);
-let currentUser=null,currentProfile=null,mainView='feed',feedFilter='الكل',currentPostType='حديث';
-let currentBook=null,currentHadiths=[],currentChapters=[],activeChapter=null;
-let currentMode='browse',activeFnCats={},openPanels={mss:false,editions:false};
-let commentsDrawerOpen=false,activeHadith=null,qcHadith=null,footnotes=[],fnCounter=0;
-let currentDraftId=null,addItemType=null,viewedProfileId=null,previousView='feed';
-
-window.addEventListener('DOMContentLoaded',async()=>{
-  const{data:{session}}=await sb.auth.getSession();
-  if(session){
-    currentUser=session.user;
-    await loadProfile();
-  } else {
-    currentUser = { id: 'guest_user', email: 'guest@example.com' };
-    currentProfile = { full_name: 'ضيف (معاينة)', account_type: 'guest' };
-  }
-  showApp();
-  sb.auth.onAuthStateChange(async(event,session)=>{
-    if(event==='SIGNED_IN'&&session){currentUser=session.user;await loadProfile();showApp();}
-    if(event==='SIGNED_OUT'){currentUser=null;currentProfile=null;location.reload();}
-  });
-  initPostTypes();initQCTypes();loadCustomBooks();renderBooks();
-  ['quick-comment-modal','fn-dialog','add-item-modal','add-text-modal'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el)el.addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal(id);});
-  });
-  document.addEventListener('click',e=>{if(!e.target.closest('.fn-marker')&&!e.target.closest('#fn-popover'))document.getElementById('fn-popover').style.display='none';});
-});
-
-async function loadProfile(){
-  const {data}=await sb.from('profiles').select('*').eq('id',currentUser.id).single();
-  if(!data){
-    await sb.from('profiles').upsert({id:currentUser.id,full_name:'باحث جديد',account_type:'guest'});
-    const res=await sb.from('profiles').select('*').eq('id',currentUser.id).single();
-    currentProfile=res.data;
-  } else {
-    currentProfile=data;
-  }
-}
-function showApp(){
-  document.getElementById('auth-overlay').style.display='none';
-  document.getElementById('app').style.display='block';
-  document.getElementById('nav-username').textContent=currentProfile?.full_name||'مستخدم';
-  applyAccountRestrictions();
-  switchMainView('feed');
-  refreshMaarifRank();
-}
-function applyAccountRestrictions(){
-  const isGuest=currentProfile?.account_type!=='verified';
-  document.querySelectorAll('#post-types button').forEach(b=>{b.disabled=isGuest&&b.dataset.type!=='فائدة';});
-  document.querySelectorAll('#mode-bar .modes button').forEach(b=>{if(isGuest&&b.dataset.mode!=='browse'){b.disabled=true;}else{b.disabled=false;}});
-}
-function switchMainView(view){
-  mainView=view;
-  document.getElementById('page-feed').classList.toggle('active',view==='feed');
-  document.getElementById('page-library').classList.toggle('active',view==='library');
-  document.querySelectorAll('#nav-toggle button').forEach((b,i)=>b.classList.toggle('active',view==='feed'?i===0:i===1));
-  if(view==='feed')loadPosts();
-}
-function renderBooks(){
-  document.getElementById('books-list').innerHTML=BOOKS.map(b=>`<div class="book-item" data-id="${b.id}" onclick="selectBook('${b.id}')"><span class="book-icon">${b.icon}</span><div class="book-title">${b.title}</div></div>`).join('');
-}
-async function selectBook(id){
-  currentBook=BOOKS.find(b=>b.id===id);
-  document.getElementById('lib-empty').style.display='none';
-  document.getElementById('lib-active').style.display='flex';
-  document.getElementById('reader-title').textContent=currentBook.title;
-  const {data} = await sb.from('hadiths').select('*').eq('book_id',id).limit(50);
-  renderHadiths(data||[]);
-}
-function renderHadiths(hadiths){
-  document.getElementById('hadiths-container').innerHTML=hadiths.map(h=>`<div class="hadith-card"><div class="hadith-text">${escHtml(h.text)}</div><button class="btn btn-sm btn-outline-warning mt-2" onclick="setActiveHadith('${h.hadithnumber}')">تحرير</button></div>`).join('');
-}
-function setActiveHadith(num){
-    activeHadith={num};
-    setMode('editor');
-}
-function setMode(mode){
-    currentMode=mode;
-    document.getElementById('hadiths-container').style.display=mode==='browse'?'block':'none';
-    document.getElementById('editor-view').style.display=mode==='editor'?'block':'none';
-}
-async function loadPosts(){
-    const {data}=await sb.from('posts').select('*, profiles(full_name)').order('created_at',{ascending:false}).limit(20);
-    document.getElementById('posts-list').innerHTML=(data||[]).map(p=>`<div class="post-card"><div class="fw-bold">${p.profiles?.full_name||'باحث'}</div><div>${escHtml(p.content)}</div></div>`).join('');
-}
-async function publishPost(){
-    const c=document.getElementById('post-content').value;
-    await sb.from('posts').insert({author_id:currentUser.id,content:c});
-    document.getElementById('post-content').value='';
-    loadPosts();
-    toast('تم النشر');
-}
-async function runSmartTakhrij(){
-    const content = document.getElementById('editor-content').innerText;
-    const sample = content.substring(0, 60).trim();
-    if(!sample) return toast('المحرر فارغ');
-    toast('جاري البحث في المكتبة...');
-    try {
-        const { data, error } = await sb.from('hadiths').select('*, book_id').ilike('text', '%' + sample + '%').limit(5);
-        if(error) throw error;
-        if(!data || data.length === 0) return toast('لم يتم العثور على شواهد مطابقة');
-        let msg = '📚 شواهد مقترحة:\n' + data.map(h => `- ${h.book_id} (${h.hadithnumber})`).join('\n');
-        if(confirm(msg + '\n\nهل تريد إدراج العزو المختصر؟')) {
-            document.getElementById('editor-content').focus();
-            document.execCommand('insertText', false, '\n[أخرجه ' + data[0].book_id + ' (' + data[0].hadithnumber + ')]');
-        }
-    } catch(e) { toast('خطأ في التخريج: ' + e.message); }
-}
-function openFnDialog(){
-    const t=prompt('نص الحاشية:');
-    if(t) addFootnote(t);
-}
-function addFootnote(text){
-    const sel=window.getSelection();
-    if(!sel.rangeCount)return;
-    const r=sel.getRangeAt(0);
-    const s=document.createElement('sup');
-    s.className='m-fn-ref';
-    s.textContent='*';
-    r.insertNode(s);
-    footnotes.push({text});
-    reIndexFootnotes();
-}
-function reIndexFootnotes(){
-    const ms=document.querySelectorAll('.m-fn-ref');
-    ms.forEach((m,i)=>m.textContent=(i+1));
-    document.getElementById('fn-list').innerHTML=footnotes.map((f,i)=>`<div>${i+1}. ${escHtml(f.text)}</div>`).join('');
-}
-function closeModal(id){document.getElementById(id).style.display='none';}
-function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
-function escHtml(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-async function loadCustomBooks(){}
-function initPostTypes(){}
-function initQCTypes(){}
-function doLogout(){sb.auth.signOut();}
-</script></body></html>
+.modal-box{background:#fff;border-radius:8px;padding:22px;width:460px;max-width:100%;max-hei
