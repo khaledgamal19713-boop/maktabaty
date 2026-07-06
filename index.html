@@ -852,7 +852,9 @@ function closeScholarlyAudio(){document.getElementById('audio-player-overlay').c
 async function submitQC(){toast('تم النشر بنجاح');closeModal('quick-comment-modal');}
 function closeZoom(){document.getElementById('img-zoom').style.display='none';}
 function refreshMaarifRank(){
-  document.getElementById('maarif-rank-title').textContent='باحث متقدم';
-  document.getElementById('maarif-rank-num').textContent='٥';
+  const elTitle = document.getElementById('maarif-rank-title');
+  const elNum = document.getElementById('maarif-rank-num');
+  if(elTitle) elTitle.textContent='باحث متقدم';
+  if(elNum) elNum.textContent='٥';
 }
 </script></body></html>
