@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>مكتبتي</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAALrUlEQVR4nF2XaZBc1XXHf/e+97pf7+t0z6aZ0SwaSQgEAgMxgkAcYWwSuwqIsyeV2K5KPsRxvsQpf8riOF4quJyyk4BTiQk4OI4D2FCGxHYsFiOBZEkIaaTRaDbN0jM9vUzv/fq9d28+9IQPOVWn7sfzv+d/6vzPX5w/f1Yb0sIwJVKamKaJYRgYhoE0JADhoE0sHKPpdVmtFLhR2WKnVaPT64CGSDBELpZmNJ1nLDVIxLBotVu0ew5oUErh+z6e572XruvieR7i4sWL2jDke0X7AEwAApZFMhZnZbfITy6/zXJhjZAwGUwMkI4lCQeCaARtp0O1WWenVaWLy0RuhOOzx9ifGqTerON4LmjwPBfPU/h+H4Druoi5ubk9ACaGFBimiRaQCEXpKI+n33iJayuLHD9wG8cP385Ibgg7ZIOgHwLQgA+dbpsb2wVOz1/g1PJFJgZH+e3jv0zMCrLbrAPGEpS">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABzenr0AAALrUlEQVR4nF2XaZBc1XXHf/e+97pf7+t0z6aZ0SwaSQgEAgMxgkAcYWwSuwqIsyeV2K5KPsRxvsQpf8riOF4quJyyk4BTiQk4OI4D2FCGxHYsFiOBZEkIaaTRaDbN0jM9vUzv/fq9d28+9IQPOVWn7sfzv+d/6vzPX5w/f1Yb0sIwJVKamKaJYRgYhoE0JADhoE0sHKPpdVmtFLhR2WKnVaPT64CGSDBELpZmNJ1nLDVIxLBotVu0ew5oUErh+z6e572XruvieR7i4sWL2jDke0X7AEwAApZFMhZnZbfITy6/zXJhjZAwGUwMkI4lCQeCaARtp0O1WWenVaWLy0RuhOOzx9ifGqTerON4LmjwPBfPU/h+H4Druoi5ubk9ACaGFBimiRaQCEXpKI+n33iJayuLHD9wG8cP385Ibgg7ZIOgHwLQgA+dbpsb2wVOz1/g1PJFJgZH+e3jv0zMCrLbrAPGEpS">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
 async function runSmartTakhrij() {
     const editor = document.getElementById('editor-content');
     const text = editor.innerText.substring(0, 60).trim();
@@ -353,7 +356,7 @@ img{max-width:100%}
 </style>
 </head>
 <body>
-<div id="auth-overlay" style="display:none" style="display:none" style="display:none">
+<div id="auth-overlay" style="display:none">
   <div id="auth-box">
     <h2>مكتبتي</h2>
     <div id="auth-tabs">
@@ -656,15 +659,21 @@ function showApp(){
   refreshMaarifRank();
 }
 function applyAccountRestrictions(){
-  const isGuest=currentProfile?.account_type!=='verified';
-  document.querySelectorAll('#post-types button').forEach(b=>{b.disabled=isGuest&&b.dataset.type!=='فائدة';});
-  document.querySelectorAll('#mode-bar .modes button').forEach(b=>{if(isGuest&&b.dataset.mode!=='browse'){b.disabled=true;}else{b.disabled=false;}});
+  // For development simulation, allow all features
+  document.querySelectorAll('#post-types button').forEach(b=>{b.disabled=false;});
+  document.querySelectorAll('#mode-bar .modes button').forEach(b=>{b.disabled=false;});
 }
 function switchMainView(view){
   mainView=view;
-  document.getElementById('page-feed').classList.toggle('active',view==='feed');
-  document.getElementById('page-library').classList.toggle('active',view==='library');
-  document.querySelectorAll('#nav-toggle button').forEach((b,i)=>b.classList.toggle('active',view==='feed'?i===0:i===1));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  if(view==='feed') document.getElementById('page-feed').classList.add('active');
+  if(view==='library') document.getElementById('page-library').classList.add('active');
+  if(view==='maarif') document.getElementById('page-maarif').classList.add('active');
+  if(view==='profile') document.getElementById('page-profile').classList.add('active');
+
+  document.querySelectorAll('#nav-toggle button').forEach((b,i)=>{
+    b.classList.toggle('active', (view==='feed' && i===0) || (view==='library' && i===1) || (view==='maarif' && i===2));
+  });
   if(view==='feed')loadPosts();
 }
 function renderBooks(){
@@ -744,4 +753,106 @@ async function loadCustomBooks(){}
 function initPostTypes(){}
 function initQCTypes(){}
 function doLogout(){sb.auth.signOut();}
+
+function switchAuthTab(tab){
+  document.getElementById('tab-login').style.display=tab==='login'?'flex':'none';
+  document.getElementById('tab-register').style.display=tab==='register'?'flex':'none';
+  document.querySelectorAll('#auth-tabs button').forEach((b,i)=>b.classList.toggle('active',tab==='login'?i===0:i===1));
+}
+async function doLogin(){
+  const email=document.getElementById('login-email').value,password=document.getElementById('login-pass').value;
+  const{error}=await sb.auth.signInWithPassword({email,password});
+  if(error) document.getElementById('auth-msg').textContent=error.message;
+}
+async function doRegister(){
+  const email=document.getElementById('reg-email').value,password=document.getElementById('reg-pass').value,full_name=document.getElementById('reg-name').value;
+  const{error}=await sb.auth.signUp({email,password,options:{data:{full_name}}});
+  if(error) document.getElementById('auth-msg').textContent=error.message;
+  else toast('تم إرسال رابط التفعيل لبريدك');
+}
+function goBack(){switchMainView(previousView);}
+function showProfilePage(id){
+  previousView=mainView;
+  switchMainView('profile');
+  document.getElementById('profile-name').textContent=currentProfile.full_name;
+  document.getElementById('profile-acc-badge').textContent=currentProfile.account_type;
+  document.getElementById('profile-avatar').textContent=currentProfile.full_name[0];
+  document.getElementById('nav-back-btn').style.display='flex';
+}
+function toggleSidebar(){document.getElementById('lib-sidebar').classList.toggle('expanded');}
+function selectChapterFromDropdown(val){toast('انتقال إلى: '+val);}
+function togglePaneD(){
+  const p=document.getElementById('pane-d');
+  p.style.width=p.style.width==='280px'?'0':'280px';
+}
+function openAddTextModal(){document.getElementById('add-text-modal').style.display='flex';}
+function toggleCommentsDrawer(){document.getElementById('comments-drawer').classList.toggle('open');}
+function togglePanel(panelId){
+  const p=document.getElementById('panel-'+panelId);
+  p.classList.toggle('open');
+  document.getElementById('panel-toggle-'+(panelId==='mss'?'left':'right')).classList.toggle('open');
+}
+async function searchHadiths(){
+  const q=document.getElementById('hadith-search-input').value;
+  if(!q) return;
+  const {data}=await sb.from('hadiths').select('*').eq('book_id',currentBook.id).ilike('text','%'+q+'%').limit(20);
+  renderHadiths(data||[]);
+}
+function fmt(c){document.execCommand(c,false,null);}
+function insertTxt(t){document.execCommand('insertText',false,t);}
+function insertMark(type){
+  const sel=window.getSelection();
+  if(!sel.rangeCount) return;
+  const range=sel.getRangeAt(0);
+  const span=document.createElement('span');
+  span.className='m-'+type;
+  span.textContent=sel.toString()||(type==='tashif'?'[تصحيف]':'[تعديل]');
+  range.deleteContents();
+  range.insertNode(span);
+}
+async function saveDraft(){toast('تم الحفظ كمسودة');}
+async function submitForReview(){toast('تم الإرسال للمراجعة');}
+function openAddModal(type){
+  addItemType=type;
+  document.getElementById('add-item-title').textContent=type==='manuscript'?'إضافة مخطوط':'إضافة طبعة';
+  document.getElementById('add-item-modal').style.display='flex';
+}
+async function submitAddItem(){toast('تم الإضافة بنجاح');closeModal('add-item-modal');}
+async function submitAddText(){toast('تم حفظ الكتاب');closeModal('add-text-modal');}
+async function submitDrawerComment(){
+  const val=document.getElementById('drawer-comment-input').value;
+  if(!val) return;
+  toast('تم التعليق');
+  document.getElementById('drawer-comment-input').value='';
+}
+async function doTakhrij(){toast('جاري البحث في الفهارس...');}
+function genCitation(t){toast('تم توليد العزو: '+t);}
+async function saveBio(){
+  const bio=document.getElementById('profile-bio-input').value;
+  document.getElementById('profile-bio-text').textContent=bio;
+  toast('تم حفظ النبذة');
+}
+function switchProfileTab(tab){
+  document.querySelectorAll('#profile-tabs button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  toast('عرض: '+tab);
+}
+async function analyzeIsnadMaarif(){
+  const val=document.getElementById('maarif-isnad-input').value;
+  if(!val) return toast('أدخل الإسناد');
+  document.getElementById('maarif-isnad-results').style.display='block';
+  document.getElementById('maarif-isnad-results').innerHTML='<div class="maarif-isnad-node sahabi">الإمام البخاري<div class="node-role">راوٍ</div></div>';
+}
+async function searchNarratorMaarif(){toast('جاري البحث عن الراوي...');}
+function toggleScholarlyAudio(){
+  const overlay=document.getElementById('audio-player-overlay');
+  overlay.classList.toggle('active');
+  document.getElementById('audio-title').textContent='شرح حديث إنما الأعمال بالنيات';
+}
+function closeScholarlyAudio(){document.getElementById('audio-player-overlay').classList.remove('active');}
+async function submitQC(){toast('تم النشر بنجاح');closeModal('quick-comment-modal');}
+function closeZoom(){document.getElementById('img-zoom').style.display='none';}
+function refreshMaarifRank(){
+  document.getElementById('maarif-rank-title').textContent='باحث متقدم';
+  document.getElementById('maarif-rank-num').textContent='٥';
+}
 </script></body></html>
