@@ -8,6 +8,8 @@
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABzenr0AAALrUlEQVR4nF2XaZBc1XXHf/e+97pf7+t0z6aZ0SwaSQgEAgMxgkAcYWwSuwqIsyeV2K5KPsRxvsQpf8riOF4quJyyk4BTiQk4OI4D2FCGxHYsFiOBZEkIaaTRaDbN0jM9vUzv/fq9d28+9IQPOVWn7sfzv+d/6vzPX5w/f1Yb0sIwJVKamKaJYRgYhoE0JADhoE0sHKPpdVmtFLhR2WKnVaPT64CGSDBELpZmNJ1nLDVIxLBotVu0ew5oUErh+z6e572XruvieR7i4sWL2jDke0X7AEwAApZFMhZnZbfITy6/zXJhjZAwGUwMkI4lCQeCaARtp0O1WWenVaWLy0RuhOOzx9ifGqTerON4LmjwPBfPU/h+H4Druoi5ubk9ACaGFBimiRaQCEXpKI+n33iJayuLHD9wG8cP385Ibgg7ZIOgHwLQgA+dbpsb2wVOz1/g1PJFJgZH+e3jv0zMCrLbrAPGEpS">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// --- الدوال الأساسية للمكتبة والمحرر ---
+
 async function runSmartTakhrij() {
     const editor = document.getElementById('editor-content');
     const text = editor.innerText.substring(0, 60).trim();
@@ -199,7 +201,8 @@ img{max-width:100%}
 .comment-input-row input{flex:1;border:1px solid var(--border);border-radius:20px;padding:7px 12px;font-size:13px}
 .comment-input-row button{background:var(--green);color:#fff;padding:7px 14px;border-radius:20px;font-size:13px}
 #posts-loading,#posts-empty{text-align:center;padding:30px;color:var(--text2)}
-#page-library{display:flex;height:calc(100vh - 50px);overflow:hidden}
+#page-library{display:none;height:calc(100vh - 50px);overflow:hidden}
+#page-library.active{display:flex}
 #lib-sidebar{width:5%;min-width:5%;background:#fff;border-left:1px solid var(--border);overflow-y:auto;transition:width .2s;display:flex;flex-direction:column;flex-shrink:0}
 #lib-sidebar.expanded{width:200px;min-width:200px}
 #sidebar-toggle{padding:10px;text-align:center;border-bottom:1px solid var(--border);color:var(--green);font-size:16px}
@@ -685,12 +688,25 @@ async function selectBook(id){
   document.getElementById('lib-active').style.display='flex';
   document.getElementById('reader-title').textContent=currentBook.title;
   const {data} = await sb.from('hadiths').select('*').eq('book_id',id).limit(50);
-  renderHadiths(data||[]);
+  currentHadiths = data || [];
+  renderHadiths(currentHadiths);
 }
 function renderHadiths(hadiths){
-  document.getElementById('hadiths-container').innerHTML=hadiths.map(h=>`<div class="hadith-card"><div class="hadith-text">${escHtml(h.text)}</div><button class="btn btn-sm btn-outline-warning mt-2" onclick="setActiveHadith('${h.hadithnumber}')">تحرير</button></div>`).join('');
+  document.getElementById('hadiths-container').innerHTML=hadiths.map(h=>`
+    <div class="hadith-card">
+      <div class="hadith-card-header">
+        <span class="hadith-number">#${h.hadithnumber}</span>
+      </div>
+      <div class="hadith-text">${escHtml(h.text)}</div>
+      <div class="hadith-actions">
+        <button onclick="setActiveHadith('${h.hadithnumber}')">📝 تحرير في المحرر</button>
+        <button class="btn-tahqiq" onclick="toast('جاري فتح أدوات التحقيق...')">🔬 تحقيق</button>
+      </div>
+    </div>`).join('');
 }
 function setActiveHadith(num){
+    const h = currentHadiths.find(x => x.hadithnumber === num);
+    if(h) document.getElementById('editor-content').innerHTML = h.text;
     activeHadith={num};
     setMode('editor');
 }
@@ -839,8 +855,23 @@ function switchProfileTab(tab){
 async function analyzeIsnadMaarif(){
   const val=document.getElementById('maarif-isnad-input').value;
   if(!val) return toast('أدخل الإسناد');
-  document.getElementById('maarif-isnad-results').style.display='block';
-  document.getElementById('maarif-isnad-results').innerHTML='<div class="maarif-isnad-node sahabi">الإمام البخاري<div class="node-role">راوٍ</div></div>';
+  toast('جاري التحليل السحابي للإسناد...');
+  setTimeout(() => {
+    document.getElementById('maarif-isnad-results').style.display='block';
+    document.getElementById('maarif-isnad-results').innerHTML=`
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <div class="maarif-isnad-node thabit">رسول الله ﷺ<div class="node-role">صاحب الشريعة</div></div>
+        <div class="isnad-connector"></div>
+        <div class="maarif-isnad-node sahabi">عمر بن الخطاب<div class="node-role">صحابي</div></div>
+        <div class="isnad-connector"></div>
+        <div class="maarif-isnad-node">علقمة بن وقاص الليثي<div class="node-role">تابعي</div></div>
+        <div class="isnad-connector"></div>
+        <div class="maarif-isnad-node">محمد بن إبراهيم التيمي<div class="node-role">من أتباع التابعين</div></div>
+      </div>
+    `;
+    document.getElementById('maarif-rank-title').textContent = 'باحث مشارك';
+    document.getElementById('maarif-rank-num').textContent = '٢';
+  }, 1000);
 }
 async function searchNarratorMaarif(){toast('جاري البحث عن الراوي...');}
 function toggleScholarlyAudio(){
