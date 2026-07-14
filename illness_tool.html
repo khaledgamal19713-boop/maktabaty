@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>أداة الربط التفاعلي بين أجناس علل الحديث ومسائل كتب العلل</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --primary-color: #1a6b3c;
+  --primary-light: #e8f5ee;
+  --secondary-color: #b8860b;
+  --secondary-light: #fdf8e8;
+  --blue-color: #1a3a6b;
+  --blue-light: #e8f0fd;
+  --danger-color: #c0392b;
+  --danger-light: #fde8e8;
+  --text-dark: #1a1a1a;
+  --text-muted: #555;
+  --text-light: #888;
+  --border-color: #e0e0e0;
+  --bg-color: #f8f9fa;
+  --card-bg: #ffffff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-dark);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+header {
+  background-color: var(--primary-color);
+  color: #fff;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+header h1 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.user-status {
+  font-size: 13px;
+  background-color: rgba(255,255,255,0.15);
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+.container {
+  display: flex;
+  height: calc(100vh - 56px);
+  overflow: hidden;
+}
+
+/* Column 1: Tree Column */
+.col-tree {
+  width: 28%;
+  min-width: 280px;
+  background: var(--card-bg);
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Column 2: Editor/Viewer Column */
+.col-viewer {
+  flex: 1;
+  background: var(--bg-color);
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Column 3: Search, Stats & Tools */
+.col-tools {
+  width: 26%;
+  min-width: 280px;
+  background: var(--card-bg);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.panel-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.panel-header h2 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.panel-body-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+/* Tree Styling */
+.tree-node {
+  margin-right: 12px;
+  margin-top: 4px;
+}
+
+.tree-node-header {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+  gap: 8px;
+}
+
+.tree-node-header:hover {
+  background-color: var(--primary-light);
+}
+
+.tree-node-header.active {
+  background-color: var(--secondary-light);
+  border: 1px solid var(--secondary-color);
+}
+
+.tree-toggle {
+  font-size: 10px;
+  color: var(--text-muted);
+  width: 14px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.tree-toggle.collapsed {
+  transform: rotate(-90deg);
+}
+
+.tree-title {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.tree-badge {
+  font-size: 10px;
+  background: var(--primary-color);
+  color: #fff;
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-right: auto;
+}
+
+.tree-node-children {
+  margin-right: 12px;
+  border-right: 1px dashed var(--border-color);
+  padding-right: 6px;
+}
+
+.tree-node-children.collapsed {
+  display: none;
+}
+
+/* Cards & Content Styling */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.card h3 {
+  font-size: 14px;
+  color: var(--primary-color);
+  margin-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 6px;
+  font-weight: 700;
+}
+
+.hadith-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.hadith-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--blue-color);
+}
+
+.hadith-book-badge {
+  font-size: 11px;
+  background-color: var(--blue-light);
+  color: var(--blue-color);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.hadith-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  background: #f5f5f5;
+  padding: 6px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.hadith-text {
+  font-size: 15px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  background: #fff;
+  border: 1px solid #eef2ee;
+  padding: 14px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.hadith-reasoning {
+  background-color: var(--secondary-light);
+  border-right: 4px solid var(--secondary-color);
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #7d5e08;
+  font-style: italic;
+}
+
+/* Suggested item and confidence scores */
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  margin-bottom: 8px;
+  background: #fafafa;
+}
+
+.suggestion-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.confidence-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.confidence-high {
+  background: #e8f5ee;
+  color: var(--primary-color);
+}
+
+.confidence-med {
+  background: var(--secondary-light);
+  color: var(--secondary-color);
+}
+
+.confidence-low {
+  background: var(--danger-light);
+  color: var(--danger-color);
+}
+
+.explanation-text {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Logs and Activity stream */
+.log-item {
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 6px 0;
+  border-bottom: 1px dashed #eee;
+}
+
+.log-item:last-child {
+  border-bottom: none;
+}
+
+/* Tools search and list */
+.search-box {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.search-box input {
+  flex: 1;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 13px;
+  outline: none;
+}
+
+.search-box input:focus {
+  border-color: var(--primary-color);
+}
+
+.search-box button {
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.hadith-list-item {
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: background 0.15s;
+}
+
+.hadith-list-item:hover {
+  background: var(--primary-light);
+}
+
+.hadith-list-item.active {
+  border-color: var(--secondary-color);
+  background: var(--secondary-light);
+}
+
+.stat-box {
+  background: var(--primary-light);
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 14px;
+  font-size: 12px;
+}
+
+.btn-action {
+  width: 100%;
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.btn-action:hover {
+  background: #155530;
+}
+
+/* Modal Styling */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-box {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  width: 500px;
+  max-width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-box h3 {
+  color: var(--primary-color);
+  font-size: 16px;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.modal-box input, .modal-box textarea, .modal-box select {
+  width: 100%;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  outline: none;
+}
+
+.modal-box textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.modal-footer button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-cancel {
+  background: #eee;
+  color: #555;
+}
+
+.btn-submit {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+/* Toast Notification */
+#toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #333;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 13px;
+  z-index: 1050;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+#toast.show {
+  opacity: 1;
+}
+
+@media(max-width: 992px) {
+  .container {
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+  .col-tree, .col-tools {
+    width: 100%;
+    height: auto;
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>أداة الربط التفاعلي بين أجناس علل الحديث ومسائل كتب العلل</h1>
+  <div class="user-status">👤 الباحث: الدكتور أحمد الباحث (موثق)</div>
+</header>
+
+<div class="container">
+  <!-- Column 1: Collapsible Tree of Illness Genres -->
+  <div class="col-tree">
+    <div class="panel-header">
+      <h2>شجرة أجناس العلة المستخرجة</h2>
+    </div>
+    <div class="panel-body-scroll" id="tree-container">
+      <!-- Generated dynamically -->
+    </div>
+  </div>
+
+  <!-- Column 2: Interactive linking dashboard -->
+  <div class="col-viewer" id="viewer-container">
+    <!-- Loaded dynamically -->
+  </div>
+
+  <!-- Column 3: Search, Statistics, Addition -->
+  <div class="col-tools">
+    <div class="panel-header" style="padding: 12px 0;">
+      <h2>البحث والترشيحات العلمية</h2>
+    </div>
+
+    <!-- Stats Summary -->
+    <div class="stat-box" id="stats-container">
+      <p style="font-weight: 700; margin-bottom: 4px;">إحصائيات المعرفة الحالية:</p>
+      <p>عدد الأحاديث والمسائل: <span id="stat-hadith-count">0</span></p>
+      <p>الروابط العلمية المعتمدة: <span id="stat-link-count">0</span></p>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-box">
+      <input type="text" id="tool-search-input" placeholder="ابحث برقم، راو، صحابي، كلمة..." oninput="searchHadiths()">
+    </div>
+    <div style="margin-bottom: 12px;">
+      <select id="tool-book-filter" onchange="searchHadiths()" style="width:100%; border:1px solid var(--border-color); border-radius:6px; padding:6px; font-size:12px; background:#fff;">
+        <option value="الكل">كل كتب العلل</option>
+        <option value="علل ابن أبي حاتم">علل ابن أبي حاتم</option>
+        <option value="علل الدارقطني">علل الدارقطني</option>
+      </select>
+    </div>
+
+    <!-- Hadith Results List -->
+    <div style="flex: 1; overflow-y: auto;" id="hadiths-list-container">
+      <!-- Generated dynamically -->
+    </div>
+
+    <!-- Add New Issue -->
+    <button class="btn-action" onclick="openAddModal()">+ إضافة مسألة معللة جديدة</button>
+  </div>
+</div>
+
+<!-- Modal: Add New Issue -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal-box">
+    <h3>إضافة مسألة حديثية معللة جديدة</h3>
+    <p style="font-size:11px; color:var(--text-light); margin-bottom:12px;">أدخل تفاصيل الحديث، والتعليل، وقرينة المخالفة لإضافتها مباشرة إلى قاعدة المعرفة.</p>
+
+    <select id="am-book">
+      <option value="علل ابن أبي حاتم">علل ابن أبي حاتم</option>
+      <option value="علل الدارقطني">علل الدارقطني</option>
+    </select>
+    <input type="text" id="am-issue" placeholder="المسألة (مثال: مسألة 215)">
+    <input type="text" id="am-number" placeholder="رقم الحديث">
+    <input type="text" id="am-companion" placeholder="الصحابي (مثال: أبو هريرة)">
+    <input type="text" id="am-narrator" placeholder="الراوي المحوري (مثال: الأعمش)">
+    <textarea id="am-text" placeholder="نص الحديث والتعليل..."></textarea>
+    <textarea id="am-reasoning" placeholder="نص قرينة العلة ووجه الاختلاف..."></textarea>
+
+    <div style="display: flex; gap: 8px;">
+      <input type="text" id="am-part" placeholder="الجزء" style="flex:1;">
+      <input type="text" id="am-page" placeholder="الصفحة" style="flex:1;">
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">إلغاء</button>
+      <button class="btn-submit" onclick="submitAddHadith()">حفظ المسألة</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// Supabase Client Config (using same credentials for seamless transition)
+const SUPA_URL = 'https://uqfqpqjarofbcdzkrdgs.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVxZnFwcWphcm9mYmNkemtyZGdzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4ODUwMzUsImV4cCI6MjA5MzQ2MTAzNX0.8z2Nc8t14txttepiRV5yhhkBfDdE77FJ7rx1dxQrICI';
+
+let sb = null;
+try {
+  if (typeof supabase !== 'undefined') {
+    sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+  }
+} catch (e) {
+  console.log("Supabase client init failed, running on LocalStorage mode.");
+}
+
+// Memory / Local arrays
+let maarifNodes = [];
+let maarifHadiths = [];
+let maarifLinks = [];
+let maarifLogs = [];
+
+let activeHadith = null;
+let activeNodeId = null;
+const expandedNodes = new Set(['root', 'ikhtilaf_rawi']);
+
+const DEFAULT_NODES = [
+  {id: 'root', title: 'شجرة أجناس علل الحديث', parent_id: null, description: 'الجنس الرئيس الجامع لأجناس العلة المستخرجة من كتاب أجناس العلة للدارقطني'},
+  {id: 'ikhtilaf_rawi', title: 'اختلاف الرواة', parent_id: 'root', description: 'الاختلاف الواقع في الإسناد أو المتن بين الثقات أو الرواة'},
+  {id: 'wasl_irsal', title: 'وصل وإرسال', parent_id: 'ikhtilaf_rawi', description: 'الافتراق بين وصل الحديث موصولاً مسنداً وبين إرساله منقطعاً مرسلاً'},
+  {id: 'raf_waqf', title: 'رفع ووقف', parent_id: 'ikhtilaf_rawi', description: 'الاختلاف بين رفع الحديث إلى النبي صلى الله عليه وسلم وبين وقفه على الصحابي'},
+  {id: 'ziyadat_rawi', title: 'زيادة راو', parent_id: 'ikhtilaf_rawi', description: 'انفراد راو بزيادة كلمة أو جملة في المتن، أو زيادة راو في السند لم يذكره غيره'},
+  {id: 'isqat_rawi', title: 'إسقاط راو', parent_id: 'ikhtilaf_rawi', description: 'سقوط راو من السند سواء كان عمداً أو وهماً من الراوي'},
+  {id: 'ikhtilaf_ala_shaikh', title: 'اختلاف على شيخ', parent_id: 'ikhtilaf_rawi', description: 'يرويه الرواة عن الشيخ الواحد على وجوه مختلفة ومتعارضة'},
+  {id: 'وجه_اول', title: 'الوجه الأول', parent_id: 'ikhtilaf_ala_shaikh', description: 'الوجه الأول المروي عن الشيخ'},
+  {id: 'وجه_ثاني', title: 'الوجه الثاني', parent_id: 'ikhtilaf_ala_shaikh', description: 'الوجه الثاني المروي عن الشيخ المخالف للأول'},
+  {id: 'tashif_tahrif', title: 'التصحيف والتحريف', parent_id: 'root', description: 'تغيير الحروف بالمرادفة أو بالتشابه في الشكل والنقط'},
+  {id: 'wahm_rawi', title: 'وهم راو', parent_id: 'root', description: 'وقوع الراوي في الخطأ والوهم في السند أو المتن دون قصد المخالفة'},
+  {id: 'idraj', title: 'الإدراج', parent_id: 'root', description: 'إدخال كلام في متن الحديث أو راو في السند ليس منه'},
+  {id: 'qalb', title: 'القلب', parent_id: 'root', description: 'تبديل لفظ بآخر أو راو بآخر في الإسناد أو المتن'}
+];
+
+const DEFAULT_HADITHS = [
+  {id: 1, book: 'علل ابن أبي حاتم', issue: 'مسألة 215', number: '215', text: 'سألت أبي عن حديث رواه سفيان الثوري عن الأعمش عن أبي صالح عن أبي هريرة مرفوعا: "إذا أقيمت الصلاة فلا تأتوها تسعون". ورواه شعبة عن الأعمش موقوفا.', companion: 'أبو هريرة', narrator: 'الأعمش', reasoning_text: 'أخطأ الثوري في رفعه، والصواب فيه الوقف كما رواه شعبة.', part: '1', page: '124'},
+  {id: 2, book: 'علل الدارقطني', issue: 'مسألة 346', number: '346', text: 'وسئل الدارقطني عن حديث سعيد بن المسيب عن أبي هريرة عن النبي صلى الله عليه وسلم: "لا يحل لامرأة تسافر مسيرة يوم وليلة إلا مع ذي محرم". فقال: يرويه مالك عن نافع موصولا، ورواه غيره مرسلا، والصواب المرسل.', companion: 'أبو هريرة', narrator: 'نافع', reasoning_text: 'خالف مالك في وصله، والصواب فيه المرسل عن غيره.', part: '2', page: '88'},
+  {id: 3, book: 'علل ابن أبي حاتم', issue: 'مسألة 991', number: '991', text: 'سمعت أبي وذكر حديثا رواه حماد بن سلمة عن ثابت عن أنس مرفوعا في فضل السواك. فقال أبي: أخطأ حماد، وإنما هو من قول ثابت موقوف عليه، وزاد فيه حماد رفعه.', companion: 'أنس بن مالك', narrator: 'ثابت البناني', reasoning_text: 'وزاد فيه حماد رفعه وهو وهم، والصواب أنه موقوف على ثابت.', part: '4', page: '56'},
+  {id: 4, book: 'علل الدارقطني', issue: 'مسألة 1510', number: '1510', text: 'وسئل عن حديث أبي إسحاق عن البراء: "كان النبي صلى الله عليه وسلم يتوضأ لكل صلاة". فقال: اختلف فيه على أبي إسحاق، فرواه شعبة موصولا، ورواه سفيان منقطعا بإسقاط راو بينهما وهو أبو بردة.', companion: 'البراء بن عازب', narrator: 'أبو إسحاق السبيعي', reasoning_text: 'اختلف فيه، ورواه سفيان بإسقاط راو بين أبي إسحاق والبراء وهو الصواب.', part: '6', page: '210'}
+];
+
+const DEFAULT_LINKS = [
+  {id: 1, node_id: 'raf_waqf', hadith_id: 1, confidence: 94.00, created_by: null},
+  {id: 2, node_id: 'wasl_irsal', hadith_id: 2, confidence: 86.00, created_by: null},
+  {id: 3, node_id: 'ziyadat_rawi', hadith_id: 3, confidence: 43.00, created_by: null},
+  {id: 4, node_id: 'isqat_rawi', hadith_id: 4, confidence: 75.00, created_by: null}
+];
+
+window.addEventListener('DOMContentLoaded', () => {
+  initApp();
+});
+
+async function initApp() {
+  let loadedFromSupa = false;
+  if (sb) {
+    try {
+      const {data: nodes, error: e1} = await sb.from('maarif_nodes').select('*');
+      const {data: hadiths, error: e2} = await sb.from('maarif_hadiths').select('*');
+      const {data: links, error: e3} = await sb.from('maarif_links').select('*');
+      const {data: logs, error: e4} = await sb.from('maarif_logs').select('*');
+
+      if (!e1 && !e2 && !e3 && nodes && hadiths && links) {
+        maarifNodes = nodes;
+        maarifHadiths = hadiths;
+        maarifLinks = links;
+        maarifLogs = logs || [];
+        loadedFromSupa = true;
+      }
+    } catch (e) {
+      console.log("Supabase error, using local fallback");
+    }
+  }
+
+  if (!loadedFromSupa) {
+    // LocalStorage / Seed fallback
+    const storedNodes = localStorage.getItem('maarif_nodes');
+    maarifNodes = storedNodes ? JSON.parse(storedNodes) : [...DEFAULT_NODES];
+    if (!storedNodes) localStorage.setItem('maarif_nodes', JSON.stringify(maarifNodes));
+
+    const storedHadiths = localStorage.getItem('maarif_hadiths');
+    maarifHadiths = storedHadiths ? JSON.parse(storedHadiths) : [...DEFAULT_HADITHS];
+    if (!storedHadiths) localStorage.setItem('maarif_hadiths', JSON.stringify(maarifHadiths));
+
+    const storedLinks = localStorage.getItem('maarif_links');
+    maarifLinks = storedLinks ? JSON.parse(storedLinks) : [...DEFAULT_LINKS];
+    if (!storedLinks) localStorage.setItem('maarif_links', JSON.stringify(maarifLinks));
+
+    const storedLogs = localStorage.getItem('maarif_logs');
+    maarifLogs = storedLogs ? JSON.parse(storedLogs) : [];
+    if (!storedLogs) localStorage.setItem('maarif_logs', JSON.stringify(maarifLogs));
+  }
+
+  renderTree();
+  searchHadiths();
+  updateStats();
+  renderActiveView();
+}
+
+// Tree builder
+function renderTree() {
+  const container = document.getElementById('tree-container');
+  if (!container) return;
+
+  const nodesMap = {};
+  maarifNodes.forEach(n => {
+    nodesMap[n.id] = {...n, children: []};
+  });
+
+  const roots = [];
+  maarifNodes.forEach(n => {
+    if (!n.parent_id || n.parent_id === 'null' || !nodesMap[n.parent_id]) {
+      roots.push(nodesMap[n.id]);
+    } else {
+      nodesMap[n.parent_id].children.push(nodesMap[n.id]);
+    }
+  });
+
+  function getNodeCount(nodeId) {
+    let count = maarifLinks.filter(l => l.node_id === nodeId).length;
+    const children = maarifNodes.filter(n => n.parent_id === nodeId);
+    children.forEach(c => {
+      count += getNodeCount(c.id);
+    });
+    return count;
+  }
+
+  function buildNodeHTML(node) {
+    const isExpanded = expandedNodes.has(node.id);
+    const hasChildren = node.children && node.children.length > 0;
+    const isSelected = activeNodeId === node.id;
+    const linkCount = getNodeCount(node.id);
+
+    const toggleIcon = hasChildren
+      ? `<span class="tree-toggle ${isExpanded ? '' : 'collapsed'}" onclick="event.stopPropagation(); toggleNode('${node.id}')">▼</span>`
+      : `<span style="width:14px; display:inline-block;"></span>`;
+
+    const badge = linkCount > 0 ? `<span class="tree-badge">${linkCount}</span>` : '';
+
+    let html = `
+      <div class="tree-node">
+        <div class="tree-node-header ${isSelected ? 'active' : ''}" onclick="selectNode('${node.id}')">
+          ${toggleIcon}
+          <span class="tree-title">${escHtml(node.title)}</span>
+          ${badge}
+        </div>
+    `;
+
+    if (hasChildren) {
+      html += `
+        <div class="tree-node-children ${isExpanded ? '' : 'collapsed'}" id="children-${node.id}">
+          ${node.children.map(child => buildNodeHTML(child)).join('')}
+        </div>
+      `;
+    }
+
+    html += `</div>`;
+    return html;
+  }
+
+  container.innerHTML = roots.map(r => buildNodeHTML(r)).join('');
+}
+
+function toggleNode(nodeId) {
+  if (expandedNodes.has(nodeId)) {
+    expandedNodes.delete(nodeId);
+  } else {
+    expandedNodes.add(nodeId);
+  }
+  renderTree();
+}
+
+function selectNode(nodeId) {
+  activeNodeId = nodeId;
+  activeHadith = null;
+  renderTree();
+  searchHadiths();
+  renderActiveView();
+}
+
+// Text analysis engine
+function analyzeText(text, reasoning) {
+  const combined = (text + ' ' + (reasoning || '')).toLowerCase();
+  const suggestions = [];
+
+  const patterns = [
+    {
+      id: 'wasl_irsal',
+      keywords: ['أرسل', 'ارسل', 'مرسل', 'المرسل', 'إرسال', 'ارسال'],
+      confidence: 90,
+      reason: "لوجود ألفاظ دالة على الإرسال (مثل 'مرسل' أو 'أرسله')"
+    },
+    {
+      id: 'raf_waqf',
+      keywords: ['وقف', 'وقفه', 'موقوف', 'الموقف', 'موقف'],
+      confidence: 92,
+      reason: "لوجود ألفاظ دالة على الوقف (مثل 'وقفه' أو 'موقوفا')"
+    },
+    {
+      id: 'ziyadat_rawi',
+      keywords: ['زاد', 'زيادة', 'يزيد', 'انفرد', 'زياد'],
+      confidence: 80,
+      reason: "لوجود ألفاظ دالة على الزيادة والانفراد (مثل 'زاد' أو 'زيادة')"
+    },
+    {
+      id: 'isqat_rawi',
+      keywords: ['سقط', 'إسقاط', 'سقوط', 'منقطعا', 'منقطع', 'بإسقاط'],
+      confidence: 85,
+      reason: "لوجود ألفاظ دالة على سقوط راوٍ أو انقطاع السند (مثل 'إسقاط' أو 'منقطع')"
+    },
+    {
+      id: 'ikhtilaf_ala_shaikh',
+      keywords: ['اختلف', 'خالف', 'وجوه', 'الوجه', 'وجهان'],
+      confidence: 88,
+      reason: "لوجود مؤشرات على الاختلاف والوجوه المتعارضة على الشيخ (مثل 'اختلف فيه' أو 'خالف')"
+    },
+    {
+      id: 'tashif_tahrif',
+      keywords: ['تصحيف', 'حرف', 'صحف', 'تحريف', 'حروف'],
+      confidence: 75,
+      reason: "لوجود ألفاظ دالة على التصحيف في الكتابة أو الحروف"
+    },
+    {
+      id: 'wahm_rawi',
+      keywords: ['وهم', 'أخطأ', 'اخطأ', 'غلط', 'الخطأ', 'وهمت'],
+      confidence: 82,
+      reason: "لوجود ألفاظ دالة على وهم الراوي وخطئه (مثل 'أخطأ' أو 'وهم')"
+    },
+    {
+      id: 'idraj',
+      keywords: ['أدرج', 'ادرج', 'إدراج', 'ادراج', 'كلام من قول'],
+      confidence: 80,
+      reason: "لوجود ألفاظ دالة على إدراج كلامٍ أو إسنادٍ ليس من الحديث"
+    },
+    {
+      id: 'qalb',
+      keywords: ['قلب', 'انقلب', 'مقلوب', 'يبدل', 'بدل'],
+      confidence: 80,
+      reason: "لوجود مؤشرات على تبديل أو قلب في الأسماء أو المتون"
+    }
+  ];
+
+  patterns.forEach(p => {
+    const matched = p.keywords.filter(k => combined.includes(k));
+    if (matched.length > 0) {
+      let finalConf = p.confidence;
+      if (matched.length > 2) finalConf = Math.min(98, finalConf + 5);
+      suggestions.push({
+        node_id: p.id,
+        confidence: finalConf,
+        reason: p.reason + ` (الكلمات المكتشفة: ${matched.join('، ')})`
+      });
+    }
+  });
+
+  return suggestions;
+}
+
+// Display Column 2 Details
+function renderActiveView() {
+  const container = document.getElementById('viewer-container');
+  if (!container) return;
+
+  if (activeHadith) {
+    const h = activeHadith;
+
+    const linkedNodeIds = maarifLinks
+      .filter(l => String(l.hadith_id) === String(h.id))
+      .map(l => l.node_id);
+
+    const linkedHtml = linkedNodeIds.length > 0
+      ? linkedNodeIds.map(nid => {
+          const node = maarifNodes.find(n => n.id === nid);
+          return `
+            <span style="display:inline-flex; align-items:center; background:var(--primary-light); color:var(--primary-color); border:1px solid var(--primary-color); padding:4px 10px; border-radius:18px; margin:4px; font-size:12px;">
+              ${escHtml(node ? node.title : nid)}
+              <button onclick="unlinkMaarif('${nid}', ${h.id})" style="margin-right:6px; color:var(--danger-color); font-weight:bold; border:none; background:none; cursor:pointer;">✕</button>
+            </span>
+          `;
+        }).join('')
+      : '<p style="font-size:12px; color:var(--text-light);">لا توجد أجناس علة مرتبطة حالياً.</p>';
+
+    const suggestions = analyzeText(h.text, h.reasoning_text);
+    const unlinkedSuggestions = suggestions.filter(s => !linkedNodeIds.includes(s.node_id));
+
+    let suggestionsHtml = '';
+    if (unlinkedSuggestions.length > 0) {
+      suggestionsHtml = unlinkedSuggestions.map(s => {
+        const node = maarifNodes.find(n => n.id === s.node_id);
+        const title = node ? node.title : s.node_id;
+        let cClass = 'confidence-low';
+        if (s.confidence >= 80) cClass = 'confidence-high';
+        else if (s.confidence >= 50) cClass = 'confidence-med';
+
+        return `
+          <div class="suggestion-item">
+            <div class="suggestion-info">
+              <span style="font-weight:600; font-size:13px;">${escHtml(title)}</span>
+              <span class="explanation-text">${escHtml(s.reason)}</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span class="confidence-badge ${cClass}">${s.confidence}%</span>
+              <input type="checkbox" name="suggested_nodes" value="${s.node_id}" style="width:18px; height:18px; cursor:pointer;">
+            </div>
+          </div>
+        `;
+      }).join('');
+    } else {
+      suggestionsHtml = '<p style="font-size:12px; color:var(--text-light); padding:6px 0;">لا توجد ترشيحات إضافية معلقة بناءً على النص.</p>';
+    }
+
+    const otherNodes = maarifNodes.filter(n => n.id !== 'root' && !linkedNodeIds.includes(n.id) && !unlinkedSuggestions.some(s => s.node_id === n.id));
+    let otherNodesHtml = '';
+    if (otherNodes.length > 0) {
+      otherNodesHtml = `
+        <div style="margin-top:10px; border-top:1px dashed #eee; padding-top:10px;">
+          <p style="font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:6px;">أجناس علل أخرى للربط:</p>
+          <div style="display:flex; flex-wrap:wrap; gap:8px;">
+            ${otherNodes.map(n => `
+              <label style="display:inline-flex; align-items:center; gap:4px; font-size:12px; background:#fff; border:1px solid var(--border-color); padding:4px 8px; border-radius:4px; cursor:pointer;">
+                <input type="checkbox" name="suggested_nodes" value="${n.id}">
+                ${escHtml(n.title)}
+              </label>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    const relevantLogs = maarifLogs.filter(l => String(l.hadith_id) === String(h.id));
+    const logsHtml = relevantLogs.length > 0
+      ? relevantLogs.map(l => {
+          const date = new Date(l.created_at).toLocaleTimeString('ar-SA') + ' ' + new Date(l.created_at).toLocaleDateString('ar-SA');
+          return `<div class="log-item">📅 ${escHtml(l.details)} <span style="font-size:10px; color:var(--text-light);">(${date})</span></div>`;
+        }).join('')
+      : '<p style="font-size:11px; color:var(--text-light);">لا يوجد سجل تعديلات لهذه المسألة بعد.</p>';
+
+    container.innerHTML = `
+      <div class="card">
+        <div class="hadith-title-row">
+          <div class="hadith-title">${escHtml(h.issue)}</div>
+          <span class="hadith-book-badge">${escHtml(h.book)}</span>
+        </div>
+        <div class="hadith-meta">
+          الصحابي: <b>${escHtml(h.companion || 'غير محدد')}</b> | الراوي: <b>${escHtml(h.narrator || 'غير محدد')}</b> | الجزء: ${escHtml(h.part || '1')} الصفحة: ${escHtml(h.page || '1')}
+        </div>
+        <div class="hadith-text">${escHtml(h.text)}</div>
+        <div class="hadith-reasoning">
+          <b>نص التعليل وقرينة العلة:</b> ${escHtml(h.reasoning_text || 'لا يوجد تعليق معلل بعد.')}
+        </div>
+      </div>
+
+      <!-- Current Links Card -->
+      <div class="card">
+        <h3>الأجناس المرتبطة حالياً</h3>
+        <div style="display:flex; flex-wrap:wrap;">
+          ${linkedHtml}
+        </div>
+      </div>
+
+      <!-- Linking Actions Card -->
+      <div class="card">
+        <h3>ربط أجناس علة جديدة (اقتراحات الذكاء الاصطناعي)</h3>
+        <p style="font-size:11px; color:var(--text-muted); margin-bottom:10px;">
+          * يعرض النظام أدناه ترشيحات علمية دقيقة تم تحليلها تلقائياً. حدد الأجناس المناسبة واعتمدها.
+        </p>
+        ${suggestionsHtml}
+        ${otherNodesHtml}
+        <button onclick="saveHadithLinks(${h.id})" style="width:100%; background:var(--primary-color); color:#fff; border-radius:6px; padding:10px; font-size:13px; font-weight:600; margin-top:14px; border:none; cursor:pointer;">
+          حفظ واعتماد الروابط العلمية ✓
+        </button>
+      </div>
+
+      <!-- Revision Logs Card -->
+      <div class="card">
+        <h3>سجل التعديلات والتحقق العلمي لهذه المسألة</h3>
+        <div style="max-height:150px; overflow-y:auto;">
+          ${logsHtml}
+        </div>
+      </div>
+    `;
+
+  } else if (activeNodeId) {
+    const node = maarifNodes.find(n => n.id === activeNodeId);
+    if (!node) return;
+
+    const linkedHadithIds = maarifLinks
+      .filter(l => l.node_id === node.id)
+      .map(l => parseInt(l.hadith_id));
+
+    const linkedHadiths = maarifHadiths.filter(h => linkedHadithIds.includes(parseInt(h.id)));
+
+    const linkedHtml = linkedHadiths.length > 0
+      ? linkedHadiths.map(h => `
+          <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; border:1px solid var(--border-color); border-radius:6px; padding:10px; margin-bottom:6px;">
+            <div>
+              <span style="font-weight:600; color:var(--blue-color);">${escHtml(h.issue)}</span>
+              <span style="font-size:11px; color:var(--text-muted); margin-right:8px;">(${escHtml(h.book)})</span>
+              <p style="font-size:12px; color:var(--text-muted); margin-top:4px; max-height:40px; overflow:hidden;">${escHtml(h.text.substring(0,80))}...</p>
+            </div>
+            <button onclick="unlinkMaarif('${node.id}', ${h.id})" style="background:var(--danger-light); color:var(--danger-color); padding:4px 8px; border-radius:4px; font-size:12px; border:none; cursor:pointer;">إلغاء الربط</button>
+          </div>
+        `).join('')
+      : '<p style="font-size:12px; color:var(--text-light);">لا توجد أحاديث مرتبطة حالياً بهذا الجنس.</p>';
+
+    const checklistHtml = maarifHadiths.map(h => {
+      const isChecked = linkedHadithIds.includes(parseInt(h.id));
+      return `
+        <label style="display:flex; align-items:center; gap:8px; padding:8px; border-bottom:1px solid #eee; cursor:pointer;">
+          <input type="checkbox" name="node_linked_hadiths" value="${h.id}" ${isChecked ? 'checked' : ''} style="width:16px; height:16px;">
+          <div>
+            <span style="font-size:12px; font-weight:600; color:var(--text-dark)">${escHtml(h.issue)} - ${escHtml(h.book)}</span>
+            <p style="font-size:11px; color:var(--text-muted); margin-top:2px;">${escHtml(h.text.substring(0,60))}...</p>
+          </div>
+        </label>
+      `;
+    }).join('');
+
+    const relevantLogs = maarifLogs.filter(l => l.node_id === node.id);
+    const logsHtml = relevantLogs.length > 0
+      ? relevantLogs.map(l => {
+          const date = new Date(l.created_at).toLocaleTimeString('ar-SA') + ' ' + new Date(l.created_at).toLocaleDateString('ar-SA');
+          return `<div class="log-item">📅 ${escHtml(l.details)} <span style="font-size:10px; color:var(--text-light);">(${date})</span></div>`;
+        }).join('')
+      : '<p style="font-size:11px; color:var(--text-light);">لا يوجد سجل تعديلات لهذا الجنس بعد.</p>';
+
+    container.innerHTML = `
+      <div class="card" style="border-right:4px solid var(--secondary-color);">
+        <h3 style="border:none; margin-bottom:4px; font-size:16px;">جنس العلة: ${escHtml(node.title)}</h3>
+        <p style="font-size:13px; color:var(--text-muted); line-height:1.6;">${escHtml(node.description || 'لا يوجد وصف متاح لمصطلح العلة هذا.')}</p>
+      </div>
+
+      <div class="card">
+        <h3>الأحاديث المرتبطة حالياً بهذا الجنس</h3>
+        ${linkedHtml}
+      </div>
+
+      <div class="card">
+        <h3>الربط المتعدد من جهة جنس العلة</h3>
+        <p style="font-size:11px; color:var(--text-muted); margin-bottom:10px;">
+          * يمكنك تحديد عدة أحاديث لربطها بهذا الجنس دفعة واحدة، أو إلغاء تحديدها لفك الارتباط. يظل القرار العلمي راجعاً للباحث.
+        </p>
+        <div style="max-height: 250px; overflow-y:auto; border:1px solid var(--border-color); border-radius:6px; background:#fafafa; padding:8px;">
+          ${checklistHtml}
+        </div>
+        <button onclick="saveNodeLinks('${node.id}')" style="width:100%; background:var(--primary-color); color:#fff; border-radius:6px; padding:10px; font-size:13px; font-weight:600; margin-top:14px; border:none; cursor:pointer;">
+          اعتماد وحفظ ارتباط الأحاديث بهذا الجنس ✓
+        </button>
+      </div>
+
+      <div class="card">
+        <h3>سجل التعديلات والتحقق العلمي لهذا الجنس</h3>
+        <div style="max-height:150px; overflow-y:auto;">
+          ${logsHtml}
+        </div>
+      </div>
+    `;
+
+  } else {
+    container.innerHTML = `
+      <div style="text-align: center; color: var(--text-muted); padding-top: 80px;">
+        <p style="font-size: 44px; margin-bottom: 12px;">🔍</p>
+        <p style="font-size:16px; font-weight:600; color: var(--primary-color);">بوابة الربط التفاعلي واستخراج أجناس علل الحديث</p>
+        <p style="font-size:13px; max-width:440px; margin: 8px auto; line-height:1.6; color: var(--text-muted);">
+          مرحباً بك في نظام المعارف الذكي للربط المتعدد بين الأحاديث المعللة وأجناس العلة المستخلصة. يرجى اختيار أي جنس من فروع الشجرة باليمين، أو مسألة من قائمة البحث باليسار للبدء بالتحليل والربط.
+        </p>
+      </div>
+    `;
+  }
+}
+
+// Hadith search and stats
+function searchHadiths() {
+  const query = (document.getElementById('tool-search-input')?.value || '').trim().toLowerCase();
+  const bookFilter = document.getElementById('tool-book-filter')?.value || 'الكل';
+  const container = document.getElementById('hadiths-list-container');
+  if (!container) return;
+
+  const filtered = maarifHadiths.filter(h => {
+    if (bookFilter !== 'الكل' && h.book !== bookFilter) return false;
+    if (!query) return true;
+    return (
+      (h.text || '').toLowerCase().includes(query) ||
+      (h.issue || '').toLowerCase().includes(query) ||
+      (h.number || '').toLowerCase().includes(query) ||
+      (h.companion || '').toLowerCase().includes(query) ||
+      (h.narrator || '').toLowerCase().includes(query) ||
+      (h.reasoning_text || '').toLowerCase().includes(query)
+    );
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<p style="text-align:center; color:var(--text-light); padding:20px; font-size:12px;">لا توجد نتائج مطابقة لبحثك.</p>';
+    return;
+  }
+
+  container.innerHTML = filtered.map(h => {
+    const isSelected = activeHadith && String(activeHadith.id) === String(h.id);
+    return `
+      <div class="hadith-list-item ${isSelected ? 'active' : ''}" onclick="selectHadith(${h.id})">
+        <div style="display:flex; justify-content:space-between; font-weight:bold; color:var(--blue-color); margin-bottom:4px; font-size:13px;">
+          <span>${escHtml(h.issue)}</span>
+          <span style="font-size:10px; color:var(--text-light);">${escHtml(h.book)}</span>
+        </div>
+        <p style="color:var(--text-muted); text-overflow:ellipsis; overflow:hidden; white-space:nowrap; font-size:11px;">${escHtml(h.text)}</p>
+        <div style="font-size:10px; color:var(--text-light); margin-top:3px;">
+          الصحابي: ${escHtml(h.companion || 'غير محدد')} | الراوي: ${escHtml(h.narrator || 'غير محدد')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function selectHadith(id) {
+  activeHadith = maarifHadiths.find(h => String(h.id) === String(id));
+  activeNodeId = null;
+  renderTree();
+  searchHadiths();
+  renderActiveView();
+}
+
+function updateStats() {
+  const hadithCount = document.getElementById('stat-hadith-count');
+  const linkCount = document.getElementById('stat-link-count');
+  if (hadithCount) hadithCount.textContent = maarifHadiths.length;
+  if (linkCount) linkCount.textContent = maarifLinks.length;
+}
+
+// Linking and unlinking logic
+async function saveHadithLinks(hadithId) {
+  const checkboxes = document.querySelectorAll('input[name="suggested_nodes"]:checked');
+  const selectedNodeIds = Array.from(checkboxes).map(cb => cb.value);
+  if (selectedNodeIds.length === 0) {
+    toast('يرجى تحديد جنس علة واحد على الأقل للربط');
+    return;
+  }
+
+  for (const nodeId of selectedNodeIds) {
+    const exists = maarifLinks.some(l => l.node_id === nodeId && String(l.hadith_id) === String(hadithId));
+    if (exists) continue;
+
+    const match = analyzeText(activeHadith.text, activeHadith.reasoning_text).find(s => s.node_id === nodeId);
+    const confidence = match ? match.confidence : 100.00;
+
+    const payload = {
+      node_id: nodeId,
+      hadith_id: hadithId,
+      confidence: confidence,
+      created_by: null
+    };
+
+    const logPayload = {
+      action_type: 'link',
+      hadith_id: hadithId,
+      node_id: nodeId,
+      details: `ربط الحديث بالجنس [${nodeId}] بثقة علمية ${confidence}%`,
+      user_id: null
+    };
+
+    if (sb) {
+      try {
+        const {error} = await sb.from('maarif_links').insert(payload);
+        if (!error) {
+          await sb.from('maarif_logs').insert(logPayload);
+        }
+      } catch (e) {}
+    }
+
+    // Always keep fallback updated
+    const newLink = {
+      id: Date.now() + Math.floor(Math.random() * 1000),
+      ...payload,
+      created_at: new Date().toISOString()
+    };
+    maarifLinks.push(newLink);
+    localStorage.setItem('maarif_links', JSON.stringify(maarifLinks));
+
+    const newLog = {
+      id: Date.now() + Math.floor(Math.random() * 1000),
+      ...logPayload,
+      created_at: new Date().toISOString()
+    };
+    maarifLogs.push(newLog);
+    localStorage.setItem('maarif_logs', JSON.stringify(maarifLogs));
+  }
+
+  toast('تم اعتماد وربط الأجناس المحددة بنجاح ✓');
+  initApp();
+}
+
+async function saveNodeLinks(nodeId) {
+  const checkboxes = document.querySelectorAll('input[name="node_linked_hadiths"]:checked');
+  const checkedHadithIds = Array.from(checkboxes).map(cb => parseInt(cb.value));
+
+  const currentLinkedIds = maarifLinks
+    .filter(l => l.node_id === nodeId)
+    .map(l => parseInt(l.hadith_id));
+
+  const toLink = checkedHadithIds.filter(id => !currentLinkedIds.includes(id));
+  const toUnlink = currentLinkedIds.filter(id => !checkedHadithIds.includes(id));
+
+  for (const hadithId of toLink) {
+    const h = maarifHadiths.find(x => x.id === hadithId);
+    const match = h ? analyzeText(h.text, h.reasoning_text).find(s => s.node_id === nodeId) : null;
+    const confidence = match ? match.confidence : 100.00;
+
+    const payload = {
+      node_id: nodeId,
+      hadith_id: hadithId,
+      confidence: confidence,
+      created_by: null
+    };
+
+    const logPayload = {
+      action_type: 'link',
+      hadith_id: hadithId,
+      node_id: nodeId,
+      details: `ربط الحديث بالجنس [${nodeId}] من جهة الشجرة بثقة ${confidence}%`,
+      user_id: null
+    };
+
+    if (sb) {
+      try {
+        await sb.from('maarif_links').insert(payload);
+        await sb.from('maarif_logs').insert(logPayload);
+      } catch (e) {}
+    }
+
+    const newLink = {
+      id: Date.now() + Math.floor(Math.random() * 1000),
+      ...payload,
+      created_at: new Date().toISOString()
+    };
+    maarifLinks.push(newLink);
+    localStorage.setItem('maarif_links', JSON.stringify(maarifLinks));
+
+    const newLog = {
+      id: Date.now() + Math.floor(Math.random() * 1000),
+      ...logPayload,
+      created_at: new Date().toISOString()
+    };
+    maarifLogs.push(newLog);
+    localStorage.setItem('maarif_logs', JSON.stringify(maarifLogs));
+  }
+
+  for (const hadithId of toUnlink) {
+    const logPayload = {
+      action_type: 'unlink',
+      hadith_id: hadithId,
+      node_id: nodeId,
+      details: `فك ارتباط الحديث بالجنس [${nodeId}] من جهة الشجرة`,
+      user_id: null
+    };
+
+    if (sb) {
+      try {
+        await sb.from('maarif_links').delete().eq('node_id', nodeId).eq('hadith_id', hadithId);
+        await sb.from('maarif_logs').insert(logPayload);
+      } catch (e) {}
+    }
+
+    maarifLinks = maarifLinks.filter(l => !(l.node_id === nodeId && parseInt(l.hadith_id) === hadithId));
+    localStorage.setItem('maarif_links', JSON.stringify(maarifLinks));
+
+    const newLog = {
+      id: Date.now() + Math.floor(Math.random() * 1000),
+      ...logPayload,
+      created_at: new Date().toISOString()
+    };
+    maarifLogs.push(newLog);
+    localStorage.setItem('maarif_logs', JSON.stringify(maarifLogs));
+  }
+
+  toast('تم تعديل وحفظ الروابط بنجاح ✓');
+  initApp();
+}
+
+async function unlinkMaarif(nodeId, hadithId) {
+  const logPayload = {
+    action_type: 'unlink',
+    hadith_id: hadithId,
+    node_id: nodeId,
+    details: `ألغى الباحث ارتباط الحديث بالجنس [${nodeId}]`,
+    user_id: null
+  };
+
+  if (sb) {
+    try {
+      await sb.from('maarif_links').delete().eq('node_id', nodeId).eq('hadith_id', hadithId);
+      await sb.from('maarif_logs').insert(logPayload);
+    } catch (e) {}
+  }
+
+  maarifLinks = maarifLinks.filter(l => !(l.node_id === nodeId && String(l.hadith_id) === String(hadithId)));
+  localStorage.setItem('maarif_links', JSON.stringify(maarifLinks));
+
+  const newLog = {
+    id: Date.now() + Math.floor(Math.random() * 1000),
+    ...logPayload,
+    created_at: new Date().toISOString()
+  };
+  maarifLogs.push(newLog);
+  localStorage.setItem('maarif_logs', JSON.stringify(maarifLogs));
+
+  toast('تم إلغاء الرابط العلمي بنجاح ✕');
+  initApp();
+}
+
+// Modals and issue additions
+function openAddModal() {
+  ['am-issue', 'am-number', 'am-companion', 'am-narrator', 'am-text', 'am-reasoning', 'am-part', 'am-page'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('add-modal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('add-modal').style.display = 'none';
+}
+
+async function submitAddHadith() {
+  const book = document.getElementById('am-book').value;
+  const issue = document.getElementById('am-issue').value.trim();
+  const number = document.getElementById('am-number').value.trim();
+  const companion = document.getElementById('am-companion').value.trim();
+  const narrator = document.getElementById('am-narrator').value.trim();
+  const text = document.getElementById('am-text').value.trim();
+  const reasoning_text = document.getElementById('am-reasoning').value.trim();
+  const part = document.getElementById('am-part').value.trim();
+  const page = document.getElementById('am-page').value.trim();
+
+  if (!issue || !text) {
+    toast('يرجى ملء الحقول الأساسية: المسألة ونص الحديث والتعليل');
+    return;
+  }
+
+  const payload = {
+    book,
+    issue,
+    number,
+    companion,
+    narrator,
+    text,
+    reasoning_text,
+    part: part || '1',
+    page: page || '1'
+  };
+
+  let newId = Date.now();
+
+  if (sb) {
+    try {
+      const {data, error} = await sb.from('maarif_hadiths').insert(payload).select().single();
+      if (!error && data) {
+        newId = data.id;
+        await sb.from('maarif_logs').insert({
+          action_type: 'create_hadith',
+          hadith_id: data.id,
+          details: `أضاف الباحث مسألة حديثية معللة جديدة: [${issue}]`,
+          user_id: null
+        });
+      }
+    } catch (e) {}
+  }
+
+  // Fallback / update local lists
+  const localH = {
+    id: newId,
+    ...payload
+  };
+  maarifHadiths.push(localH);
+  localStorage.setItem('maarif_hadiths', JSON.stringify(maarifHadiths));
+
+  const newLog = {
+    id: Date.now() + Math.floor(Math.random() * 1000),
+    action_type: 'create_hadith',
+    hadith_id: newId,
+    details: `أضاف الباحث مسألة حديثية معللة جديدة: [${issue}]`,
+    user_id: null,
+    created_at: new Date().toISOString()
+  };
+  maarifLogs.push(newLog);
+  localStorage.setItem('maarif_logs', JSON.stringify(maarifLogs));
+
+  closeModal();
+  toast('تم إضافة المسألة بنجاح إلى قاعدة المعارف ✓');
+  initApp();
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+</script>
+</body>
+</html>
