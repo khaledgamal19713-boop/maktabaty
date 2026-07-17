@@ -1,0 +1,41 @@
+#app{display:none}
+.page{display:none;min-height:calc(100vh - 50px)}
+.page.active{display:block}
+#page-feed{max-width:680px;margin:0 auto;padding:16px}
+#composer{background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px}
+#guest-notice{font-size:12px;color:var(--gold);background:var(--gold-light);padding:8px 12px;border-radius:6px;margin-bottom:10px}
+#post-types{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+#post-types button{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:#fff;font-size:13px;color:var(--text2)}
+#post-types button.active{background:var(--green);color:#fff;border-color:var(--green)}
+#post-types button:disabled{opacity:.35;cursor:not-allowed}
+#post-content{width:100%;border:1px solid var(--border);border-radius:6px;padding:10px;min-height:80px;resize:vertical}
+#post-content:focus{border-color:var(--green)}
+#composer-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;gap:8px}
+#composer-footer select{border:1px solid var(--border);border-radius:4px;padding:4px 8px;font-size:13px}
+#btn-publish{background:var(--green);color:#fff;padding:8px 22px;border-radius:6px;font-size:14px}
+#btn-publish:hover{background:#155530}
+#btn-publish:disabled{background:#aaa}
+.post-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:12px}
+.post-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.post-author-row{display:flex;align-items:center;gap:8px}
+.post-author{font-weight:600;font-size:14px;color:var(--green);cursor:pointer}
+.post-meta{font-size:11px;color:var(--text2);margin-top:1px}
+.post-type-badge{font-size:11px;padding:2px 8px;border-radius:10px;background:var(--green-light);color:var(--green);font-weight:600}
+.post-type-badge.فائدة{background:var(--blue-light);color:var(--blue)}
+.post-type-badge.سؤال{background:#fdf3e8;color:#b85c0b}
+.post-type-badge.اقتباس{background:var(--gold-light);color:var(--gold)}
+.post-type-badge.تحقيق{background:var(--purple-light);color:var(--purple)}
+.post-content{line-height:1.7;font-size:15px;white-space:pre-wrap;margin-bottom:4px}
+.post-footer{display:flex;gap:14px;margin-top:10px;padding-top:8px;border-top:1px solid #f3f3f3}
+.post-footer button{color:var(--text2);font-size:13px;padding:3px 6px;border-radius:4px}
+.post-footer button:hover{background:var(--green-light);color:var(--green)}
+.post-footer button.liked{color:var(--green);font-weight:600}
+.post-hadith-ref{font-size:12px;color:var(--blue);background:var(--blue-light);padding:3px 10px;border-radius:4px;cursor:pointer}
+.post-hadith-ref:hover{text-decoration:underline}
+.comments-section{margin-top:10px;border-top:1px solid #f3f3f3;padding-top:8px;display:none}
+.comment-item{padding:6px 0;border-bottom:1px solid #f7f7f7;font-size:13px;display:flex;gap:6px}
+.comment-author{font-weight:600;color:var(--green);font-size:12px;flex-shrink:0}
+.comment-input-row{display:flex;gap:8px;margin-top:8px}
+.comment-input-row input{flex:1;border:1px solid var(--border);border-radius:20px;padding:7px 12px;font-size:13px}
+.comment-input-row button{background:var(--green);color:#fff;padding:7px 14px;border-radius:20px;font-size:13px}
+#posts-loading,#posts-empty{text-align:center;padding:30px;color:var(--text2)}
