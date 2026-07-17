@@ -1,0 +1,47 @@
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --green:#1a6b3c;--green-light:#e8f5ee;--gold:#b8860b;--gold-light:#fdf8e8;
+  --blue:#1a3a6b;--blue-light:#e8f0fd;--text:#1a1a1a;--text2:#666;--text3:#999;
+  --border:#e0e0e0;--bg:#f7f7f5;--white:#fff;--purple:#6b1ab8;--purple-light:#f3e8fd;
+}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.5}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;outline:none;font-family:inherit;font-size:14px;background:none}
+input,textarea,select{font-family:inherit;font-size:14px;outline:none}
+img{max-width:100%}
+#nav{background:var(--green);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:50px;position:sticky;top:0;z-index:100;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+#nav .logo{font-size:19px;font-weight:700;letter-spacing:.5px;flex-shrink:0}
+#nav-toggle{display:flex;background:rgba(0,0,0,.15);border-radius:20px;padding:2px;margin:0 12px}
+#nav-toggle button{padding:6px 18px;border-radius:18px;color:rgba(255,255,255,.8);font-size:13px;font-weight:600}
+#nav-toggle button.active{background:#fff;color:var(--green)}
+#nav .nav-user{display:flex;align-items:center;gap:8px;font-size:13px;flex-shrink:0}
+#nav .nav-user span{color:rgba(255,255,255,.9);cursor:pointer;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#nav .nav-user button{background:rgba(255,255,255,.15);color:#fff;padding:5px 10px;border-radius:4px;font-size:12px}
+#nav .nav-user button:hover{background:rgba(255,255,255,.25)}
+#nav-back-btn{background:rgba(255,255,255,.15);color:#fff;padding:5px 12px;border-radius:4px;font-size:12px;display:none;align-items:center;gap:4px}
+#nav-back-btn:hover{background:rgba(255,255,255,.25)}
+#sub-bar{background:#fff;border-bottom:1px solid var(--border);display:flex;gap:6px;padding:8px 16px;overflow-x:auto;position:sticky;top:50px;z-index:99}
+#sub-bar button{padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:#fff;font-size:13px;color:var(--text2);white-space:nowrap;flex-shrink:0}
+#sub-bar button.active{background:var(--gold);color:#fff;border-color:var(--gold)}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-box{background:#fff;border-radius:8px;padding:22px;width:460px;max-width:100%;max-height:90vh;overflow-y:auto}
+.modal-box h3{color:var(--green);margin-bottom:6px;font-size:16px}
+.modal-box textarea,.modal-box input{width:100%;border:1px solid var(--border);border-radius:6px;padding:9px;margin-bottom:10px;font-size:13px}
+.modal-box textarea{min-height:80px;resize:vertical}
+.modal-types{display:flex;gap:6px;margin-bottom:10px}
+.modal-types button{padding:4px 12px;border-radius:20px;border:1px solid var(--border);font-size:12px;background:#fff}
+.modal-types button.active{background:var(--green);color:#fff;border-color:var(--green)}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px}
+.modal-footer button{padding:8px 18px;border-radius:6px;font-size:13px}
+.modal-cancel{background:var(--bg);color:var(--text2);border:1px solid var(--border)}
+.modal-submit{background:var(--green);color:#fff}
+#img-zoom{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:none;align-items:center;justify-content:center}
+#img-zoom img{max-width:90vw;max-height:90vh;border-radius:4px}
+#img-zoom-close{position:absolute;top:20px;left:20px;background:rgba(255,255,255,.2);color:#fff;padding:8px 14px;border-radius:4px;font-size:14px}
+#toast{position:fixed;bottom:24px;right:24px;background:#333;color:#fff;padding:10px 18px;border-radius:6px;font-size:13px;z-index:999;opacity:0;transition:.3s;pointer-events:none;max-width:90vw}
+#toast.show{opacity:1}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:#f0f0f0}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@media(max-width:768px){.side-panel.open{position:absolute;height:100%;z-index:50;width:70%}#comments-drawer.open{position:absolute;right:0;height:100%;z-index:51;width:80%}#lib-sidebar.expanded{position:absolute;height:100%;z-index:52}}
