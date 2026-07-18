@@ -1,0 +1,14 @@
+const SUPA_URL='https://uqfqpqjarofbcdzkrdgs.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVxZnFwcWphcm9mYmNkemtyZGdzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4ODUwMzUsImV4cCI6MjA5MzQ2MTAzNX0.8z2Nc8t14txttepiRV5yhhkBfDdE77FJ7rx1dxQrICI';
+const CDN='https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1';
+const BOOKS=[{id:'bukhari',cdnId:'ara-bukhari',icon:'📗',title:'صحيح البخاري',author:'البخاري'},{id:'muslim',cdnId:'ara-muslim',icon:'📘',title:'صحيح مسلم',author:'مسلم'},{id:'abudawud',cdnId:'ara-abudawud',icon:'📙',title:'سنن أبي داود',author:'أبو داود'},{id:'tirmidhi',cdnId:'ara-tirmidhi',icon:'📕',title:'سنن الترمذي',author:'الترمذي'},{id:'nasai',cdnId:'ara-nasai',icon:'📔',title:'سنن النسائي',author:'النسائي'},{id:'ibnmajah',cdnId:'ara-ibnmajah',icon:'📓',title:'سنن ابن ماجه',author:'ابن ماجه'}];
+const FN_CATS=['تخريج','فروق_نسخ','غريب'];
+const FN_CAT_DB={'تخريج':'تخريج','فروق_نسخ':'فروق نسخ','غريب':'غريب'};
+const{createClient}=supabase;
+const sb=createClient(SUPA_URL,SUPA_KEY);
+let currentUser=null,currentProfile=null,mainView='feed',feedFilter='الكل',currentPostType='حديث';
+let currentBook=null,currentHadiths=[],currentChapters=[],activeChapter=null;
+let currentMode='browse',activeFnCats={},openPanels={mss:false,editions:false};
+let editingNum=null,editingMatnHtml=null,editingStatus='draft',lastRenderedList=[];
+let commentsDrawerOpen=false,activeHadith=null,qcHadith=null,footnotes=[],fnCounter=0;
+let currentDraftId=null,addItemType=null,viewedProfileId=null,previousView='feed';
