@@ -1,0 +1,9 @@
+function goBack(){document.getElementById('page-profile').classList.remove('active');document.getElementById('nav-back-btn').style.display='none';document.getElementById('nav-toggle').style.display='flex';if(previousView==='library')switchMainView('library');else switchMainView('feed');}
+function showProfilePage(userId){previousView=mainView;viewedProfileId=userId;document.getElementById('page-feed').classList.remove('active');document.getElementById('page-library').classList.remove('active');document.getElementById('page-profile').classList.add('active');document.getElementById('sub-bar').style.display='none';document.getElementById('nav-back-btn').style.display='flex';document.getElementById('nav-toggle').style.display='none';loadProfilePage();}
+function switchMainView(view){mainView=view;document.getElementById('page-profile').classList.remove('active');document.getElementById('nav-back-btn').style.display='none';document.getElementById('nav-toggle').style.display='flex';document.querySelectorAll('#nav-toggle button').forEach((b,i)=>b.classList.toggle('active',view==='feed'?i===0:i===1));document.getElementById('page-feed').classList.toggle('active',view==='feed');document.getElementById('page-library').classList.toggle('active',view==='library');renderSubBar();if(view==='feed')loadPosts();}
+function openModal(id){document.getElementById(id).style.display='flex';}
+function closeModal(id){document.getElementById(id).style.display='none';}
+function zoomImg(src){document.getElementById('zoom-img').src=src;document.getElementById('img-zoom').style.display='flex';}
+function closeZoom(){document.getElementById('img-zoom').style.display='none';}
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2800);}
+function escHtml(str){if(!str)return '';return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
