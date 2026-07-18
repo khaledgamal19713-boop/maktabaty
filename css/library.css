@@ -1,0 +1,110 @@
+#page-library{display:flex;height:calc(100vh - 50px);overflow:hidden}
+#lib-sidebar{width:64px;min-width:64px;background:#fff;border-left:1px solid var(--border);overflow-y:auto;transition:width .2s;display:flex;flex-direction:column;flex-shrink:0}
+#lib-sidebar.expanded{width:200px;min-width:200px}
+#sidebar-toggle{padding:10px;text-align:center;border-bottom:1px solid var(--border);color:var(--green);font-size:16px}
+#sidebar-toggle:hover{background:var(--green-light)}
+.book-item{padding:10px 8px;cursor:pointer;border-bottom:1px solid #f5f5f5;text-align:center;border-right:3px solid transparent}
+.book-item:hover{background:var(--green-light)}
+.book-item.active{background:var(--green-light);border-right-color:var(--green)}
+.book-item .book-icon{font-size:20px;display:block;margin-bottom:2px}
+.book-item .book-title{font-size:11px;font-weight:600;color:var(--text);display:none;line-height:1.3}
+.book-item .book-author{font-size:10px;color:var(--text2);display:none}
+#lib-sidebar.expanded .book-item{text-align:right;padding:10px 12px}
+#lib-sidebar.expanded .book-item .book-icon{display:none}
+#lib-sidebar.expanded .book-item .book-title,#lib-sidebar.expanded .book-item .book-author{display:block}
+#lib-main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+#lib-empty{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;color:var(--text2);text-align:center}
+#lib-empty p:first-child{font-size:32px;margin-bottom:10px}
+#mode-bar{background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:8px 14px;flex-wrap:wrap;gap:8px}
+#mode-bar .modes{display:flex;gap:6px}
+#mode-bar .modes button{padding:6px 16px;border-radius:6px;border:1px solid var(--border);font-size:13px;color:var(--text2)}
+#mode-bar .modes button.active{background:var(--green);color:#fff;border-color:var(--green)}
+#mode-bar .modes button:disabled{opacity:.4;cursor:not-allowed}
+#mode-bar .toc-and-fn{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+#mode-bar select{border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:12px}
+.fn-toggle{padding:4px 10px;border-radius:14px;border:1px solid var(--border);font-size:11px;color:var(--text2)}
+.fn-toggle.active.تخريج{background:var(--blue-light);color:var(--blue);border-color:var(--blue)}
+.fn-toggle.active.فروق_نسخ{background:var(--gold-light);color:var(--gold);border-color:var(--gold)}
+.fn-toggle.active.غريب{background:var(--purple-light);color:var(--purple);border-color:var(--purple)}
+#comments-toggle-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--border);font-size:12px;color:var(--text2)}
+#comments-toggle-btn.active{background:var(--green-light);color:var(--green);border-color:var(--green)}
+#lib-content{flex:1;display:flex;overflow:hidden;position:relative}
+.side-panel{width:0;overflow:hidden;transition:width .2s;background:#fafafa;border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.side-panel.open{width:19%;min-width:170px}
+.side-panel-header{padding:8px 10px;font-size:12px;font-weight:600;color:var(--text2);background:#fff;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.side-panel-body{flex:1;overflow-y:auto;padding:8px}
+.side-panel-body .ms-item,.side-panel-body .ed-item{border:1px solid var(--border);border-radius:6px;padding:8px;margin-bottom:8px;background:#fff;font-size:12px}
+.side-panel-body .ms-item h4,.side-panel-body .ed-item h4{font-size:12px;color:var(--green);margin-bottom:3px}
+.side-panel-body .ms-item p,.side-panel-body .ed-item p{font-size:10px;color:var(--text2);line-height:1.5}
+.side-panel-body img{width:100%;border-radius:4px;margin-top:6px;cursor:zoom-in}
+.add-item-btn{width:100%;padding:6px;border:1px dashed var(--border);border-radius:6px;font-size:11px;color:var(--green);margin-top:4px}
+.add-item-btn:hover{background:var(--green-light)}
+#panel-toggle-left,#panel-toggle-right{position:absolute;top:8px;z-index:10;background:#fff;border:1px solid var(--border);border-radius:50%;width:28px;height:28px;font-size:13px;color:var(--text2)}
+#panel-toggle-left{right:8px}
+#panel-toggle-right{left:8px}
+#panel-toggle-left.open,#panel-toggle-right.open{background:var(--green-light);color:var(--green)}
+#reader-panel{flex:1;overflow-y:auto;padding:18px;min-width:0;background:var(--bg)}
+#reader-header{margin-bottom:12px}
+#reader-header h2{color:var(--green);font-size:18px;margin-bottom:6px}
+#hadith-search-bar{display:flex;gap:8px;margin-bottom:12px}
+#hadith-search-bar input{flex:1;border:1px solid var(--border);border-radius:6px;padding:8px 12px}
+#hadith-search-bar button{background:var(--green);color:#fff;padding:8px 16px;border-radius:6px}
+.hadith-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:12px}
+.hadith-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.hadith-number{font-size:12px;color:var(--text2)}
+.hadith-grade{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+.hadith-grade.صحيح{background:var(--green-light);color:var(--green)}
+.hadith-grade.حسن{background:var(--blue-light);color:var(--blue)}
+.hadith-grade.ضعيف{background:#fde8e8;color:#b81a1a}
+.hadith-text{line-height:2;font-size:15px}
+.fn-marker{display:inline-block;font-size:11px;font-weight:700;color:#fff;border-radius:3px;padding:0 4px;margin:0 2px;cursor:pointer;vertical-align:super}
+.fn-marker.تخريج{background:var(--blue)}
+.fn-marker.فروق_نسخ{background:var(--gold)}
+.fn-marker.غريب{background:var(--purple)}
+.hadith-actions{display:flex;gap:8px;margin-top:10px;padding-top:8px;border-top:1px solid #f0f0f0;flex-wrap:wrap}
+.hadith-actions button{background:var(--green-light);color:var(--green);padding:5px 12px;border-radius:4px;font-size:12px}
+.hadith-actions .btn-save{background:#f0f0f0;color:var(--text)}
+.hadith-actions .btn-submit{background:var(--green);color:#fff}
+.hadith-actions .btn-submit:hover{background:#155530}
+.hadith-actions button:hover{background:var(--green);color:#fff}
+.hadith-actions .btn-tahqiq{background:var(--purple-light);color:var(--purple)}
+.hadith-actions .btn-tahqiq:hover{background:var(--purple);color:#fff}
+.hadith-actions .btn-editor{background:var(--gold-light);color:var(--gold)}
+.hadith-actions .btn-editor:hover{background:var(--gold);color:#fff}
+#fn-popover{position:fixed;background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;max-width:280px;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:400;display:none}
+#fn-popover .fn-cat-label{font-size:11px;font-weight:700;margin-bottom:4px}
+#fn-popover .fn-cat-label.تخريج{color:var(--blue)}
+#fn-popover .fn-cat-label.فروق_نسخ{color:var(--gold)}
+#fn-popover .fn-cat-label.غريب{color:var(--purple)}
+#comments-drawer{width:0;overflow:hidden;transition:width .2s;background:#fff;border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+#comments-drawer.open{width:280px;min-width:240px}
+#comments-drawer-header{padding:10px 12px;font-size:13px;font-weight:600;color:var(--green);border-bottom:1px solid var(--border);display:flex;justify-content:space-between}
+#comments-drawer-body{flex:1;overflow-y:auto;padding:10px}
+#comments-drawer-input{padding:10px;border-top:1px solid var(--border);display:flex;gap:6px}
+#comments-drawer-input input{flex:1;border:1px solid var(--border);border-radius:18px;padding:7px 12px;font-size:13px}
+#comments-drawer-input button{background:var(--green);color:#fff;padding:7px 14px;border-radius:18px;font-size:12px}
+#editor-toolbar{margin:0 0 10px 0;padding:6px 0;border-bottom:1px solid var(--border);display:flex;gap:3px;flex-wrap:wrap;background:transparent;align-items:center;flex-shrink:0}
+#editor-toolbar button{padding:4px 7px;border:1px solid transparent;border-radius:4px;background:none;font-size:13px;color:var(--text);min-width:26px;text-align:center;line-height:1.2}
+#editor-toolbar button:hover{background:var(--green-light);border-color:var(--border);color:var(--green)}
+#editor-toolbar select{border:1px solid var(--border);border-radius:4px;padding:3px 5px;font-size:12px;background:#fff;max-width:95px}
+#editor-toolbar button:hover{background:var(--green-light);border-color:var(--green);color:var(--green)}
+#editor-toolbar .sep{width:1px;background:var(--border);align-self:stretch;margin:0 2px}
+#editor-toolbar .status-badge{font-size:11px;padding:3px 10px;border-radius:10px;margin-right:auto}
+.status-draft{background:#f0f0f0;color:var(--text2)}
+.status-pending_review{background:var(--gold-light);color:var(--gold)}
+.status-approved{background:var(--green-light);color:var(--green)}
+#editor-content{outline:none;min-height:120px}
+#editor-content:empty:before{content:'اختر حديثاً من وضع التصفح أولاً.';color:#bbb}
+.m-fn-ref{background:var(--gold-light);color:var(--gold);border-radius:3px;padding:0 4px;font-size:11px;font-weight:700;vertical-align:super;cursor:pointer}
+#editor-footnotes{margin-top:14px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:12px}
+#editor-footnotes h5{font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:600}
+.fn-item{display:flex;gap:8px;font-size:12px;margin-bottom:6px;align-items:flex-start;padding-bottom:6px;border-bottom:1px solid #f5f5f5}
+.fn-num{color:var(--gold);font-weight:700;min-width:18px}
+.fn-text{flex:1;line-height:1.6}
+.fn-del{color:#c0392b;font-size:14px;padding:0 4px}
+.fn-del:hover{color:#e74c3c}
+#btn-add-fn{color:var(--green);font-size:12px;padding:6px 0}
+#btn-add-fn:hover{text-decoration:underline}
+.btn-save{background:#f0f0f0;color:var(--text)}
+.btn-submit{background:var(--green);color:#fff}
+.btn-submit:hover{background:#155530}
