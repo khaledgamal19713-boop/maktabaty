@@ -1,0 +1,2284 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>مكتبتي — منصة العلوم الإسلامية</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iIzFhNmIzYyIvPjx0ZXh0IHg9IjUwIiB5PSI2NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IlRhaG9tYSxBcmlhbCIgZm9udC1zaXplPSI0NSIgZmlsbD0iI2ZmZiI+2YU8L3RleHQ+PC9zdmc+">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Amiri:ital,wght@0,400;0,700;1,400&family=Scheherazade+New:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fb-bg:#f0f2f5;--fb-white:#ffffff;--fb-green:#1a6b3c;--fb-green-dark:#14522e;--fb-green-light:#e8f5ee;
+  --fb-gold:#b8860b;--fb-gold-light:#fdf8e8;--fb-blue:#1877f2;--fb-blue-light:#e7f3ff;
+  --fb-text:#050505;--fb-text-secondary:#65676b;--fb-text-tertiary:#8a8d91;
+  --fb-border:#dddfe2;--fb-border-light:#e4e6eb;--fb-hover:#f2f2f2;
+  --fb-shadow:0 1px 2px rgba(0,0,0,0.1),0 2px 4px rgba(0,0,0,0.05);
+  --fb-shadow-card:0 1px 2px rgba(0,0,0,0.2);
+  --fb-radius:max(0px,min(8px,calc((100vw - 4px - 100%) * 9999)));
+  --fb-radius-lg:12px;--nav-height:56px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Cairo',sans-serif;background:var(--fb-bg);color:var(--fb-text);font-size:15px;line-height:1.5;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;outline:none;font-family:inherit;background:none}
+input,textarea,select{font-family:inherit;outline:none}
+img{max-width:100%}
+
+/* ===== TOP NAVIGATION ===== */
+#top-nav{position:fixed;top:0;left:0;right:0;height:var(--nav-height);background:var(--fb-white);box-shadow:0 1px 3px rgba(0,0,0,0.08);z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 16px}
+#top-nav .nav-left{display:flex;align-items:center;gap:8px;flex:1}
+#top-nav .logo{font-size:24px;font-weight:800;color:var(--fb-green);letter-spacing:-0.5px;display:flex;align-items:center;gap:6px}
+#top-nav .logo-icon{width:40px;height:40px;background:var(--fb-green);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:700}
+#search-box{position:relative;width:240px;max-width:100%}
+#search-box input{width:100%;background:var(--fb-bg);border:none;border-radius:50px;padding:8px 12px 8px 36px;font-size:14px;color:var(--fb-text);transition:width .2s}
+#search-box input:focus{width:320px;background:var(--fb-white);box-shadow:0 0 0 2px var(--fb-blue-light)}
+#search-box::before{content:"🔍";position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.5}
+#top-nav .nav-center{display:flex;align-items:center;gap:4px;flex:2;justify-content:center}
+.nav-tab{position:relative;padding:10px 32px;border-radius:8px;color:var(--fb-text-secondary);font-size:24px;transition:.15s;display:flex;align-items:center;justify-content:center}
+.nav-tab:hover{background:var(--fb-hover)}
+.nav-tab.active{color:var(--fb-green)}
+.nav-tab.active::after{content:"";position:absolute;bottom:-2px;left:16px;right:16px;height:3px;background:var(--fb-green);border-radius:2px}
+.nav-tab .tab-label{font-size:11px;font-weight:600;margin-top:2px;display:none}
+#top-nav .nav-right{display:flex;align-items:center;gap:8px;flex:1;justify-content:flex-end}
+.nav-icon-btn{width:40px;height:40px;border-radius:50%;background:var(--fb-bg);display:flex;align-items:center;justify-content:center;font-size:20px;position:relative;transition:.15s}
+.nav-icon-btn:hover{background:var(--fb-hover)}
+.nav-icon-btn .badge{position:absolute;top:-2px;right:-2px;background:#e41e3f;color:#fff;font-size:11px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--fb-white)}
+#user-menu-btn{display:flex;align-items:center;gap:6px;padding:4px 8px 4px 4px;border-radius:20px;background:var(--fb-bg);transition:.15s}
+#user-menu-btn:hover{background:var(--fb-hover)}
+#user-menu-btn .user-avatar{width:32px;height:32px;border-radius:50%;background:var(--fb-green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600}
+#user-menu-btn .user-name{font-size:14px;font-weight:600;display:none}
+
+/* ===== MAIN LAYOUT ===== */
+#main-layout{display:grid;grid-template-columns:280px 1fr 280px;gap:16px;max-width:1400px;margin:0 auto;padding:calc(var(--nav-height) + 16px) 16px 16px;min-height:100vh}
+
+/* ===== LEFT SIDEBAR ===== */
+#left-sidebar{position:sticky;top:calc(var(--nav-height) + 16px);height:calc(100vh - var(--nav-height) - 32px);overflow-y:auto}
+.sidebar-menu{display:flex;flex-direction:column;gap:4px}
+.sidebar-item{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:8px;cursor:pointer;transition:.15s;font-size:15px;font-weight:500;color:var(--fb-text)}
+.sidebar-item:hover{background:var(--fb-hover)}
+.sidebar-item .si-icon{font-size:24px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:var(--fb-bg)}
+.sidebar-item.active{background:var(--fb-green-light);color:var(--fb-green)}
+.sidebar-item.active .si-icon{background:var(--fb-green);color:#fff}
+.sidebar-divider{height:1px;background:var(--fb-border);margin:8px 0}
+.sidebar-heading{font-size:13px;font-weight:600;color:var(--fb-text-secondary);padding:8px 12px}
+
+/* ===== CENTER FEED ===== */
+#center-feed{max-width:680px;margin:0 auto;width:100%}
+
+/* Stories */
+#stories-bar{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding:4px}
+.story-card{flex-shrink:0;width:112px;height:200px;border-radius:var(--fb-radius-lg);background:var(--fb-white);box-shadow:var(--fb-shadow);overflow:hidden;position:relative;cursor:pointer;transition:transform .15s}
+.story-card:hover{transform:scale(1.02)}
+.story-card .story-bg{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,0.7))}
+.story-card .story-avatar{position:absolute;top:12px;right:12px;width:40px;height:40px;border-radius:50%;border:4px solid var(--fb-green);background:var(--fb-white);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--fb-green)}
+.story-card .story-name{position:absolute;bottom:12px;right:12px;left:12px;color:#fff;font-size:13px;font-weight:600;text-align:center}
+.story-card.create .story-bg{background:var(--fb-bg)}
+.story-card.create .story-plus{position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);width:40px;height:40px;border-radius:50%;background:var(--fb-green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px}
+.story-card.create .story-name{color:var(--fb-text);bottom:16px}
+
+/* Composer */
+#composer-card{background:var(--fb-white);border-radius:var(--fb-radius-lg);box-shadow:var(--fb-shadow);padding:12px 16px;margin-bottom:16px}
+.composer-top{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+.composer-avatar{width:40px;height:40px;border-radius:50%;background:var(--fb-green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;flex-shrink:0}
+.composer-input{flex:1;background:var(--fb-bg);border:none;border-radius:20px;padding:10px 16px;font-size:15px;color:var(--fb-text);cursor:pointer;transition:.15s}
+.composer-input:hover{background:var(--fb-hover)}
+.composer-divider{height:1px;background:var(--fb-border);margin:8px 0}
+.composer-actions{display:flex;justify-content:space-around}
+.composer-action{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:8px;cursor:pointer;transition:.15s;font-size:14px;font-weight:500;color:var(--fb-text-secondary)}
+.composer-action:hover{background:var(--fb-hover)}
+.composer-action .ca-icon{font-size:20px}
+
+/* Full Composer Modal */
+#composer-modal-overlay{position:fixed;inset:0;background:rgba(255,255,255,0.8);backdrop-filter:blur(4px);z-index:2000;display:none;align-items:center;justify-content:center;padding:16px}
+#composer-modal{background:var(--fb-white);border-radius:var(--fb-radius-lg);box-shadow:0 12px 28px rgba(0,0,0,0.2);width:500px;max-width:100%;overflow:hidden}
+#composer-modal-header{padding:12px 16px;border-bottom:1px solid var(--fb-border);display:flex;justify-content:space-between;align-items:center}
+#composer-modal-header h3{font-size:17px;font-weight:700;text-align:center;flex:1}
+#composer-modal-close{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;color:var(--fb-text-secondary)}
+#composer-modal-close:hover{background:var(--fb-hover)}
+#composer-modal-body{padding:16px}
+#composer-modal-user{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+#composer-modal-user .name{font-weight:600;font-size:15px}
+#composer-modal-user .privacy{font-size:13px;color:var(--fb-text-secondary);display:flex;align-items:center;gap:4px;background:var(--fb-bg);padding:2px 8px;border-radius:4px}
+#composer-textarea{width:100%;border:none;resize:none;font-size:17px;min-height:120px;font-family:inherit;color:var(--fb-text)}
+#composer-textarea::placeholder{color:var(--fb-text-tertiary)}
+#composer-modal-footer{padding:12px 16px;border-top:1px solid var(--fb-border);display:flex;justify-content:space-between;align-items:center}
+#composer-addons{display:flex;gap:8px}
+.composer-addon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;transition:.15s;background:var(--fb-bg)}
+.composer-addon:hover{background:var(--fb-hover)}
+#btn-publish-modal{background:var(--fb-green);color:#fff;padding:8px 24px;border-radius:6px;font-size:15px;font-weight:600;opacity:.6;transition:.15s}
+#btn-publish-modal:not(:disabled){opacity:1}
+#btn-publish-modal:not(:disabled):hover{background:var(--fb-green-dark)}
+
+/* Composer Types */
+#composer-types{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.composer-type{padding:5px 12px;border-radius:20px;border:1px solid var(--fb-border);background:#fff;font-size:13px;color:var(--fb-text-secondary);cursor:pointer;transition:.15s}
+.composer-type:hover{background:var(--fb-hover)}
+.composer-type.active{background:var(--fb-green);color:#fff;border-color:var(--fb-green)}
+.composer-type:disabled{opacity:.4;cursor:not-allowed}
+#composer-track{display:flex;gap:8px;align-items:center;margin-bottom:12px;font-size:13px;color:var(--fb-text-secondary)}
+#composer-track select{border:1px solid var(--fb-border);border-radius:6px;padding:4px 8px;font-size:13px;background:#fff}
+
+/* ===== POST CARD ===== */
+.post-card{background:var(--fb-white);border-radius:var(--fb-radius-lg);box-shadow:var(--fb-shadow);margin-bottom:16px;overflow:hidden}
+.post-header{padding:12px 16px;display:flex;justify-content:space-between;align-items:flex-start}
+.post-author-section{display:flex;gap:10px;align-items:flex-start}
+.post-avatar{width:40px;height:40px;border-radius:50%;background:var(--fb-green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;flex-shrink:0;cursor:pointer;transition:.15s}
+.post-avatar:hover{opacity:.9}
+.post-meta-info{display:flex;flex-direction:column}
+.post-author-name{font-weight:600;font-size:15px;color:var(--fb-text);cursor:pointer}
+.post-author-name:hover{text-decoration:underline}
+.post-meta-row{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--fb-text-secondary)}
+.post-meta-row .dot{width:3px;height:3px;border-radius:50%;background:var(--fb-text-secondary)}
+.post-menu-btn{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--fb-text-secondary);font-size:20px}
+.post-menu-btn:hover{background:var(--fb-hover)}
+.post-content{padding:0 16px 12px;font-size:15px;line-height:1.6;color:var(--fb-text);white-space:pre-wrap}
+.post-hadith-ref{display:inline-flex;align-items:center;gap:4px;background:var(--fb-green-light);color:var(--fb-green);padding:4px 10px;border-radius:6px;font-size:13px;font-weight:600;margin-top:8px;cursor:pointer;transition:.15s}
+.post-hadith-ref:hover{background:var(--fb-green);color:#fff}
+.post-hadith-ref::before{content:"📚"}
+
+/* Post Stats */
+.post-stats{padding:8px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--fb-border-light);font-size:14px;color:var(--fb-text-secondary)}
+.post-reactions{display:flex;align-items:center;gap:4px}
+.reaction-icons{display:flex;margin-left:4px}
+.reaction-icon{width:18px;height:18px;border-radius:50%;background:var(--fb-bg);border:2px solid var(--fb-white);display:flex;align-items:center;justify-content:center;font-size:10px;margin-right:-6px}
+
+/* Post Actions */
+.post-actions{display:flex;padding:4px 12px;border-bottom:1px solid var(--fb-border-light);position:relative}
+.post-action{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px;border-radius:6px;cursor:pointer;transition:.15s;font-size:14px;font-weight:600;color:var(--fb-text-secondary)}
+.post-action:hover{background:var(--fb-hover)}
+.post-action.active{color:var(--fb-green)}
+.post-action .pa-icon{font-size:18px}
+.reactions-popover{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--fb-white);border-radius:30px;padding:6px 10px;box-shadow:0 4px 12px rgba(0,0,0,0.15);display:none;gap:6px;z-index:100}
+.reactions-popover.show{display:flex}
+.reaction-btn{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;transition:.2s;background:transparent}
+.reaction-btn:hover{transform:scale(1.3) translateY(-4px)}
+
+/* Comments */
+.comments-section{padding:8px 16px 12px;display:none}
+.comments-section.open{display:block}
+.comment-item{display:flex;gap:8px;margin-bottom:8px}
+.comment-avatar{width:32px;height:32px;border-radius:50%;background:var(--fb-green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.comment-body{flex:1}
+.comment-bubble{background:var(--fb-bg);border-radius:16px;padding:8px 12px;display:inline-block;max-width:100%}
+.comment-author{font-weight:600;font-size:13px;color:var(--fb-text);cursor:pointer}
+.comment-author:hover{text-decoration:underline}
+.comment-text{font-size:14px;color:var(--fb-text);line-height:1.5}
+.comment-actions{display:flex;gap:12px;margin-top:2px;padding:0 12px;font-size:12px;color:var(--fb-text-secondary)}
+.comment-action{cursor:pointer;font-weight:600}
+.comment-action:hover{text-decoration:underline}
+.comment-input-row{display:flex;gap:8px;align-items:flex-start;margin-top:8px}
+.comment-input-row .my-avatar{width:32px;height:32px;border-radius:50%;background:var(--fb-green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.comment-input-wrapper{flex:1;background:var(--fb-bg);border-radius:20px;padding:8px 12px;display:flex;align-items:center;gap:8px}
+.comment-input-wrapper input{flex:1;border:none;background:transparent;font-size:14px;color:var(--fb-text)}
+.comment-input-wrapper input::placeholder{color:var(--fb-text-tertiary)}
+.comment-send-btn{color:var(--fb-green);font-size:18px;cursor:pointer;padding:4px}
+.comment-send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* ===== RIGHT SIDEBAR ===== */
+#right-sidebar{position:sticky;top:calc(var(--nav-height) + 16px);height:calc(100vh - var(--nav-height) - 32px);overflow-y:auto}
+.rs-section{margin-bottom:16px}
+.rs-heading{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:15px;font-weight:600;color:var(--fb-text-secondary)}
+.rs-item{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:8px;cursor:pointer;transition:.15s}
+.rs-item:hover{background:var(--fb-hover)}
+.rs-item .rs-avatar{width:36px;height:36px;border-radius:50%;background:var(--fb-green-light);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--fb-green)}
+.rs-item .rs-info{flex:1}
+.rs-item .rs-name{font-size:14px;font-weight:500;color:var(--fb-text)}
+.rs-item .rs-sub{font-size:12px;color:var(--fb-text-secondary)}
+
+/* ===== PROFILE PAGE ===== */
+#profile-page{display:none}
+#profile-page.active{display:block}
+.profile-cover{position:relative;height:350px;background:linear-gradient(135deg,var(--fb-green) 0%,#0d3d22 100%);border-radius:0 0 var(--fb-radius-lg) var(--fb-radius-lg);overflow:hidden}
+.profile-cover-edit{position:absolute;bottom:16px;left:16px;background:rgba(0,0,0,0.6);color:#fff;padding:8px 16px;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px}
+.profile-cover-edit:hover{background:rgba(0,0,0,0.8)}
+.profile-header-info{position:relative;max-width:940px;margin:0 auto;padding:0 16px}
+.profile-avatar-wrap{position:relative;margin-top:-40px;display:inline-block}
+.profile-avatar-large{width:168px;height:168px;border-radius:50%;border:4px solid var(--fb-white);background:var(--fb-green);display:flex;align-items:center;justify-content:center;color:#fff;font-size:60px;font-weight:700;box-shadow:var(--fb-shadow)}
+.profile-avatar-edit{position:absolute;bottom:8px;left:8px;width:36px;height:36px;border-radius:50%;background:var(--fb-bg);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;box-shadow:var(--fb-shadow)}
+.profile-name-section{padding:16px 0;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px}
+.profile-name-info h1{font-size:28px;font-weight:700}
+.profile-name-info .username{color:var(--fb-text-secondary);font-size:15px}
+.profile-name-info .bio{margin-top:6px;font-size:15px;color:var(--fb-text)}
+.profile-actions{display:flex;gap:8px}
+.profile-btn{padding:8px 20px;border-radius:6px;font-size:15px;font-weight:600;transition:.15s}
+.profile-btn.primary{background:var(--fb-green);color:#fff}
+.profile-btn.primary:hover{background:var(--fb-green-dark)}
+.profile-btn.secondary{background:var(--fb-bg);color:var(--fb-text)}
+.profile-btn.secondary:hover{background:var(--fb-hover)}
+.profile-nav{display:flex;gap:4px;padding:0 16px;border-top:1px solid var(--fb-border);max-width:940px;margin:0 auto}
+.profile-nav-btn{padding:14px 16px;font-size:15px;font-weight:600;color:var(--fb-text-secondary);border-bottom:3px solid transparent;transition:.15s}
+.profile-nav-btn:hover{background:var(--fb-hover);border-radius:6px 6px 0 0}
+.profile-nav-btn.active{color:var(--fb-green);border-bottom-color:var(--fb-green)}
+.profile-content{max-width:940px;margin:16px auto;display:grid;grid-template-columns:360px 1fr;gap:16px;padding:0 16px}
+.profile-sidebar-left{display:flex;flex-direction:column;gap:16px}
+.profile-intro-card,.profile-photos-card,.profile-friends-card{background:var(--fb-white);border-radius:var(--fb-radius-lg);box-shadow:var(--fb-shadow);padding:16px}
+.profile-card-title{font-size:18px;font-weight:700;margin-bottom:12px}
+.profile-intro-item{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:15px;color:var(--fb-text-secondary)}
+.profile-intro-item .intro-icon{font-size:20px;width:24px;text-align:center}
+.profile-intro-item b{color:var(--fb-text);font-weight:600}
+
+/* ===== LIBRARY PAGE ===== */
+#library-page{display:none}
+#library-page.active{display:block}
+#library-layout{display:grid;grid-template-columns:280px 1fr;gap:0;max-width:1400px;margin:0 auto;padding-top:var(--nav-height);min-height:100vh}
+#library-sidebar{background:var(--fb-white);border-left:1px solid var(--fb-border);height:calc(100vh - var(--nav-height));overflow-y:auto;position:sticky;top:var(--nav-height)}
+.lib-sidebar-header{padding:16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--fb-border)}
+.lib-sidebar-header h2{font-size:20px;font-weight:700}
+#lib-sidebar-toggle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px}
+#lib-sidebar-toggle:hover{background:var(--fb-hover)}
+.book-list-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;transition:.15s;border-right:3px solid transparent}
+.book-list-item:hover{background:var(--fb-hover)}
+.book-list-item.active{background:var(--fb-green-light);border-right-color:var(--fb-green)}
+.book-list-item .bli-icon{font-size:24px}
+.book-list-item .bli-info{flex:1}
+.book-list-item .bli-title{font-size:14px;font-weight:600}
+.book-list-item .bli-author{font-size:12px;color:var(--fb-text-secondary)}
+#library-main{background:var(--fb-bg);display:flex;flex-direction:column;overflow:hidden}
+#lib-empty{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;color:var(--fb-text-secondary);text-align:center;padding:40px}
+#lib-empty .empty-icon{font-size:64px;margin-bottom:16px}
+#lib-empty h3{font-size:20px;margin-bottom:8px;color:var(--fb-text)}
+#lib-active{display:none;flex-direction:column;flex:1;overflow:hidden}
+#lib-mode-bar{background:var(--fb-white);border-bottom:1px solid var(--fb-border);padding:8px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.lib-modes{display:flex;gap:4px;background:var(--fb-bg);padding:4px;border-radius:8px}
+.lib-mode-btn{padding:6px 20px;border-radius:6px;font-size:14px;font-weight:600;color:var(--fb-text-secondary);transition:.15s}
+.lib-mode-btn:hover{background:var(--fb-hover)}
+.lib-mode-btn.active{background:var(--fb-white);color:var(--fb-green);box-shadow:var(--fb-shadow)}
+.lib-mode-btn:disabled{opacity:.4;cursor:not-allowed}
+.lib-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lib-tools select{border:1px solid var(--fb-border);border-radius:6px;padding:5px 10px;font-size:13px;background:var(--fb-white)}
+.fn-toggle-btn{padding:5px 12px;border-radius:14px;border:1px solid var(--fb-border);font-size:12px;color:var(--fb-text-secondary);cursor:pointer;transition:.15s}
+.fn-toggle-btn:hover{background:var(--fb-hover)}
+.fn-toggle-btn.active.تخريج{background:var(--fb-blue-light);color:var(--fb-blue);border-color:var(--fb-blue)}
+.fn-toggle-btn.active.فروق_نسخ{background:var(--fb-gold-light);color:var(--fb-gold);border-color:var(--fb-gold)}
+.fn-toggle-btn.active.غريب{background:var(--fb-green-light);color:var(--fb-green);border-color:var(--fb-green)}
+
+/* Library Content */
+#lib-content-area{flex:1;display:flex;overflow:hidden;position:relative}
+.lib-side-panel{width:0;overflow:hidden;transition:width .25s ease;background:var(--fb-white);border-left:1px solid var(--fb-border);display:flex;flex-direction:column}
+.lib-side-panel.open{width:280px;min-width:280px}
+.lsp-header{padding:12px 16px;font-size:15px;font-weight:700;border-bottom:1px solid var(--fb-border);display:flex;justify-content:space-between;align-items:center;background:var(--fb-white)}
+.lsp-body{flex:1;overflow-y:auto;padding:12px}
+.lsp-item{background:var(--fb-bg);border-radius:8px;padding:12px;margin-bottom:10px}
+.lsp-item h4{font-size:14px;font-weight:600;color:var(--fb-text);margin-bottom:4px}
+.lsp-item p{font-size:12px;color:var(--fb-text-secondary);line-height:1.5}
+.lsp-item img{width:100%;border-radius:6px;margin-top:8px;cursor:zoom-in}
+.lsp-add-btn{width:100%;padding:8px;border:1px dashed var(--fb-border);border-radius:8px;font-size:13px;color:var(--fb-green);font-weight:600;background:transparent;cursor:pointer;transition:.15s}
+.lsp-add-btn:hover{background:var(--fb-green-light);border-style:solid}
+.lib-panel-toggle{position:absolute;top:12px;z-index:10;width:32px;height:32px;border-radius:50%;background:var(--fb-white);border:1px solid var(--fb-border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--fb-text-secondary);box-shadow:var(--fb-shadow);transition:.15s}
+.lib-panel-toggle:hover{background:var(--fb-hover)}
+.lib-panel-toggle.open{background:var(--fb-green-light);color:var(--fb-green)}
+#panel-toggle-right{left:12px}
+#panel-toggle-left{right:12px}
+
+/* Reader */
+#reader-area{flex:1;overflow-y:auto;padding:20px;min-width:0}
+#reader-header{margin-bottom:16px}
+#reader-header h2{color:var(--fb-green);font-size:22px;font-weight:700;margin-bottom:12px}
+#reader-search{display:flex;gap:8px;margin-bottom:16px}
+#reader-search input{flex:1;border:1px solid var(--fb-border);border-radius:20px;padding:8px 16px;font-size:14px;background:var(--fb-white)}
+#reader-search input:focus{border-color:var(--fb-green);box-shadow:0 0 0 2px var(--fb-green-light)}
+#reader-search button{background:var(--fb-green);color:#fff;padding:8px 20px;border-radius:20px;font-size:14px;font-weight:600}
+#reader-search button:hover{background:var(--fb-green-dark)}
+
+.hadith-card-fb{background:var(--fb-white);border-radius:var(--fb-radius-lg);box-shadow:var(--fb-shadow);padding:16px;margin-bottom:16px;transition:.15s}
+.hadith-card-fb:hover{box-shadow:var(--fb-shadow-card)}
+.hadith-card-header-fb{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.hadith-number-fb{font-size:13px;color:var(--fb-text-secondary);font-weight:600}
+.hadith-grade-fb{font-size:12px;padding:3px 10px;border-radius:12px;font-weight:700}
+.hadith-grade-fb.صحيح{background:var(--fb-green-light);color:var(--fb-green)}
+.hadith-grade-fb.حسن{background:var(--fb-blue-light);color:var(--fb-blue)}
+.hadith-grade-fb.ضعيف{background:#fde8e8;color:#e41e3f}
+.hadith-text-fb{line-height:2;font-size:16px;font-family:'Amiri','Scheherazade New',serif;color:var(--fb-text)}
+
+.hadith-actions-fb{display:flex;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--fb-border-light);flex-wrap:wrap}
+.hadith-actions-fb button{padding:6px 14px;border-radius:6px;font-size:13px;font-weight:600;transition:.15s;display:flex;align-items:center;gap:4px}
+.hadith-actions-fb .btn-comment{background:var(--fb-bg);color:var(--fb-text)}
+.hadith-actions-fb .btn-comment:hover{background:var(--fb-hover)}
+.hadith-actions-fb .btn-comments-drw{background:var(--fb-green-light);color:var(--fb-green)}
+.hadith-actions-fb .btn-comments-drw:hover{background:var(--fb-green);color:#fff}
+.hadith-actions-fb .btn-tahqiq{background:var(--fb-gold-light);color:var(--fb-gold)}
+.hadith-actions-fb .btn-tahqiq:hover{background:var(--fb-gold);color:#fff}
+.hadith-actions-fb .btn-edit{background:var(--fb-blue-light);color:var(--fb-blue)}
+.hadith-actions-fb .btn-edit:hover{background:var(--fb-blue);color:#fff}
+
+/* Footnote Markers */
+.fn-marker-fb{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;font-size:10px;font-weight:700;color:#fff;border-radius:4px;margin:0 3px;cursor:pointer;vertical-align:super;transition:.15s}
+.fn-marker-fb.تخريج{background:var(--fb-blue)}
+.fn-marker-fb.فروق_نسخ{background:var(--fb-gold)}
+.fn-marker-fb.غريب{background:var(--fb-green)}
+.fn-marker-fb:hover{transform:scale(1.2)}
+
+/* Comments Drawer */
+#comments-drawer-fb{width:0;overflow:hidden;transition:width .25s ease;background:var(--fb-white);border-left:1px solid var(--fb-border);display:flex;flex-direction:column;flex-shrink:0}
+#comments-drawer-fb.open{width:320px;min-width:280px}
+#cd-header{padding:12px 16px;font-size:15px;font-weight:700;color:var(--fb-green);border-bottom:1px solid var(--fb-border);display:flex;justify-content:space-between;align-items:center}
+#cd-body{flex:1;overflow-y:auto;padding:12px}
+#cd-input{padding:12px;border-top:1px solid var(--fb-border);display:flex;gap:8px;align-items:center}
+#cd-input input{flex:1;border:1px solid var(--fb-border);border-radius:20px;padding:8px 14px;font-size:14px}
+#cd-input button{background:var(--fb-green);color:#fff;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600}
+
+/* Tahqiq Editor */
+#tahqiq-editor{background:var(--fb-white);border-radius:var(--fb-radius-lg);box-shadow:var(--fb-shadow);padding:16px;margin-bottom:16px}
+#tahqiq-toolbar{display:flex;gap:4px;padding:8px 0;border-bottom:1px solid var(--fb-border);margin-bottom:12px;flex-wrap:wrap;align-items:center;background:transparent}
+#tahqiq-toolbar button{padding:5px 8px;border:1px solid transparent;border-radius:6px;background:none;font-size:14px;color:var(--fb-text);min-width:30px;text-align:center;transition:.15s}
+#tahqiq-toolbar button:hover{background:var(--fb-hover);border-color:var(--fb-border)}
+#tahqiq-toolbar select{border:1px solid var(--fb-border);border-radius:6px;padding:4px 6px;font-size:12px;background:var(--fb-white);max-width:100px}
+#tahqiq-toolbar .tb-sep{width:1px;background:var(--fb-border);align-self:stretch;margin:0 4px}
+#tahqiq-toolbar .tb-status{font-size:11px;padding:3px 10px;border-radius:10px;margin-right:auto;font-weight:600}
+.status-draft-fb{background:var(--fb-bg);color:var(--fb-text-secondary)}
+.status-pending-fb{background:var(--fb-gold-light);color:var(--fb-gold)}
+.status-approved-fb{background:var(--fb-green-light);color:var(--fb-green)}
+
+#tahqiq-content{outline:none;min-height:150px;font-family:'Amiri','Scheherazade New',serif;font-size:17px;line-height:2;padding:12px;border:1px solid var(--fb-border);border-radius:8px;transition:.15s}
+#tahqiq-content:focus{border-color:var(--fb-green);box-shadow:0 0 0 2px var(--fb-green-light)}
+#tahqiq-content:empty:before{content:'اختر حديثاً من وضع التصفح أولاً.';color:var(--fb-text-tertiary)}
+
+.m-fn-ref-fb{background:var(--fb-gold-light);color:var(--fb-gold);border-radius:4px;padding:0 5px;font-size:11px;font-weight:700;vertical-align:super;cursor:pointer}
+
+#tahqiq-footnotes{margin-top:16px;background:var(--fb-bg);border-radius:8px;padding:12px}
+#tahqiq-footnotes h5{font-size:13px;color:var(--fb-text-secondary);margin-bottom:10px;font-weight:700}
+.fn-item-fb{display:flex;gap:10px;font-size:13px;margin-bottom:8px;align-items:flex-start;padding-bottom:8px;border-bottom:1px solid var(--fb-border-light)}
+.fn-num-fb{color:var(--fb-gold);font-weight:700;min-width:20px;font-size:14px}
+.fn-text-fb{flex:1;line-height:1.7}
+.fn-del-fb{color:#e41e3f;font-size:16px;padding:0 4px;cursor:pointer;border-radius:4px}
+.fn-del-fb:hover{background:#fde8e8}
+#btn-add-fn-fb{color:var(--fb-green);font-size:13px;padding:8px 0;font-weight:600;cursor:pointer;background:none}
+#btn-add-fn-fb:hover{text-decoration:underline}
+
+.tahqiq-actions-fb{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.tahqiq-actions-fb button{padding:8px 20px;border-radius:6px;font-size:14px;font-weight:600;transition:.15s}
+.tahqiq-actions-fb .btn-save-fb{background:var(--fb-bg);color:var(--fb-text)}
+.tahqiq-actions-fb .btn-save-fb:hover{background:var(--fb-hover)}
+.tahqiq-actions-fb .btn-submit-fb{background:var(--fb-green);color:#fff}
+.tahqiq-actions-fb .btn-submit-fb:hover{background:var(--fb-green-dark)}
+.tahqiq-actions-fb .btn-cancel-fb{background:transparent;color:var(--fb-text-secondary)}
+.tahqiq-actions-fb .btn-cancel-fb:hover{background:var(--fb-hover)}
+
+/* ===== AUTH ===== */
+#auth-overlay{position:fixed;inset:0;background:linear-gradient(135deg,var(--fb-green) 0%,#0d3d22 100%);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px}
+#auth-box{background:var(--fb-white);border-radius:var(--fb-radius-lg);padding:32px;width:420px;max-width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+#auth-box .auth-logo{text-align:center;margin-bottom:24px}
+#auth-box .auth-logo h1{font-size:36px;font-weight:800;color:var(--fb-green);display:flex;align-items:center;justify-content:center;gap:10px}
+#auth-box .auth-logo p{color:var(--fb-text-secondary);margin-top:4px;font-size:15px}
+#auth-tabs{display:flex;margin-bottom:20px;border-bottom:2px solid var(--fb-border)}
+#auth-tabs button{flex:1;padding:10px;font-size:15px;color:var(--fb-text-secondary);border-bottom:3px solid transparent;margin-bottom:-2px;font-weight:600;transition:.15s}
+#auth-tabs button.active{color:var(--fb-green);border-bottom-color:var(--fb-green)}
+.auth-form{display:flex;flex-direction:column;gap:12px}
+.auth-form input{border:1px solid var(--fb-border);border-radius:8px;padding:12px 14px;width:100%;font-size:15px;transition:.15s}
+.auth-form input:focus{border-color:var(--fb-green);box-shadow:0 0 0 3px var(--fb-green-light)}
+.auth-form .btn-main{background:var(--fb-green);color:#fff;padding:12px;border-radius:8px;font-size:16px;font-weight:700;margin-top:4px;transition:.15s}
+.auth-form .btn-main:hover{background:var(--fb-green-dark)}
+.auth-form .btn-main:disabled{opacity:.5;cursor:not-allowed}
+#auth-msg{font-size:14px;color:#e41e3f;text-align:center;min-height:20px;margin-top:8px;font-weight:500}
+#acc-type-tabs{display:flex;gap:10px;margin-bottom:8px}
+.acc-type-card{flex:1;border:2px solid var(--fb-border);border-radius:10px;padding:14px;text-align:center;cursor:pointer;transition:.15s}
+.acc-type-card:hover{border-color:var(--fb-green-light)}
+.acc-type-card.active{border-color:var(--fb-green);background:var(--fb-green-light)}
+.acc-type-card h4{font-size:14px;color:var(--fb-text);margin-bottom:6px;font-weight:700}
+.acc-type-card p{font-size:12px;color:var(--fb-text-secondary);line-height:1.6}
+
+/* ===== MODALS ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:3000;display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)}
+.modal-box{background:var(--fb-white);border-radius:var(--fb-radius-lg);padding:24px;width:480px;max-width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+.modal-box h3{color:var(--fb-green);margin-bottom:12px;font-size:18px;font-weight:700}
+.modal-box p.subtitle{font-size:13px;color:var(--fb-text-secondary);margin-bottom:16px}
+.modal-box textarea,.modal-box input{width:100%;border:1px solid var(--fb-border);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:14px;transition:.15s}
+.modal-box textarea:focus,.modal-box input:focus{border-color:var(--fb-green);box-shadow:0 0 0 2px var(--fb-green-light)}
+.modal-box textarea{min-height:100px;resize:vertical}
+.modal-types{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.modal-types button{padding:5px 14px;border-radius:20px;border:1px solid var(--fb-border);font-size:13px;background:var(--fb-white);font-weight:500;cursor:pointer;transition:.15s}
+.modal-types button:hover{background:var(--fb-hover)}
+.modal-types button.active{background:var(--fb-green);color:#fff;border-color:var(--fb-green)}
+.modal-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
+.modal-footer button{padding:8px 20px;border-radius:6px;font-size:14px;font-weight:600;transition:.15s}
+.modal-cancel{background:var(--fb-bg);color:var(--fb-text);border:1px solid var(--fb-border)}
+.modal-cancel:hover{background:var(--fb-hover)}
+.modal-submit{background:var(--fb-green);color:#fff}
+.modal-submit:hover{background:var(--fb-green-dark)}
+
+/* ===== NOTIFICATIONS ===== */
+#notif-dropdown{position:absolute;top:calc(100% + 8px);left:0;width:360px;background:var(--fb-white);border-radius:var(--fb-radius-lg);box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:2001;display:none;overflow:hidden}
+#notif-dropdown.show{display:block}
+#notif-dropdown-header{padding:12px 16px;border-bottom:1px solid var(--fb-border);display:flex;justify-content:space-between;align-items:center}
+#notif-dropdown-header h4{font-size:16px;font-weight:700}
+#notif-dropdown-header button{font-size:13px;color:var(--fb-blue);font-weight:600;padding:4px 8px;border-radius:4px}
+#notif-dropdown-header button:hover{background:var(--fb-blue-light)}
+#notif-list{max-height:400px;overflow-y:auto}
+.notif-item{display:flex;gap:10px;padding:10px 16px;cursor:pointer;transition:.15s;border-bottom:1px solid var(--fb-border-light)}
+.notif-item:hover{background:var(--fb-hover)}
+.notif-item.unread{background:var(--fb-blue-light)}
+.notif-item .notif-avatar{width:40px;height:40px;border-radius:50%;background:var(--fb-green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;flex-shrink:0}
+.notif-item .notif-content{flex:1}
+.notif-item .notif-text{font-size:14px;color:var(--fb-text);line-height:1.4}
+.notif-item .notif-text b{font-weight:600}
+.notif-item .notif-time{font-size:12px;color:var(--fb-text-secondary);margin-top:2px}
+
+/* ===== MESSENGER ===== */
+#msg-dropdown{position:absolute;top:calc(100% + 8px);left:0;width:360px;background:var(--fb-white);border-radius:var(--fb-radius-lg);box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:2001;display:none;overflow:hidden}
+#msg-dropdown.show{display:block}
+#msg-dropdown-header{padding:12px 16px;border-bottom:1px solid var(--fb-border)}
+#msg-dropdown-header h4{font-size:16px;font-weight:700}
+#msg-list{max-height:400px;overflow-y:auto}
+.msg-preview-item{display:flex;gap:10px;padding:10px 16px;cursor:pointer;transition:.15s;border-bottom:1px solid var(--fb-border-light)}
+.msg-preview-item:hover{background:var(--fb-hover)}
+.msg-preview-item .mp-avatar{width:48px;height:48px;border-radius:50%;background:var(--fb-green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;flex-shrink:0}
+.msg-preview-item .mp-info{flex:1;min-width:0}
+.msg-preview-item .mp-name-row{display:flex;justify-content:space-between;align-items:center}
+.msg-preview-item .mp-name{font-weight:600;font-size:14px}
+.msg-preview-item .mp-time{font-size:12px;color:var(--fb-text-secondary)}
+.msg-preview-item .mp-text{font-size:13px;color:var(--fb-text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+
+/* ===== USER MENU ===== */
+#user-dropdown{position:absolute;top:calc(100% + 8px);left:0;width:280px;background:var(--fb-white);border-radius:var(--fb-radius-lg);box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:2001;display:none;overflow:hidden;padding:8px}
+#user-dropdown.show{display:block}
+.user-dropdown-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:.15s;font-size:15px;font-weight:500;color:var(--fb-text)}
+.user-dropdown-item:hover{background:var(--fb-hover)}
+.user-dropdown-item .udi-icon{font-size:20px;width:28px;text-align:center}
+.user-dropdown-divider{height:1px;background:var(--fb-border);margin:6px 0}
+
+/* ===== TOAST ===== */
+#toast{position:fixed;bottom:24px;right:24px;background:#333;color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;z-index:9999;opacity:0;transition:.3s;pointer-events:none;max-width:90vw;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,0.2)}
+#toast.show{opacity:1}
+
+/* ===== IMAGE ZOOM ===== */
+#img-zoom{position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:5000;display:none;align-items:center;justify-content:center}
+#img-zoom img{max-width:90vw;max-height:90vh;border-radius:8px}
+#img-zoom-close{position:absolute;top:20px;left:20px;background:rgba(255,255,255,0.15);color:#fff;padding:10px 18px;border-radius:8px;font-size:14px;cursor:pointer;backdrop-filter:blur(10px)}
+#img-zoom-close:hover{background:rgba(255,255,255,0.25)}
+
+/* ===== FOOTNOTE POPOVER ===== */
+#fn-popover-fb{position:fixed;background:var(--fb-white);border:1px solid var(--fb-border);border-radius:8px;padding:12px 14px;font-size:13px;max-width:300px;box-shadow:0 8px 24px rgba(0,0,0,0.15);z-index:4000;display:none;line-height:1.7}
+#fn-popover-fb .fn-cat-label{font-size:11px;font-weight:700;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--fb-border-light)}
+#fn-popover-fb .fn-cat-label.تخريج{color:var(--fb-blue)}
+#fn-popover-fb .fn-cat-label.فروق_نسخ{color:var(--fb-gold)}
+#fn-popover-fb .fn-cat-label.غريب{color:var(--fb-green)}
+
+/* ===== UTILS ===== */
+.loading-spinner{text-align:center;padding:40px;color:var(--fb-text-secondary)}
+.loading-spinner::after{content:"";display:inline-block;width:32px;height:32px;border:3px solid var(--fb-border);border-top-color:var(--fb-green);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty-state{text-align:center;padding:40px;color:var(--fb-text-secondary)}
+.empty-state .empty-icon{font-size:48px;margin-bottom:12px}
+.empty-state h4{font-size:16px;color:var(--fb-text);margin-bottom:4px}
+
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#bcc0c4;border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:#9a9ea3}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:1100px){
+  #main-layout{grid-template-columns:1fr}
+  #left-sidebar,#right-sidebar{display:none}
+  #search-box input:focus{width:200px}
+}
+@media(max-width:768px){
+  #top-nav{padding:0 8px}
+  #search-box{display:none}
+  .nav-tab{padding:10px 16px;font-size:20px}
+  .nav-tab .tab-label{display:block;font-size:9px}
+  #user-menu-btn .user-name{display:none}
+  #main-layout{padding-top:calc(var(--nav-height) + 8px);padding-left:8px;padding-right:8px}
+  .profile-content{grid-template-columns:1fr}
+  .profile-cover{height:200px}
+  .profile-avatar-large{width:120px;height:120px;font-size:40px}
+  #library-layout{grid-template-columns:1fr}
+  #library-sidebar{position:fixed;bottom:0;left:0;right:0;height:auto;max-height:50vh;z-index:100;border-radius:var(--fb-radius-lg) var(--fb-radius-lg) 0 0;transform:translateY(100%);transition:transform .3s}
+  #library-sidebar.open{transform:translateY(0)}
+  .lib-side-panel.open{position:fixed;inset:0;z-index:200;width:85%;background:var(--fb-white)}
+  #comments-drawer-fb.open{position:fixed;right:0;top:var(--nav-height);bottom:0;width:85%;z-index:150}
+}
+
+/* ===== AI ASSISTANT ===== */
+#ai-fab{position:fixed;bottom:24px;left:24px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--fb-green) 0%,#0d3d22 100%);color:#fff;display:flex;align-items:center;justify-content:center;font-size:28px;cursor:pointer;box-shadow:0 4px 16px rgba(26,107,60,0.4);z-index:5000;transition:all .3s;animation:ai-fab-pulse 2s infinite}
+#ai-fab:hover{transform:scale(1.1);box-shadow:0 6px 24px rgba(26,107,60,0.5)}
+#ai-fab.hidden{transform:scale(0);opacity:0}
+#ai-fab-badge{position:absolute;top:-2px;right:-2px;width:16px;height:16px;background:#e41e3f;border-radius:50%;border:2px solid #fff;animation:ai-badge-pulse 1.5s infinite}
+@keyframes ai-fab-pulse{0%,100%{box-shadow:0 4px 16px rgba(26,107,60,0.4)}50%{box-shadow:0 4px 24px rgba(26,107,60,0.6)}}
+@keyframes ai-badge-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+
+#ai-chat-window{position:fixed;bottom:92px;left:24px;width:400px;max-width:calc(100vw - 48px);height:560px;max-height:calc(100vh - 120px);background:var(--fb-white);border-radius:var(--fb-radius-lg);box-shadow:0 12px 40px rgba(0,0,0,0.2);z-index:4999;display:none;flex-direction:column;overflow:hidden;transition:all .3s;transform-origin:bottom left}
+#ai-chat-window.open{display:flex;animation:ai-chat-open .3s ease}
+@keyframes ai-chat-open{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}
+
+#ai-chat-header{padding:12px 16px;background:linear-gradient(135deg,var(--fb-green) 0%,#0d3d22 100%);color:#fff;display:flex;align-items:center;gap:12px}
+#ai-chat-avatar{position:relative;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:20px}
+#ai-status-indicator{position:absolute;bottom:2px;right:2px;width:10px;height:10px;border-radius:50%;border:2px solid var(--fb-green)}
+#ai-status-indicator.online{background:#31a24c}
+#ai-status-indicator.typing{background:var(--fb-gold);animation:ai-typing-pulse 1s infinite}
+@keyframes ai-typing-pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+#ai-chat-info{flex:1}
+#ai-chat-name{font-size:15px;font-weight:700}
+#ai-chat-status{font-size:12px;opacity:.85}
+#ai-chat-actions{display:flex;gap:4px}
+#ai-chat-actions button{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.15);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;transition:.15s}
+#ai-chat-actions button:hover{background:rgba(255,255,255,0.25)}
+
+#ai-chat-body{flex:1;overflow-y:auto;padding:16px;background:#f8f9fa}
+.ai-message{display:flex;gap:10px;margin-bottom:16px;animation:ai-msg-appear .3s ease}
+@keyframes ai-msg-appear{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.ai-message.ai-user{flex-direction:row-reverse}
+.ai-avatar{width:32px;height:32px;border-radius:50%;background:var(--fb-green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.ai-message.ai-user .ai-avatar{background:var(--fb-blue)}
+.ai-bubble{max-width:calc(100% - 50px);padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.7;color:var(--fb-text)}
+.ai-bot .ai-bubble{background:var(--fb-white);border:1px solid var(--fb-border-light);border-bottom-right-radius:4px}
+.ai-user .ai-bubble{background:var(--fb-green);color:#fff;border-bottom-left-radius:4px}
+.ai-text{white-space:pre-wrap}
+.ai-text b{font-weight:700}
+.ai-capabilities{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.ai-cap{padding:8px 12px;background:var(--fb-bg);border-radius:8px;font-size:13px;color:var(--fb-text-secondary);transition:.15s;cursor:pointer}
+.ai-cap:hover{background:var(--fb-green-light);color:var(--fb-green)}
+
+.ai-typing-dots{display:flex;gap:4px;padding:4px 8px}
+.ai-typing-dots span{width:8px;height:8px;border-radius:50%;background:var(--fb-text-secondary);animation:ai-dot 1.4s infinite}
+.ai-typing-dots span:nth-child(2){animation-delay:.2s}
+.ai-typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes ai-dot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+
+#ai-chat-footer{padding:12px 16px;border-top:1px solid var(--fb-border-light);background:var(--fb-white)}
+#ai-quick-actions{display:flex;gap:6px;margin-bottom:10px;overflow-x:auto;padding-bottom:4px}
+#ai-quick-actions button{padding:5px 12px;border-radius:16px;border:1px solid var(--fb-border);background:var(--fb-bg);font-size:12px;color:var(--fb-text-secondary);cursor:pointer;transition:.15s;white-space:nowrap}
+#ai-quick-actions button:hover{background:var(--fb-green-light);color:var(--fb-green);border-color:var(--fb-green)}
+#ai-input-row{display:flex;gap:8px;align-items:center;position:relative}
+#ai-attach-btn{width:36px;height:36px;border-radius:50%;background:var(--fb-bg);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:.15s;flex-shrink:0}
+#ai-attach-btn:hover{background:var(--fb-hover)}
+#ai-attach-menu{position:absolute;bottom:calc(100% + 8px);left:0;background:var(--fb-white);border-radius:var(--fb-radius-lg);box-shadow:0 4px 16px rgba(0,0,0,0.15);padding:8px;z-index:100;display:flex;flex-direction:column;gap:4px;min-width:180px}
+#ai-attach-menu button{padding:8px 12px;border-radius:8px;font-size:13px;text-align:right;cursor:pointer;transition:.15s;background:none;color:var(--fb-text);border:none}
+#ai-attach-menu button:hover{background:var(--fb-hover)}
+#ai-input{flex:1;border:1px solid var(--fb-border);border-radius:20px;padding:8px 14px;font-size:14px;background:var(--fb-bg);transition:.15s}
+#ai-input:focus{background:var(--fb-white);border-color:var(--fb-green);box-shadow:0 0 0 2px var(--fb-green-light)}
+#ai-send-btn{width:36px;height:36px;border-radius:50%;background:var(--fb-green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:.15s;flex-shrink:0;border:none}
+#ai-send-btn:hover{background:var(--fb-green-dark)}
+#ai-send-btn:disabled{background:var(--fb-border);cursor:not-allowed}
+
+.ai-analysis-section{margin-bottom:16px;padding:12px;background:var(--fb-bg);border-radius:8px}
+.ai-analysis-section h4{color:var(--fb-green);font-size:14px;margin-bottom:8px;font-weight:700}
+.ai-analysis-section p{font-size:13px;line-height:1.7;color:var(--fb-text);margin-bottom:6px}
+.ai-hadith-card{background:var(--fb-white);border:1px solid var(--fb-border);border-radius:8px;padding:10px;margin:8px 0;font-family:'Amiri','Scheherazade New',serif;font-size:14px;line-height:2}
+.ai-hadith-card .ai-hadith-text{color:var(--fb-text)}
+.ai-hadith-card .ai-hadith-ref{font-size:12px;color:var(--fb-text-secondary);margin-top:6px}
+
+@media(max-width:768px){
+  #ai-chat-window{width:calc(100vw - 32px);left:16px;right:16px;height:calc(100vh - 100px);bottom:80px}
+  #ai-fab{bottom:16px;left:16px;width:48px;height:48px;font-size:24px}
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== AUTH OVERLAY ==================== -->
+<div id="auth-overlay">
+  <div id="auth-box">
+    <div class="auth-logo">
+      <h1><span style="width:48px;height:48px;background:var(--fb-green);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:28px">م</span> مكتبتي</h1>
+      <p>منصة العلوم الإسلامية والتراث العربي</p>
+    </div>
+    <div id="auth-tabs">
+      <button class="active" onclick="switchAuthTab('login')">تسجيل الدخول</button>
+      <button onclick="switchAuthTab('register')">إنشاء حساب</button>
+    </div>
+    <div id="tab-login" class="auth-form">
+      <input type="email" id="login-email" placeholder="البريد الإلكتروني">
+      <input type="password" id="login-pass" placeholder="كلمة المرور">
+      <button class="btn-main" onclick="doLogin()">دخول</button>
+    </div>
+    <div id="tab-register" class="auth-form" style="display:none">
+      <div id="acc-type-tabs">
+        <div class="acc-type-card active" id="acc-guest" onclick="selectAccType('guest')"><h4>حساب زائر</h4><p>تصفح كامل، تعليقات، نشر فوائد عامة</p></div>
+        <div class="acc-type-card" id="acc-verified" onclick="selectAccType('verified')"><h4>حساب موثّق</h4><p>كامل الصلاحيات: تحقيق، إضافة مصادر، مراجعة</p></div>
+      </div>
+      <input type="text" id="reg-name" placeholder="الاسم الكامل">
+      <input type="text" id="reg-username" placeholder="اسم المستخدم">
+      <input type="email" id="reg-email" placeholder="البريد الإلكتروني">
+      <input type="password" id="reg-pass" placeholder="كلمة المرور (6 أحرف على الأقل)">
+      <button class="btn-main" onclick="doRegister()">إنشاء الحساب</button>
+    </div>
+    <div id="auth-msg"></div>
+  </div>
+</div>
+
+<!-- ==================== APP ==================== -->
+<div id="app" style="display:none">
+
+  <!-- ===== TOP NAVIGATION ===== -->
+  <nav id="top-nav">
+    <div class="nav-left">
+      <a href="#" class="logo" onclick="switchView('feed')">
+        <span class="logo-icon">م</span>
+        <span style="display:none" class="logo-text">مكتبتي</span>
+      </a>
+      <div id="search-box">
+        <input type="text" id="global-search" placeholder="بحث في مكتبتي..." onkeydown="if(event.key==='Enter')doGlobalSearch()">
+      </div>
+    </div>
+    <div class="nav-center">
+      <button class="nav-tab active" data-view="feed" onclick="switchView('feed')" title="الرئيسية">🏠<span class="tab-label">الرئيسية</span></button>
+      <button class="nav-tab" data-view="library" onclick="switchView('library')" title="المكتبة">📚<span class="tab-label">المكتبة</span></button>
+      <button class="nav-tab" data-view="profile" onclick="showProfilePage(null)" title="حسابي">👤<span class="tab-label">حسابي</span></button>
+    </div>
+    <div class="nav-right">
+      <div style="position:relative">
+        <button class="nav-icon-btn" id="notif-btn" onclick="toggleNotifDropdown()">🔔</button>
+        <span class="badge" id="notif-badge" style="display:none">0</span>
+        <div id="notif-dropdown">
+          <div id="notif-dropdown-header"><h4>الإشعارات</h4><button onclick="markAllNotifRead()">تعيين الكل مقروء</button></div>
+          <div id="notif-list"></div>
+        </div>
+      </div>
+      <div style="position:relative">
+        <button class="nav-icon-btn" id="msg-btn" onclick="toggleMsgDropdown()">💬</button>
+        <span class="badge" id="msg-badge" style="display:none">0</span>
+        <div id="msg-dropdown">
+          <div id="msg-dropdown-header"><h4>المحادثات</h4></div>
+          <div id="msg-list"></div>
+        </div>
+      </div>
+      <div style="position:relative">
+        <button id="user-menu-btn" onclick="toggleUserDropdown()">
+          <span class="user-avatar" id="nav-user-avatar">م</span>
+          <span class="user-name" id="nav-user-name">مستخدم</span>
+        </button>
+        <div id="user-dropdown">
+          <div class="user-dropdown-item" onclick="showProfilePage(null)"><span class="udi-icon">👤</span> حسابي</div>
+          <div class="user-dropdown-item" onclick="showSavedPosts()"><span class="udi-icon">🔖</span> المحفوظات</div>
+          <div class="user-dropdown-item" onclick="toggleDarkMode()"><span class="udi-icon">🌙</span> الوضع الليلي</div>
+          <div class="user-dropdown-divider"></div>
+          <div class="user-dropdown-item" onclick="doLogout()"><span class="udi-icon">🚪</span> تسجيل الخروج</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== MAIN LAYOUT ===== -->
+  <div id="main-layout">
+
+    <!-- LEFT SIDEBAR -->
+    <aside id="left-sidebar">
+      <div class="sidebar-menu">
+        <div class="sidebar-item active" onclick="switchView('feed')">
+          <span class="si-icon" style="background:var(--fb-green);color:#fff">🏠</span>
+          <span>الصفحة الرئيسية</span>
+        </div>
+        <div class="sidebar-item" onclick="switchView('library')">
+          <span class="si-icon">📚</span>
+          <span>المكتبة الإسلامية</span>
+        </div>
+        <div class="sidebar-item" onclick="showProfilePage(null)">
+          <span class="si-icon" id="sidebar-user-avatar" style="background:var(--fb-green);color:#fff">م</span>
+          <span id="sidebar-user-name">حسابي</span>
+        </div>
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-heading">الاختصارات</div>
+        <div class="sidebar-item" onclick="showSavedPosts()">
+          <span class="si-icon">🔖</span>
+          <span>المنشورات المحفوظة</span>
+        </div>
+        <div class="sidebar-item" onclick="switchView('library');setTimeout(()=>selectBook('bukhari'),300)">
+          <span class="si-icon">📗</span>
+          <span>صحيح البخاري</span>
+        </div>
+        <div class="sidebar-item" onclick="switchView('library');setTimeout(()=>selectBook('muslim'),300)">
+          <span class="si-icon">📘</span>
+          <span>صحيح مسلم</span>
+        </div>
+        <div class="sidebar-item" onclick="switchView('library');setTimeout(()=>selectBook('abudawud'),300)">
+          <span class="si-icon">📙</span>
+          <span>سنن أبي داود</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTER FEED -->
+    <main id="center-feed">
+
+      <!-- Stories Bar -->
+      <div id="stories-bar">
+        <div class="story-card create" onclick="toast('قريباً: إضافة قصة')">
+          <div class="story-plus">+</div>
+          <div class="story-name">إنشاء قصة</div>
+        </div>
+        <div class="story-card" style="background:linear-gradient(180deg,#1a6b3c 0%,#0d3d22 100%)" onclick="toast('قصة: فائدة يومية')">
+          <div class="story-avatar">ف</div>
+          <div class="story-name">فائدة اليوم</div>
+        </div>
+        <div class="story-card" style="background:linear-gradient(180deg,#b8860b 0%,#7a5c08 100%)" onclick="toast('قصة: حديث اليوم')">
+          <div class="story-avatar">ح</div>
+          <div class="story-name">حديث اليوم</div>
+        </div>
+        <div class="story-card" style="background:linear-gradient(180deg,#1877f2 0%,#0d5cb5 100%)" onclick="toast('قصة: سؤال علمي')">
+          <div class="story-avatar">س</div>
+          <div class="story-name">سؤال علمي</div>
+        </div>
+      </div>
+
+      <!-- Composer -->
+      <div id="composer-card">
+        <div class="composer-top">
+          <div class="composer-avatar" id="composer-avatar">م</div>
+          <div class="composer-input" onclick="openComposerModal()" id="composer-trigger">بماذا تفكر؟</div>
+        </div>
+        <div class="composer-divider"></div>
+        <div class="composer-actions">
+          <div class="composer-action" onclick="openComposerModal('image')"><span class="ca-icon">📷</span> صورة</div>
+          <div class="composer-action" onclick="openComposerModal('video')"><span class="ca-icon">🎥</span> فيديو</div>
+          <div class="composer-action" onclick="openComposerModal('poll')"><span class="ca-icon">📊</span> استطلاع</div>
+          <div class="composer-action" onclick="openComposerModal('hadith')"><span class="ca-icon">📚</span> من المكتبة</div>
+        </div>
+      </div>
+
+      <!-- Feed Filter -->
+      <div id="feed-filters" style="display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding:4px">
+        <button class="composer-type active" data-filter="الكل" onclick="setFeedFilter('الكل')">الكل</button>
+        <button class="composer-type" data-filter="فائدة" onclick="setFeedFilter('فائدة')">فوائد</button>
+        <button class="composer-type" data-filter="تحقيق" onclick="setFeedFilter('تحقيق')">تحقيقات</button>
+        <button class="composer-type" data-filter="حديث" onclick="setFeedFilter('حديث')">أحاديث</button>
+        <button class="composer-type" data-filter="سؤال" onclick="setFeedFilter('سؤال')">أسئلة</button>
+        <button class="composer-type" data-filter="مكتبة" onclick="setFeedFilter('مكتبة')">من المكتبة</button>
+      </div>
+
+      <!-- Posts Loading -->
+      <div id="posts-loading" class="loading-spinner" style="display:none"></div>
+
+      <!-- Posts List -->
+      <div id="posts-list"></div>
+    </main>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside id="right-sidebar">
+      <div class="rs-section">
+        <div class="rs-heading">صفحات مقترحة</div>
+        <div class="rs-item" onclick="toast('صفحة: دار الحديث')">
+          <div class="rs-avatar">د</div>
+          <div class="rs-info">
+            <div class="rs-name">دار الحديث</div>
+            <div class="rs-sub">مؤسسة علمية</div>
+          </div>
+        </div>
+        <div class="rs-item" onclick="toast('صفحة: مجلة التحقيق')">
+          <div class="rs-avatar">ت</div>
+          <div class="rs-info">
+            <div class="rs-name">مجلة التحقيق</div>
+            <div class="rs-sub">دورية علمية</div>
+          </div>
+        </div>
+      </div>
+      <div class="rs-section">
+        <div class="rs-heading">جهات اتصال</div>
+        <div class="rs-item" onclick="toast('بدء محادثة')">
+          <div class="rs-avatar" style="position:relative">أ</div>
+          <div class="rs-info">
+            <div class="rs-name">أحمد البخاري</div>
+            <div class="rs-sub">باحث في الحديث</div>
+          </div>
+        </div>
+        <div class="rs-item" onclick="toast('بدء محادثة')">
+          <div class="rs-avatar" style="position:relative">م</div>
+          <div class="rs-info">
+            <div class="rs-name">محمد الترمذي</div>
+            <div class="rs-sub">محقق تراث</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ===== PROFILE PAGE ===== -->
+  <div id="profile-page" class="page">
+    <div class="profile-cover">
+      <div class="profile-cover-edit" onclick="toast('تغيير صورة الغلاف')">📷 تغيير الغلاف</div>
+    </div>
+    <div class="profile-header-info">
+      <div class="profile-avatar-wrap">
+        <div class="profile-avatar-large" id="profile-avatar-lg">م</div>
+        <div class="profile-avatar-edit" onclick="toast('تغيير الصورة')">📷</div>
+      </div>
+      <div class="profile-name-section">
+        <div class="profile-name-info">
+          <h1 id="profile-name-lg">مستخدم مكتبتي</h1>
+          <div class="username" id="profile-username-lg">@username</div>
+          <div class="bio" id="profile-bio-lg">باحث في العلوم الإسلامية</div>
+        </div>
+        <div class="profile-actions">
+          <button class="profile-btn primary" id="profile-follow-btn" onclick="toggleFollow()">+ متابعة</button>
+          <button class="profile-btn secondary" onclick="openMessageModal()">💬 رسالة</button>
+          <button class="profile-btn secondary" onclick="toast('المزيد')">⋯</button>
+        </div>
+      </div>
+    </div>
+    <div class="profile-nav">
+      <button class="profile-nav-btn active" data-tab="posts" onclick="switchProfileTab('posts')">المنشورات</button>
+      <button class="profile-nav-btn" data-tab="about" onclick="switchProfileTab('about')">حول</button>
+      <button class="profile-nav-btn" data-tab="friends" onclick="switchProfileTab('friends')">الأصدقاء</button>
+      <button class="profile-nav-btn" data-tab="photos" onclick="switchProfileTab('photos')">الصور</button>
+      <button class="profile-nav-btn" data-tab="tahqiq" onclick="switchProfileTab('tahqiq')">التحقيقات</button>
+    </div>
+    <div class="profile-content">
+      <div class="profile-sidebar-left">
+        <div class="profile-intro-card">
+          <div class="profile-card-title">مقدمة</div>
+          <div class="profile-intro-item"><span class="intro-icon">🎓</span> <b>التخصص:</b> <span id="intro-specialty">علم الحديث</span></div>
+          <div class="profile-intro-item"><span class="intro-icon">📍</span> <b>الموقع:</b> <span id="intro-location">القاهرة، مصر</span></div>
+          <div class="profile-intro-item"><span class="intro-icon">🔗</span> <b>الموقع:</b> <span id="intro-website">example.com</span></div>
+          <div class="profile-intro-item"><span class="intro-icon">📅</span> <b>انضم:</b> <span id="intro-joined">يناير 2024</span></div>
+          <div class="profile-intro-item"><span class="intro-icon">👥</span> <b>المتابعون:</b> <span id="intro-followers">0</span></div>
+        </div>
+        <div class="profile-photos-card">
+          <div class="profile-card-title">الصور</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px">
+            <div style="aspect-ratio:1;background:var(--fb-bg);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:24px">📷</div>
+            <div style="aspect-ratio:1;background:var(--fb-bg);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:24px">📷</div>
+            <div style="aspect-ratio:1;background:var(--fb-bg);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:24px">📷</div>
+          </div>
+        </div>
+      </div>
+      <div class="profile-timeline" id="profile-timeline">
+        <!-- Composer for own profile -->
+        <div id="composer-card" style="margin-bottom:16px">
+          <div class="composer-top">
+            <div class="composer-avatar" id="profile-composer-avatar">م</div>
+            <div class="composer-input" onclick="openComposerModal()">بماذا تفكر؟</div>
+          </div>
+        </div>
+        <div id="profile-posts-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== LIBRARY PAGE ===== -->
+  <div id="library-page" class="page">
+    <div id="library-layout">
+      <aside id="library-sidebar">
+        <div class="lib-sidebar-header">
+          <h2>📚 المكتبة</h2>
+          <button id="lib-sidebar-toggle" onclick="toggleLibSidebar()">☰</button>
+        </div>
+        <div id="books-list-fb"></div>
+      </aside>
+      <div id="library-main">
+        <div id="lib-empty">
+          <div class="empty-icon">📚</div>
+          <h3>اختر كتاباً من القائمة</h3>
+          <p>استكشف كتب السنة والتراث الإسلامي</p>
+        </div>
+        <div id="lib-active">
+          <div id="lib-mode-bar">
+            <div class="lib-modes">
+              <button class="lib-mode-btn active" data-mode="browse" onclick="setLibMode('browse')">تصفح</button>
+              <button class="lib-mode-btn" data-mode="tahqiq" onclick="setLibMode('tahqiq')">تحقيق</button>
+            </div>
+            <div class="lib-tools">
+              <select id="toc-select-fb" onchange="selectChapterFromDropdown(this.value)"><option value="">كل الأبواب</option></select>
+              <span id="fn-toggles-fb" style="display:flex;gap:4px"></span>
+              <button id="add-text-book-btn-fb" onclick="openAddTextModal()" style="display:none;padding:5px 12px;border-radius:6px;border:1px solid var(--fb-border);font-size:12px;color:var(--fb-green);font-weight:600;background:#fff;cursor:pointer">+ كتاب نصي</button>
+              <button id="comments-toggle-btn-fb" onclick="toggleCommentsDrawer()" style="padding:5px 12px;border-radius:6px;border:1px solid var(--fb-border);font-size:12px;color:var(--fb-text-secondary);background:#fff;cursor:pointer">💬 تعليقات</button>
+            </div>
+          </div>
+          <div id="lib-content-area">
+            <button class="lib-panel-toggle" id="panel-toggle-right" onclick="toggleLibPanel('editions')">‹</button>
+            <div class="lib-side-panel" id="panel-editions-fb">
+              <div class="lsp-header"><span>الطبعات المطبوعة</span></div>
+              <div class="lsp-body"><div id="editions-list-fb"></div><button class="lsp-add-btn" onclick="openAddItemModal('edition')">+ إضافة مصورة مطبوع</button></div>
+            </div>
+            <div id="reader-area">
+              <div id="reader-header">
+                <h2 id="reader-title-fb"></h2>
+                <div id="reader-search"><input id="hadith-search-input-fb" placeholder="بحث في الأحاديث..."><button onclick="searchHadiths()">بحث</button></div>
+              </div>
+              <div id="lib-loading-fb" class="loading-spinner" style="display:none"></div>
+              <div id="hadiths-container-fb"></div>
+            </div>
+            <button class="lib-panel-toggle" id="panel-toggle-left" onclick="toggleLibPanel('mss')">›</button>
+            <div class="lib-side-panel" id="panel-mss-fb">
+              <div class="lsp-header"><span>المخطوطات</span></div>
+              <div class="lsp-body"><div id="mss-list-fb"></div><button class="lsp-add-btn" onclick="openAddItemModal('manuscript')">+ إضافة مصورة مخطوط</button></div>
+            </div>
+          </div>
+          <div id="comments-drawer-fb">
+            <div id="cd-header"><span>تعليقات القرّاء</span><button onclick="toggleCommentsDrawer()">✕</button></div>
+            <div id="cd-body"></div>
+            <div id="cd-input"><input id="drawer-comment-input-fb" placeholder="أضف تعليقاً..."><button onclick="submitDrawerComment()">إرسال</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- ===== AI ASSISTANT (المساعد الذكي) ===== -->
+<!-- Floating Action Button -->
+<div id="ai-fab" onclick="toggleAIChat()">
+  <span id="ai-fab-icon">🤖</span>
+  <span id="ai-fab-badge" style="display:none">●</span>
+</div>
+
+<!-- AI Chat Window -->
+<div id="ai-chat-window">
+  <div id="ai-chat-header">
+    <div id="ai-chat-avatar">
+      <span>🤖</span>
+      <div id="ai-status-indicator" class="online"></div>
+    </div>
+    <div id="ai-chat-info">
+      <div id="ai-chat-name">مساعد مكتبتي</div>
+      <div id="ai-chat-status">متصل · مساعدك العلمي</div>
+    </div>
+    <div id="ai-chat-actions">
+      <button onclick="clearAIChat()" title="مسح المحادثة">🗑️</button>
+      <button onclick="toggleAIChat()" title="إغلاق">✕</button>
+    </div>
+  </div>
+
+  <div id="ai-chat-body">
+    <div id="ai-welcome">
+      <div class="ai-message ai-bot">
+        <div class="ai-avatar">🤖</div>
+        <div class="ai-bubble">
+          <div class="ai-text">السلام عليكم! أنا مساعدك العلمي في <b>مكتبتي</b>. يمكنني مساعدتك في:</div>
+          <div class="ai-capabilities">
+            <div class="ai-cap" onclick="sendAIQuick('اشرح لي حديث الإخلاص')">📖 <b>شرح الأحاديث</b> — معاني ودلالات</div>
+            <div class="ai-cap" onclick="sendAIQuick('ابحث لي عن أحاديث الصدق')">🔍 <b>البحث في الكتب</b> — أحاديث وفوائد</div>
+            <div class="ai-cap" onclick="sendAIQuick('قارن بين رواية البخاري ومسلم في حديث الإخلاص')">⚖️ <b>التحقيق</b> — مقارنة نصوص وتخريج</div>
+            <div class="ai-cap" onclick="sendAIQuick('ما حكم صلاة الجمعة؟')">📚 <b>الفتوى والفقه</b> — استنباط وتعليل</div>
+            <div class="ai-cap" onclick="sendAIQuick('اقترح لي موضوعاً علمياً')">🎯 <b>الاقتراحات</b> — مواضيع ومصادر</div>
+          </div>
+          <div class="ai-text" style="margin-top:8px">كيف يمكنني مساعدتك اليوم؟</div>
+        </div>
+      </div>
+    </div>
+    <div id="ai-messages"></div>
+    <div id="ai-typing" style="display:none">
+      <div class="ai-message ai-bot">
+        <div class="ai-avatar">🤖</div>
+        <div class="ai-bubble">
+          <div class="ai-typing-dots"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="ai-chat-footer">
+    <div id="ai-quick-actions">
+      <button onclick="sendAIQuick('اشرح لي حديثاً')">📖 شرح حديث</button>
+      <button onclick="sendAIQuick('ابحث عن')">🔍 بحث</button>
+      <button onclick="sendAIQuick('قارن بين')">⚖️ مقارنة</button>
+      <button onclick="sendAIQuick('اقترح لي موضوعاً')">💡 اقتراح</button>
+    </div>
+    <div id="ai-input-row">
+      <button id="ai-attach-btn" onclick="toggleAIAttachMenu()" title="إرفاق">📎</button>
+      <div id="ai-attach-menu" style="display:none">
+        <button onclick="attachHadithToAI()">📖 حديث من المكتبة</button>
+        <button onclick="attachPostToAI()">📝 منشور</button>
+        <button onclick="attachTextToAI()">📄 نص</button>
+      </div>
+      <input type="text" id="ai-input" placeholder="اكتب سؤالك العلمي..." onkeydown="if(event.key==='Enter')sendAIMessage()">
+      <button id="ai-send-btn" onclick="sendAIMessage()" disabled>➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI Analysis Modal -->
+<div class="modal-overlay" id="ai-analysis-modal" onclick="if(event.target===this)closeModal('ai-analysis-modal')">
+  <div class="modal-box" style="width:600px;max-width:95vw">
+    <h3>🔍 تحليل المساعد الذكي</h3>
+    <div id="ai-analysis-content" style="max-height:60vh;overflow-y:auto"></div>
+    <div class="modal-footer">
+      <button class="modal-submit" onclick="applyAIAnalysis()">تطبيق التعديلات</button>
+      <button class="modal-cancel" onclick="closeModal('ai-analysis-modal')">إغلاق</button>
+    </div>
+n  </div>
+</div>
+</div>
+
+<!-- ===== COMPOSER MODAL ===== -->
+<div class="modal-overlay" id="composer-modal-overlay" onclick="if(event.target===this)closeComposerModal()">
+  <div id="composer-modal">
+    <div id="composer-modal-header">
+      <h3>إنشاء منشور</h3>
+      <button id="composer-modal-close" onclick="closeComposerModal()">✕</button>
+    </div>
+    <div id="composer-modal-body">
+      <div id="composer-modal-user">
+        <div class="composer-avatar" id="modal-composer-avatar">م</div>
+        <div>
+          <div class="name" id="modal-composer-name">مستخدم</div>
+          <div class="privacy">🌐 عام</div>
+        </div>
+      </div>
+      <div id="composer-types">
+        <button class="composer-type active" data-type="فائدة" onclick="selectComposerType('فائدة')">فائدة</button>
+        <button class="composer-type" data-type="حديث" onclick="selectComposerType('حديث')">حديث</button>
+        <button class="composer-type" data-type="سؤال" onclick="selectComposerType('سؤال')">سؤال</button>
+        <button class="composer-type" data-type="اقتباس" onclick="selectComposerType('اقتباس')">اقتباس</button>
+        <button class="composer-type" data-type="تحقيق" onclick="selectComposerType('تحقيق')">تحقيق</button>
+      </div>
+      <div id="composer-track">
+        <span>المسار:</span>
+        <select id="post-track-fb">
+          <option value="عام">عام</option>
+          <option value="حديث">علم الحديث</option>
+          <option value="فقه">الفقه</option>
+          <option value="تفسير">التفسير</option>
+          <option value="تحقيق">التحقيق</option>
+        </select>
+      </div>
+      <textarea id="composer-textarea" placeholder="بماذا تفكر؟"></textarea>
+    </div>
+    <div id="composer-modal-footer">
+      <div id="composer-addons">
+        <div class="composer-addon" title="صورة" onclick="toast('إضافة صورة')">📷</div>
+        <div class="composer-addon" title="فيديو" onclick="toast('إضافة فيديو')">🎥</div>
+        <div class="composer-addon" title="استطلاع" onclick="toast('إضافة استطلاع')">📊</div>
+        <div class="composer-addon" title="من المكتبة" onclick="toast('اختيار من المكتبة')">📚</div>
+        <div class="composer-addon" title="إيموجي" onclick="toast('إضافة إيموجي')">😊</div>
+      </div>
+      <button id="btn-publish-modal" onclick="publishPostFromModal()" disabled>نشر</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== QUICK COMMENT MODAL ===== -->
+<div class="modal-overlay" id="qc-modal" onclick="if(event.target===this)closeModal('qc-modal')">
+  <div class="modal-box">
+    <h3>تعليق على الحديث</h3>
+    <div id="qc-hadith-preview" style="font-size:13px;color:var(--fb-text-secondary);background:var(--fb-bg);padding:10px;border-radius:6px;margin-bottom:10px;max-height:80px;overflow:hidden"></div>
+    <div class="modal-types" id="qc-types">
+      <button class="active" data-type="حديث" onclick="selectQCType(this)">حديث</button>
+      <button data-type="فائدة" onclick="selectQCType(this)">فائدة</button>
+      <button data-type="تحقيق" onclick="selectQCType(this)">تحقيق</button>
+    </div>
+    <textarea id="qc-text" placeholder="اكتب تعليقك..."></textarea>
+    <div class="modal-footer">
+      <button class="modal-cancel" onclick="closeModal('qc-modal')">إلغاء</button>
+      <button class="modal-submit" onclick="submitQC()">نشر في الرئيسية</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FOOTNOTE DIALOG ===== -->
+<div class="modal-overlay" id="fn-dialog-fb" onclick="if(event.target===this)closeModal('fn-dialog-fb')">
+  <div class="modal-box">
+    <h3>إضافة حاشية مرقّمة</h3>
+    <p class="subtitle">حدد كلمة في النص أولاً.</p>
+    <textarea id="fn-text-input-fb" placeholder="نص الحاشية..."></textarea>
+    <div class="modal-footer">
+      <button class="modal-cancel" onclick="closeModal('fn-dialog-fb')">إلغاء</button>
+      <button class="modal-submit" onclick="addFootnote()">إضافة</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ADD ITEM MODAL ===== -->
+<div class="modal-overlay" id="add-item-modal-fb" onclick="if(event.target===this)closeModal('add-item-modal-fb')">
+  <div class="modal-box">
+    <h3 id="add-item-title-fb">إضافة مصورة</h3>
+    <input type="text" id="ai-name-fb" placeholder="الاسم">
+    <input type="text" id="ai-meta-fb" placeholder="معلومات إضافية">
+    <input type="text" id="ai-image-url-fb" placeholder="رابط الصورة (URL)">
+    <textarea id="ai-notes-fb" placeholder="ملاحظات..."></textarea>
+    <div class="modal-footer">
+      <button class="modal-cancel" onclick="closeModal('add-item-modal-fb')">إلغاء</button>
+      <button class="modal-submit" onclick="submitAddItem()">إضافة</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ADD TEXT BOOK MODAL ===== -->
+<div class="modal-overlay" id="add-text-modal-fb" onclick="if(event.target===this)closeModal('add-text-modal-fb')">
+  <div class="modal-box">
+    <h3>إضافة كتاب نصي</h3>
+    <input type="text" id="at-title-fb" placeholder="عنوان الكتاب">
+    <input type="text" id="at-author-fb" placeholder="المؤلف">
+    <textarea id="at-content-fb" placeholder="النص..." style="min-height:160px"></textarea>
+    <div class="modal-footer">
+      <button class="modal-cancel" onclick="closeModal('add-text-modal-fb')">إلغاء</button>
+      <button class="modal-submit" onclick="submitAddText()">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== IMAGE ZOOM ===== -->
+<div id="img-zoom" onclick="closeZoom()">
+  <button id="img-zoom-close" onclick="closeZoom()">إغلاق</button>
+  <img id="zoom-img" src="" alt="">
+</div>
+
+<!-- ===== FOOTNOTE POPOVER ===== -->
+<div id="fn-popover-fb"></div>
+
+<!-- ===== TOAST ===== -->
+<div id="toast"></div>
+
+<script>
+
+// ==================== CONFIG & DATA ====================
+const SUPA_URL='https://uqfqpqjarofbcdzkrdgs.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVxZnFwcWphcm9mYmNkemtyZGdzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4ODUwMzUsImV4cCI6MjA5MzQ2MTAzNX0.8z2Nc8t14txttepiRV5yhhkBfDdE77FJ7rx1dxQrICI';
+const CDN='https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1';
+const BOOKS=[
+  {id:'bukhari',cdnId:'ara-bukhari',icon:'📗',title:'صحيح البخاري',author:'البخاري'},
+  {id:'muslim',cdnId:'ara-muslim',icon:'📘',title:'صحيح مسلم',author:'مسلم'},
+  {id:'abudawud',cdnId:'ara-abudawud',icon:'📙',title:'سنن أبي داود',author:'أبو داود'},
+  {id:'tirmidhi',cdnId:'ara-tirmidhi',icon:'📕',title:'سنن الترمذي',author:'الترمذي'},
+  {id:'nasai',cdnId:'ara-nasai',icon:'📔',title:'سنن النسائي',author:'النسائي'},
+  {id:'ibnmajah',cdnId:'ara-ibnmajah',icon:'📓',title:'سنن ابن ماجه',author:'ابن ماجه'}
+];
+const FN_CATS=['تخريج','فروق_نسخ','غريب'];
+const FN_CAT_DB={'تخريج':'تخريج','فروق_نسخ':'فروق نسخ','غريب':'غريب'};
+const REACTIONS=[{type:'like',emoji:'👍',label:'إعجاب'},{type:'love',emoji:'❤️',label:'أحببته'},{type:'care',emoji:'🤲',label:'أدعو له'},{type:'wow',emoji:'😮',label:'مذهل'},{type:'haha',emoji:'😂',label:'أضحكني'},{type:'sad',emoji:'😢',label:'حزين'},{type:'angry',emoji:'😡',label:'غاضب'}];
+
+const{createClient}=supabase;
+const sb=createClient(SUPA_URL,SUPA_KEY);
+
+// ==================== STATE ====================
+let currentUser=null,currentProfile=null;
+let currentView='feed',feedFilter='الكل',currentPostType='فائدة';
+let currentBook=null,currentHadiths=[],currentChapters=[],activeChapter=null;
+let currentLibMode='browse',activeFnCats={},openLibPanels={mss:false,editions:false};
+let editingNum=null,editingMatnHtml=null,editingStatus='draft',lastRenderedList=[];
+let commentsDrawerOpen=false,activeHadith=null,qcHadith=null;
+let footnotes=[],fnCounter=0,currentDraftId=null,addItemType=null;
+let viewedProfileId=null,currentProfileTab='posts';
+let notifDropdownOpen=false,msgDropdownOpen=false,userDropdownOpen=false;
+
+// ==================== INIT ====================
+window.addEventListener('DOMContentLoaded',async()=>{
+  const{data:{session}}=await sb.auth.getSession();
+  if(session){currentUser=session.user;await loadProfile();showApp();}
+  sb.auth.onAuthStateChange(async(event,session)=>{
+    if(event==='SIGNED_IN'&&session){currentUser=session.user;await loadProfile();showApp();}
+    if(event==='SIGNED_OUT'){currentUser=null;currentProfile=null;location.reload();}
+  });
+  initComposerTypes();initQCTypes();initFeedFilters();await loadCustomBooks();renderBooksFB();
+  setupGlobalClickHandler();
+  setupComposerTextarea();
+});
+
+function setupGlobalClickHandler(){
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('#notif-btn')&&!e.target.closest('#notif-dropdown')){notifDropdownOpen=false;document.getElementById('notif-dropdown').classList.remove('show');}
+    if(!e.target.closest('#msg-btn')&&!e.target.closest('#msg-dropdown')){msgDropdownOpen=false;document.getElementById('msg-dropdown').classList.remove('show');}
+    if(!e.target.closest('#user-menu-btn')&&!e.target.closest('#user-dropdown')){userDropdownOpen=false;document.getElementById('user-dropdown').classList.remove('show');}
+    if(!e.target.closest('.fn-marker-fb')&&!e.target.closest('#fn-popover-fb'))document.getElementById('fn-popover-fb').style.display='none';
+    if(!e.target.closest('.post-action')||!e.target.closest('.reactions-popover')){
+      document.querySelectorAll('.reactions-popover').forEach(p=>p.classList.remove('show'));
+    }
+  });
+}
+
+function setupComposerTextarea(){
+  const ta=document.getElementById('composer-textarea');
+  if(ta)ta.addEventListener('input',function(){document.getElementById('btn-publish-modal').disabled=!this.value.trim();});
+}
+
+// ==================== AUTH (SMOOTH - NO BLOCKING) ====================
+async function loadProfile(){
+  let{data}=await sb.from('profiles').select('*').eq('id',currentUser.id).single();
+  if(!data){
+    const meta=currentUser.user_metadata||{};
+    const fallbackName=meta.full_name||meta.name||currentUser.email.split('@')[0];
+    const fallbackUsername=meta.username||currentUser.email.split('@')[0];
+    await sb.from('profiles').upsert({
+      id:currentUser.id,full_name:fallbackName,username:fallbackUsername,
+      account_type:meta.account_type||'guest',is_scholar:false
+    });
+    const res=await sb.from('profiles').select('*').eq('id',currentUser.id).single();
+    data=res.data;
+  }
+  currentProfile=data;
+}
+
+function showApp(){
+  if(!currentUser)return;
+  document.getElementById('auth-overlay').style.display='none';
+  document.getElementById('app').style.display='block';
+  const name=currentProfile?.full_name||currentUser.email.split('@')[0];
+  const initial=name.trim().charAt(0)||'م';
+  document.getElementById('nav-user-name').textContent=name;
+  document.getElementById('nav-user-avatar').textContent=initial;
+  document.getElementById('sidebar-user-name').textContent=name;
+  document.getElementById('sidebar-user-avatar').textContent=initial;
+  document.getElementById('composer-avatar').textContent=initial;
+  document.getElementById('modal-composer-name').textContent=name;
+  document.getElementById('modal-composer-avatar').textContent=initial;
+  applyAccountRestrictions();
+  switchView('feed');
+  loadNotifications();
+}
+
+function applyAccountRestrictions(){
+  const isGuest=currentProfile?.account_type!=='verified';
+  document.querySelectorAll('#composer-types .composer-type').forEach(b=>{
+    b.disabled=isGuest&&b.dataset.type!=='فائدة';
+    if(b.disabled)b.style.opacity='0.4';
+  });
+  if(isGuest){
+    document.querySelectorAll('#composer-types .composer-type').forEach(b=>b.classList.remove('active'));
+    const fbBtn=document.querySelector('#composer-types .composer-type[data-type="فائدة"]');
+    if(fbBtn)fbBtn.classList.add('active');
+    currentPostType='فائدة';
+  }
+  document.querySelectorAll('.lib-mode-btn').forEach(b=>{
+    if(isGuest&&b.dataset.mode!=='browse'){b.disabled=true;b.title='يتطلب حساباً موثقاً';}
+    else{b.disabled=false;b.title='';}
+  });
+}
+
+function switchAuthTab(tab){
+  document.querySelectorAll('#auth-tabs button').forEach((b,i)=>b.classList.toggle('active',tab==='login'?i===0:i===1));
+  document.getElementById('tab-login').style.display=tab==='login'?'flex':'none';
+  document.getElementById('tab-register').style.display=tab==='register'?'flex':'none';
+  document.getElementById('auth-msg').textContent='';
+}
+
+let selectedAccType='guest';
+function selectAccType(t){
+  selectedAccType=t;
+  document.getElementById('acc-guest').classList.toggle('active',t==='guest');
+  document.getElementById('acc-verified').classList.toggle('active',t==='verified');
+}
+
+async function doLogin(){
+  const email=document.getElementById('login-email').value.trim();
+  const pass=document.getElementById('login-pass').value;
+  if(!email||!pass)return setAuthMsg('يرجى ملء جميع الحقول');
+  setAuthMsg('جاري الدخول...');
+  const{error}=await sb.auth.signInWithPassword({email,password:pass});
+  if(error)setAuthMsg(error.message==='Invalid login credentials'?'البريد أو كلمة المرور غير صحيحة':error.message);
+}
+
+async function doRegister(){
+  const name=document.getElementById('reg-name').value.trim();
+  const username=document.getElementById('reg-username').value.trim();
+  const email=document.getElementById('reg-email').value.trim();
+  const pass=document.getElementById('reg-pass').value;
+  if(!name||!username||!email||!pass)return setAuthMsg('يرجى ملء جميع الحقول');
+  if(pass.length<6)return setAuthMsg('كلمة المرور 6 أحرف على الأقل');
+  setAuthMsg('جاري إنشاء الحساب...');
+  const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name,username,account_type:selectedAccType}}});
+  if(error)return setAuthMsg(error.message);
+  if(data.user){
+    await sb.from('profiles').upsert({id:data.user.id,full_name:name,username,account_type:selectedAccType,is_scholar:false});
+    // AUTO-LOGIN: No email verification blocking!
+    const{error:loginErr}=await sb.auth.signInWithPassword({email,password:pass});
+    if(loginErr)setAuthMsg('تم الإنشاء، يرجى تسجيل الدخول.');
+  } else {
+    setAuthMsg('تم الإنشاء، يرجى تسجيل الدخول.');
+  }
+}
+
+async function doLogout(){await sb.auth.signOut();}
+function setAuthMsg(m){document.getElementById('auth-msg').textContent=m;}
+
+// ==================== NAVIGATION & VIEWS ====================
+function switchView(view){
+  currentView=view;
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+  document.getElementById('profile-page').classList.remove('active');
+  document.getElementById('library-page').classList.remove('active');
+  document.getElementById('main-layout').style.display=view==='feed'?'grid':'none';
+  if(view==='feed'){loadPosts();}
+  else if(view==='library'){document.getElementById('library-page').classList.add('active');}
+  else if(view==='profile'){showProfilePage(null);}
+  window.scrollTo(0,0);
+}
+
+function toggleNotifDropdown(){
+  notifDropdownOpen=!notifDropdownOpen;
+  document.getElementById('notif-dropdown').classList.toggle('show',notifDropdownOpen);
+  if(notifDropdownOpen){msgDropdownOpen=false;document.getElementById('msg-dropdown').classList.remove('show');userDropdownOpen=false;document.getElementById('user-dropdown').classList.remove('show');}
+}
+
+function toggleMsgDropdown(){
+  msgDropdownOpen=!msgDropdownOpen;
+  document.getElementById('msg-dropdown').classList.toggle('show',msgDropdownOpen);
+  if(msgDropdownOpen){notifDropdownOpen=false;document.getElementById('notif-dropdown').classList.remove('show');userDropdownOpen=false;document.getElementById('user-dropdown').classList.remove('show');}
+}
+
+function toggleUserDropdown(){
+  userDropdownOpen=!userDropdownOpen;
+  document.getElementById('user-dropdown').classList.toggle('show',userDropdownOpen);
+  if(userDropdownOpen){notifDropdownOpen=false;document.getElementById('notif-dropdown').classList.remove('show');msgDropdownOpen=false;document.getElementById('msg-dropdown').classList.remove('show');}
+}
+
+function doGlobalSearch(){const q=document.getElementById('global-search').value.trim();if(q)toast('بحث: '+q);}
+function showSavedPosts(){toast('المنشورات المحفوظة');}
+function toggleDarkMode(){toast('الوضع الليلي قريباً');}
+
+// ==================== NOTIFICATIONS ====================
+async function loadNotifications(){
+  if(!currentUser)return;
+  const{data}=await sb.from('notifications').select('*,actor:profiles!actor_id(full_name)').eq('recipient_id',currentUser.id).eq('is_read',false).order('created_at',{ascending:false}).limit(20);
+  const badge=document.getElementById('notif-badge');
+  const list=document.getElementById('notif-list');
+  if(data&&data.length>0){
+    badge.style.display='flex';badge.textContent=data.length>99?'99+':data.length;
+    list.innerHTML=data.map(n=>{
+      const actor=n.actor?.full_name||'مجهول';
+      const text=getNotifText(n.type,actor);
+      return `<div class="notif-item ${n.is_read?'':'unread'}" onclick="handleNotifClick('${n.id}')">
+        <div class="notif-avatar">${actor.charAt(0)}</div>
+        <div class="notif-content">
+          <div class="notif-text">${text}</div>
+          <div class="notif-time">${timeAgo(n.created_at)}</div>
+        </div>
+      </div>`;
+    }).join('');
+  } else {
+    badge.style.display='none';
+    list.innerHTML='<div style="text-align:center;padding:20px;color:var(--fb-text-secondary);font-size:14px">لا إشعارات جديدة</div>';
+  }
+}
+
+function getNotifText(type,actor){
+  const map={like:`<b>${actor}</b> أعجب بمنشورك`,comment:`<b>${actor}</b> علّق على منشورك`,reply:`<b>${actor}</b> رد على تعليقك`,follow:`<b>${actor}</b> بدأ بمتابعتك`,mention:`<b>${actor}</b> أشار إليك`,share:`<b>${actor}</b> شارك منشورك`,review_approved:'تم <b>اعتماد</b> تحقيقك',review_rejected:'تم <b>رفض</b> تحقيقك'};
+  return map[type]||type;
+}
+
+function handleNotifClick(id){toast('الانتقال للإشعار...');}
+function markAllNotifRead(){toast('تم تعيين الكل مقروء');document.getElementById('notif-badge').style.display='none';}
+
+function timeAgo(date){
+  const s=Math.floor((new Date()-new Date(date))/1000);
+  if(s<60)return'الآن';if(s<3600)return Math.floor(s/60)+' د';if(s<86400)return Math.floor(s/3600)+' س';if(s<604800)return Math.floor(s/86400)+' ي';return new Date(date).toLocaleDateString('ar-SA');
+}
+
+// ==================== FEED ====================
+function initFeedFilters(){
+}
+
+function setFeedFilter(val){
+  feedFilter=val;
+  document.querySelectorAll('#feed-filters .composer-type').forEach(b=>b.classList.toggle('active',b.dataset.filter===val));
+  loadPosts();
+}
+
+async function loadPosts(){
+  const loading=document.getElementById('posts-loading');
+  const list=document.getElementById('posts-list');
+  loading.style.display='block';list.innerHTML='';
+  let q=sb.from('posts').select('*,author:profiles!author_id(full_name,username,account_type)').order('created_at',{ascending:false}).limit(50);
+  if(feedFilter==='مكتبة'){q=q.not('book_id','is',null);}
+  else if(feedFilter!=='الكل'){q=q.eq('post_type',feedFilter);}
+  const{data,error}=await q;
+  loading.style.display='none';
+  if(error||!data){list.innerHTML='<div class="empty-state"><div class="empty-icon">⚠️</div><h4>حدث خطأ في التحميل</h4></div>';return;}
+  list.innerHTML=data.length?data.map(postCardHTML).join(''):'<div class="empty-state"><div class="empty-icon">📝</div><h4>لا توجد منشورات بعد</h4><p>كن أول من ينشر!</p></div>';
+}
+
+function postCardHTML(p){
+  const date=timeAgo(p.created_at);
+  const author=p.author?.full_name||'مجهول';
+  const initial=author.trim().charAt(0)||'م';
+  const hadithRef=p.book_id?`<span class="post-hadith-ref" onclick="goToHadith('${p.book_id}',${p.text_id||0})">عرض في المكتبة</span>`:'';
+  return `<div class="post-card" id="post-${p.id}">
+    <div class="post-header">
+      <div class="post-author-section">
+        <div class="post-avatar" onclick="showProfilePage('${p.author_id}')">${initial}</div>
+        <div class="post-meta-info">
+          <div class="post-author-name" onclick="showProfilePage('${p.author_id}')">${author}</div>
+          <div class="post-meta-row">${date}<span class="dot"></span>${p.track||'عام'}${hadithRef?'<span class="dot"></span>':''}${hadithRef}</div>
+        </div>
+      </div>
+      <button class="post-menu-btn" onclick="toast('خيارات المنشور')">⋯</button>
+    </div>
+    <div class="post-content">${escHtml(p.content)}</div>
+    <div class="post-stats">
+      <div class="post-reactions">
+        <div class="reaction-icons"><span class="reaction-icon">👍</span><span class="reaction-icon">❤️</span></div>
+        <span>${p.likes_count||0}</span>
+      </div>
+      <div>
+        <span>${p.comments_count||0} تعليق</span> · <span>${p.shares_count||0} مشاركة</span>
+      </div>
+    </div>
+    <div class="post-actions">
+      ${renderReactionsBar(p.id,p.likes_count||0,p.user_reaction)}
+      <div class="post-action" onclick="toggleComments(${p.id})"><span class="pa-icon">💬</span> تعليق</div>
+      <div class="post-action" onclick="sharePost(${p.id})"><span class="pa-icon">↗️</span> مشاركة</div>
+      <div class="post-action" onclick="savePost(${p.id},this)"><span class="pa-icon">🔖</span> حفظ</div>
+    </div>
+    <div class="comments-section" id="comments-${p.id}">
+      <div id="comments-list-${p.id}"></div>
+      <div class="comment-input-row">
+        <div class="my-avatar">${(currentProfile?.full_name||'م').charAt(0)}</div>
+        <div class="comment-input-wrapper">
+          <input id="comment-input-${p.id}" placeholder="أضف تعليقاً..." onkeydown="if(event.key==='Enter')submitComment(${p.id})">
+          <span class="comment-send-btn" onclick="submitComment(${p.id})">➤</span>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderReactionsBar(postId,likesCount,userReaction){
+  return `<div class="post-action" onmouseenter="showReactionsPopover(this,${postId})" onclick="toggleReaction(${postId},'like',this)">
+    <span class="pa-icon">👍</span> إعجاب
+    <div class="reactions-popover">
+      ${REACTIONS.map(r=>`<button class="reaction-btn" onclick="event.stopPropagation();toggleReaction(${postId},'${r.type}',this.parentElement.parentElement)" title="${r.label}">${r.emoji}</button>`).join('')}
+    </div>
+  </div>`;
+}
+
+function showReactionsPopover(el,postId){
+  document.querySelectorAll('.reactions-popover').forEach(p=>p.classList.remove('show'));
+  const popover=el.querySelector('.reactions-popover');
+  if(popover)popover.classList.add('show');
+}
+
+async function toggleReaction(postId,type,btn){
+  if(!currentUser)return toast('يجب تسجيل الدخول');
+  const{data:existing}=await sb.from('reactions').select('*').eq('user_id',currentUser.id).eq('post_id',postId).maybeSingle();
+  if(existing){
+    if(existing.reaction_type===type){
+      await sb.from('reactions').delete().eq('user_id',currentUser.id).eq('post_id',postId);
+      await sb.from('posts').update({likes_count:Math.max(0,(existing.likes_count||1)-1)}).eq('id',postId);
+    } else {
+      await sb.from('reactions').update({reaction_type:type}).eq('user_id',currentUser.id).eq('post_id',postId);
+    }
+  } else {
+    await sb.from('reactions').insert({user_id:currentUser.id,post_id:postId,reaction_type:type});
+    const{data:post}=await sb.from('posts').select('likes_count').eq('id',postId).single();
+    await sb.from('posts').update({likes_count:(post?.likes_count||0)+1}).eq('id',postId);
+  }
+  loadPosts();
+}
+
+async function toggleComments(postId){
+  const s=document.getElementById('comments-'+postId);
+  if(s.classList.contains('open')){s.classList.remove('open');return;}
+  s.classList.add('open');
+  const{data}=await sb.from('comments').select('*,author:profiles!author_id(full_name)').eq('post_id',postId).order('created_at');
+  const list=document.getElementById('comments-list-'+postId);
+  list.innerHTML=data&&data.length?data.map(c=>`<div class="comment-item">
+    <div class="comment-avatar">${(c.author?.full_name||'م').charAt(0)}</div>
+    <div class="comment-body">
+      <div class="comment-bubble">
+        <div class="comment-author">${c.author?.full_name||'مجهول'}</div>
+        <div class="comment-text">${escHtml(c.content)}</div>
+      </div>
+      <div class="comment-actions"><span class="comment-action">إعجاب</span><span class="comment-action">رد</span><span>${timeAgo(c.created_at)}</span></div>
+    </div>
+  </div>`).join(''):'<div style="font-size:13px;color:var(--fb-text-secondary);padding:8px 0">لا تعليقات بعد</div>';
+}
+
+async function submitComment(postId){
+  const input=document.getElementById('comment-input-'+postId);
+  const content=input.value.trim();
+  if(!content||!currentUser)return;
+  const{error}=await sb.from('comments').insert({post_id:postId,author_id:currentUser.id,content});
+  if(error){toast('خطأ في إرسال التعليق');return;}
+  input.value='';
+  const{data:post}=await sb.from('posts').select('comments_count').eq('id',postId).single();
+  await sb.from('posts').update({comments_count:(post?.comments_count||0)+1}).eq('id',postId);
+  toggleComments(postId);setTimeout(()=>toggleComments(postId),100);
+}
+
+function sharePost(postId){toast('مشاركة المنشور');}
+async function savePost(postId,btn){
+  if(!currentUser)return toast('يجب تسجيل الدخول');
+  btn.classList.toggle('active');
+  toast(btn.classList.contains('active')?'تم الحفظ':'تم إلغاء الحفظ');
+}
+
+// ==================== COMPOSER ====================
+function initComposerTypes(){
+}
+
+function selectComposerType(type){
+  if(currentProfile?.account_type!=='verified'&&type!=='فائدة'){toast('الحساب الزائر يسمح فقط بفائدة');return;}
+  currentPostType=type;
+  document.querySelectorAll('#composer-types .composer-type').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`#composer-types .composer-type[data-type="${type}"]`)?.classList.add('active');
+}
+
+function openComposerModal(type){
+  document.getElementById('composer-modal-overlay').style.display='flex';
+  document.getElementById('composer-textarea').focus();
+  if(type==='hadith'){toast('اختيار من المكتبة قريباً');}
+}
+
+function closeComposerModal(){
+  document.getElementById('composer-modal-overlay').style.display='none';
+  document.getElementById('composer-textarea').value='';
+  document.getElementById('btn-publish-modal').disabled=true;
+}
+
+async function publishPostFromModal(){
+  const content=document.getElementById('composer-textarea').value.trim();
+  if(!content)return toast('أدخل محتوى المنشور');
+  if(!currentUser)return toast('يجب تسجيل الدخول');
+  if(currentProfile?.account_type!=='verified'&&currentPostType!=='فائدة')return toast('الحساب الزائر يسمح فقط بفائدة');
+  const track=document.getElementById('post-track-fb').value;
+  const btn=document.getElementById('btn-publish-modal');
+  btn.disabled=true;btn.textContent='جاري النشر...';
+  const{error}=await sb.from('posts').insert({author_id:currentUser.id,post_type:currentPostType,content,track,likes_count:0,comments_count:0,shares_count:0});
+  btn.disabled=false;btn.textContent='نشر';
+  if(error)return toast('خطأ في النشر: '+error.message);
+  closeComposerModal();
+  toast('تم النشر بنجاح');
+  feedFilter='الكل';
+  document.querySelectorAll('#feed-filters .composer-type').forEach(b=>b.classList.toggle('active',b.dataset.filter==='الكل'));
+  loadPosts();
+}
+
+// ==================== PROFILE PAGE ====================
+function showProfilePage(userId){
+  viewedProfileId=userId;
+  document.getElementById('main-layout').style.display='none';
+  document.getElementById('library-page').classList.remove('active');
+  document.getElementById('profile-page').classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  loadProfilePage();
+}
+
+async function loadProfilePage(){
+  const uid=viewedProfileId||currentUser?.id;
+  if(!uid)return;
+  viewedProfileId=null;
+  const{data:prof}=await sb.from('profiles').select('*').eq('id',uid).single();
+  if(!prof)return;
+  const initial=(prof.full_name||'م').trim().charAt(0);
+  document.getElementById('profile-avatar-lg').textContent=initial;
+  document.getElementById('profile-name-lg').textContent=prof.full_name||prof.username||'مستخدم';
+  document.getElementById('profile-username-lg').textContent='@'+(prof.username||'user');
+  document.getElementById('profile-bio-lg').textContent=prof.bio||'باحث في العلوم الإسلامية';
+  document.getElementById('intro-specialty').textContent=prof.account_type==='verified'?'باحث موثّق':'باحث';
+  document.getElementById('intro-followers').textContent=prof.followers_count||0;
+  const isOwn=uid===currentUser?.id;
+  document.getElementById('profile-follow-btn').style.display=isOwn?'none':'inline-block';
+  document.getElementById('profile-composer-avatar').textContent=initial;
+  document.getElementById('profile-page').dataset.uid=uid;
+  switchProfileTab('posts');
+}
+
+function switchProfileTab(tab){
+  currentProfileTab=tab;
+  document.querySelectorAll('.profile-nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  const uid=document.getElementById('profile-page').dataset.uid||currentUser?.id;
+  if(tab==='posts')loadProfilePosts(uid);
+  else if(tab==='tahqiq')loadProfileTahqiq(uid);
+  else document.getElementById('profile-posts-list').innerHTML='<div class="empty-state"><div class="empty-icon">📝</div><h4>قريباً</h4></div>';
+}
+
+async function loadProfilePosts(uid){
+  const container=document.getElementById('profile-posts-list');
+  container.innerHTML='<div class="loading-spinner"></div>';
+  const{data}=await sb.from('posts').select('*,author:profiles!author_id(full_name)').eq('author_id',uid).order('created_at',{ascending:false}).limit(30);
+  container.innerHTML=data&&data.length?data.map(postCardHTML).join(''):'<div class="empty-state"><div class="empty-icon">📝</div><h4>لا توجد منشورات</h4></div>';
+}
+
+async function loadProfileTahqiq(uid){
+  const container=document.getElementById('profile-posts-list');
+  container.innerHTML='<div class="loading-spinner"></div>';
+  const isOwn=uid===currentUser?.id;
+  let q=sb.from('user_edits').select('*').eq('user_id',uid).order('updated_at',{ascending:false});
+  if(!isOwn)q=q.eq('status','approved');
+  const{data}=await q;
+  if(!data||!data.length){container.innerHTML='<div class="empty-state"><div class="empty-icon">📖</div><h4>لا توجد تحقيقات بعد</h4></div>';return;}
+  const labels={draft:['مسودة','var(--fb-bg)','var(--fb-text-secondary)'],pending_review:['قيد المراجعة','var(--fb-gold-light)','var(--fb-gold)'],approved:['معتمد ✓','var(--fb-green-light)','var(--fb-green)'],rejected:['مرفوض','#fde8e8','#e41e3f']};
+  container.innerHTML=data.map(t=>{
+    const book=BOOKS.find(b=>b.id===t.book_id);
+    const[lbl,bg,fg]=labels[t.status]||['','#eee','#666'];
+    const plain=(t.edited_matn||'').replace(/<[^>]+>/g,'');
+    return `<div class="post-card" style="padding:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <h4 style="font-size:15px;font-weight:700">${book?.title||t.book_id} — حديث ${t.hadith_number}</h4>
+        <span style="font-size:12px;padding:3px 10px;border-radius:10px;background:${bg};color:${fg};font-weight:600">${lbl}</span>
+      </div>
+      <div style="font-size:14px;color:var(--fb-text-secondary);line-height:1.7">${escHtml(plain.substring(0,200))}...</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleFollow(){toast('متابعة المستخدم');}
+function openMessageModal(){toast('إرسال رسالة');}
+
+// ==================== LIBRARY ====================
+function toggleLibSidebar(){document.getElementById('library-sidebar').classList.toggle('open');}
+
+async function loadCustomBooks(){
+  const knownIds=BOOKS.map(b=>b.id);
+  const{data}=await sb.from('books').select('*');
+  if(!data)return;
+  data.forEach(row=>{if(!knownIds.includes(row.id)){BOOKS.push({id:row.id,icon:row.icon||'📜',title:row.title,author:row.author});knownIds.push(row.id);}});
+}
+
+function renderBooksFB(){
+  document.getElementById('books-list-fb').innerHTML=BOOKS.map(b=>`<div class="book-list-item" data-id="${b.id}" onclick="selectBook('${b.id}')">
+    <span class="bli-icon">${b.icon}</span>
+    <div class="bli-info">
+      <div class="bli-title">${b.title}</div>
+      <div class="bli-author">${b.author}</div>
+    </div>
+  </div>`).join('');
+}
+
+async function selectBook(bookId){
+  document.querySelectorAll('.book-list-item').forEach(el=>el.classList.toggle('active',el.dataset.id===bookId));
+  currentBook=BOOKS.find(b=>b.id===bookId);
+  currentHadiths=[];currentChapters=[];activeChapter=null;activeHadith=null;
+  document.getElementById('lib-empty').style.display='none';
+  document.getElementById('lib-active').style.display='flex';
+  document.getElementById('reader-title-fb').textContent=currentBook.title;
+  document.getElementById('lib-loading-fb').style.display='block';
+  document.getElementById('hadiths-container-fb').innerHTML='';
+  document.getElementById('toc-select-fb').innerHTML='<option value="">كل الأبواب</option>';
+  setLibMode('browse');
+  try{
+    if(currentBook.cdnId){
+      const res=await fetch(`${CDN}/editions/${currentBook.cdnId}.min.json`);
+      if(!res.ok)throw new Error();
+      const json=await res.json();
+      currentHadiths=json.hadiths||[];
+    } else {
+      const{data,error}=await sb.from('texts').select('*').eq('book_id',bookId).order('hadith_number');
+      if(error)throw error;
+      currentHadiths=(data||[]).map(t=>({text:t.matn,hadithnumber:t.hadith_number,chapter:t.chapter,isnad:t.isnad}));
+    }
+    const cm={};
+    currentHadiths.forEach(h=>{const ch=h.chapter||h.chapterNumber||'عام';if(!cm[ch])cm[ch]=[];cm[ch].push(h);});
+    currentChapters=Object.entries(cm);
+    renderTOCFB();
+    renderHadithsFB(currentHadiths.slice(0,30));
+  }catch(e){
+    document.getElementById('hadiths-container-fb').innerHTML='<div class="empty-state"><div class="empty-icon">⚠️</div><h4>تعذّر تحميل الكتاب</h4></div>';
+  }
+  document.getElementById('lib-loading-fb').style.display='none';
+  loadSidePanelsFB();
+}
+
+function renderTOCFB(){
+  const sel=document.getElementById('toc-select-fb');
+  sel.innerHTML='<option value="">كل الأبواب</option>'+currentChapters.map(([ch,hs],i)=>`<option value="${i}">${ch} (${hs.length})</option>`).join('');
+}
+
+function selectChapterFromDropdown(val){
+  if(val===''){activeChapter=null;renderHadithsFB(currentHadiths.slice(0,30));return;}
+  activeChapter=parseInt(val);
+  renderHadithsFB(currentChapters[activeChapter][1]);
+}
+
+function setLibMode(mode){
+  if(mode!=='browse'&&currentProfile?.account_type!=='verified'){toast('هذه الميزة تتطلب حساباً موثقاً');return;}
+  currentLibMode=mode;
+  document.querySelectorAll('.lib-mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+  const isTahqiq=mode==='tahqiq';
+  document.getElementById('panel-toggle-left').style.display=isTahqiq?'block':'none';
+  document.getElementById('panel-toggle-right').style.display=isTahqiq?'block':'none';
+  if(!isTahqiq){
+    document.getElementById('panel-mss-fb').classList.remove('open');
+    document.getElementById('panel-editions-fb').classList.remove('open');
+    openLibPanels={mss:false,editions:false};
+  }
+  document.getElementById('add-text-book-btn-fb').style.display=(isTahqiq&&currentProfile?.account_type==='verified')?'inline-block':'none';
+}
+
+function toggleLibPanel(which){
+  const key=which==='mss'?'mss':'editions';
+  openLibPanels[key]=!openLibPanels[key];
+  document.getElementById('panel-'+key+'-fb').classList.toggle('open',openLibPanels[key]);
+  const btn=which==='mss'?document.getElementById('panel-toggle-left'):document.getElementById('panel-toggle-right');
+  btn.classList.toggle('open',openLibPanels[key]);
+  btn.textContent=which==='mss'?(openLibPanels.mss?'‹':'›'):(openLibPanels.editions?'›':'‹');
+}
+
+function renderHadithsFB(hadiths){
+  lastRenderedList=hadiths;
+  document.getElementById('fn-toggles-fb').innerHTML=FN_CATS.map(c=>{
+    const label=c.replace('_',' ');
+    return `<button class="fn-toggle-btn ${activeFnCats[c]?'active '+c:''}" onclick="toggleFnCat('${c}')">${label}</button>`;
+  }).join('');
+  const container=document.getElementById('hadiths-container-fb');
+  if(!hadiths.length){container.innerHTML='<div class="empty-state"><div class="empty-icon">📖</div><h4>لا أحاديث</h4></div>';return;}
+  container.innerHTML=hadiths.slice(0,50).map(hadithCardFB).join('');
+  Object.keys(activeFnCats).forEach(c=>{if(activeFnCats[c])loadFnMarkersFB(c);});
+  if(editingNum!=null)renderFootnotesFB();
+}
+
+function hadithCardFB(h){
+  const text=h.text||h.hadith||'';
+  const num=h.hadithnumber||h.number||'';
+  const grade=h.grades?.[0]?.grade||'';
+  const gc=grade.includes('صحيح')?'صحيح':grade.includes('حسن')?'حسن':grade.includes('ضعيف')?'ضعيف':'';
+  const ts=JSON.stringify(escHtml(text)).replace(/"/g,'&quot;');
+  const isVerified=currentProfile?.account_type==='verified';
+  const isEditingThis=isVerified&&editingNum!=null&&String(editingNum)===String(num);
+  if(isEditingThis){
+    const matnHtml=editingMatnHtml!=null?editingMatnHtml:escHtml(text);
+    const statusLabels={draft:'مسودة',pending_review:'قيد المراجعة',approved:'معتمد ✓',rejected:'مرفوض'};
+    const st=editingStatus||'draft';
+    return `<div class="hadith-card-fb" data-num="${num}">
+      <div class="hadith-card-header-fb">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="hadith-number-fb">رقم ${num}</span>
+          ${grade?`<span class="hadith-grade-fb ${gc}">${grade}</span>`:''}
+        </div>
+        <span class="tb-status status-${st}-fb" id="edit-status-badge">${statusLabels[st]||st}</span>
+      </div>
+      <div id="tahqiq-toolbar">
+        <select id="tb-font" onchange="fmt('fontName',this.value)"><option value="'Cairo',sans-serif">كايرو</option><option value="'Amiri',serif">الأميري</option><option value="'Scheherazade New',serif">شهرزاد</option></select>
+        <select id="tb-size" onchange="fmt('fontSize',this.value)"><option value="3">عادي</option><option value="2">صغير</option><option value="4">كبير</option><option value="5">أكبر</option></select>
+        <div class="tb-sep"></div>
+        <button onclick="fmt('bold')" title="غامق"><b>B</b></button>
+        <button onclick="fmt('italic')" title="مائل"><i>I</i></button>
+        <button onclick="fmt('underline')" title="تحت خط"><u>U</u></button>
+        <button onclick="fmt('strikeThrough')" title="تشطيب"><s>S</s></button>
+        <button onclick="fmt('superscript')" title="علوي">x²</button>
+        <div class="tb-sep"></div>
+        <button onclick="pickColor('foreColor')" title="لون الخط" style="border-bottom:3px solid #e41e3f">A</button>
+        <button onclick="pickColor('hiliteColor')" title="تظليل" style="border-bottom:3px solid var(--fb-gold-light)">🖊</button>
+        <div class="tb-sep"></div>
+        <button onclick="fmt('justifyRight')" title="يمين">⇤</button>
+        <button onclick="fmt('justifyCenter')" title="وسط">≡</button>
+        <button onclick="fmt('justifyFull')" title="ضبط">⇔</button>
+        <div class="tb-sep"></div>
+        <button onclick="document.execCommand('undo')" title="تراجع">↩</button>
+        <button onclick="document.execCommand('redo')" title="إعادة">↪</button>
+        <button onclick="fmt('removeFormat')" title="مسح تنسيق">✕</button>
+        <div class="tb-sep"></div>
+        <button onclick="openFnDialogFB()" title="حاشية سفلية">H¹</button>
+        <button onclick="insertSymbolFB()" title="رموز إسلامية">ﷺ</button>
+      </div>
+      <div id="tahqiq-content" contenteditable="true" spellcheck="false">${matnHtml}</div>
+      <div id="tahqiq-footnotes">
+        <h5>الحواشي الشخصية</h5>
+        <div id="fn-list-fb"></div>
+        <button id="btn-add-fn-fb" onclick="openFnDialogFB()">+ إضافة حاشية مرقّمة</button>
+      </div>
+      <div class="tahqiq-actions-fb">
+        <button class="btn-save-fb" onclick="saveDraftFB()">💾 حفظ كمسودة</button>
+        <button class="btn-submit-fb" onclick="submitForReviewFB()">📤 إرسال للجنة العلمية</button>
+        <button class="btn-cancel-fb" onclick="cancelInlineEditFB()">إلغاء</button>
+      </div>
+      <p style="font-size:12px;color:var(--fb-text-secondary);margin-top:12px">ملاحظة: تعديلاتك تظهر في صفحتك الشخصية ولدى متابعيك فقط، ولا تغيّر النص الأصلي حتى تُراجَع وتُعتمد.</p>
+    </div>`;
+  }
+  return `<div class="hadith-card-fb" data-num="${num}">
+    <div class="hadith-card-header-fb">
+      <span class="hadith-number-fb">رقم ${num}</span>
+      ${grade?`<span class="hadith-grade-fb ${gc}">${grade}</span>`:''}
+    </div>
+    <div class="hadith-text-fb" id="htext-${num}">${escHtml(text)}</div>
+    <div class="hadith-actions-fb">
+      <button class="btn-comment" onclick="openQC(${ts},${num})">💬 تعليق</button>
+      <button class="btn-comments-drw" onclick="setActiveHadithAndDrawer(${ts},${num})">📖 تعليقات القراء</button>
+      ${currentLibMode==='tahqiq'?`<button class="btn-tahqiq" onclick="setActiveHadith(${ts},${num})">✓ تحديد للتحقيق</button>`:''}
+      ${isVerified?`<button class="btn-edit" onclick="sendToEditorFB(${ts},${num})">✏️ تحرير</button>`:''}
+    </div>
+  </div>`;
+}
+
+function setActiveHadith(text,num){activeHadith={text,num};toast('تم تحديد الحديث رقم '+num);}
+function setActiveHadithAndDrawer(text,num){activeHadith={text,num};openCommentsDrawer();}
+
+async function sendToEditorFB(text,num){
+  if(currentProfile?.account_type!=='verified')return toast('يتطلب حساباً موثقاً');
+  editingNum=num;editingMatnHtml=escHtml(text);editingStatus='draft';footnotes=[];fnCounter=0;currentDraftId=null;
+  renderHadithsFB(lastRenderedList);
+  if(!currentUser||!currentBook)return;
+  const{data}=await sb.from('user_edits').select('*').eq('user_id',currentUser.id).eq('book_id',currentBook.id).eq('hadith_number',num).maybeSingle();
+  if(String(editingNum)!==String(num))return;
+  if(data){currentDraftId=data.id;editingMatnHtml=data.edited_matn||escHtml(text);footnotes=data.custom_footnotes||[];fnCounter=footnotes.length;editingStatus=data.status;}
+  renderHadithsFB(lastRenderedList);
+}
+
+function cancelInlineEditFB(){editingNum=null;editingMatnHtml=null;renderHadithsFB(lastRenderedList);}
+
+async function toggleFnCat(cat){
+  activeFnCats[cat]=!activeFnCats[cat];
+  document.querySelectorAll('.fn-toggle-btn').forEach(b=>{
+    FN_CATS.forEach(c=>{if(b.textContent.trim()===c.replace('_',' ')){b.classList.remove('تخريج','فروق_نسخ','غريب','active');if(activeFnCats[c])b.classList.add('active',c);}});
+  });
+  document.querySelectorAll('.fn-marker-fb.'+cat).forEach(m=>m.remove());
+  if(activeFnCats[cat])await loadFnMarkersFB(cat);
+}
+
+async function loadFnMarkersFB(cat){
+  if(!currentBook)return;
+  const{data}=await sb.from('footnotes').select('*').eq('book_id',currentBook.id).eq('category',FN_CAT_DB[cat]);
+  if(!data)return;
+  data.forEach(fn=>{
+    const el=document.getElementById('htext-'+fn.hadith_number);
+    if(el&&!el.querySelector('.fn-marker-fb.'+cat)){
+      const marker=document.createElement('span');
+      marker.className='fn-marker-fb '+cat;
+      marker.textContent=FN_CATS.indexOf(cat)+1;
+      marker.onclick=(e)=>showFnPopoverFB(e,fn.content||'لا يوجد محتوى',cat);
+      el.appendChild(marker);
+    }
+  });
+}
+
+function showFnPopoverFB(e,text,cat){
+  e.stopPropagation();
+  const pop=document.getElementById('fn-popover-fb');
+  pop.innerHTML=`<div class="fn-cat-label ${cat}">${cat.replace('_',' ')}</div>${escHtml(text)}`;
+  pop.style.display='block';
+  const rect=e.target.getBoundingClientRect();
+  pop.style.top=(rect.bottom+6)+'px';
+  pop.style.left=Math.max(8,rect.left-100)+'px';
+}
+
+function searchHadiths(){
+  const q=document.getElementById('hadith-search-input-fb').value.trim();
+  if(!q||!currentHadiths.length)return;
+  const results=currentHadiths.filter(h=>(h.text||h.hadith||'').includes(q));
+  renderHadithsFB(results);
+  if(!results.length)toast('لا نتائج لهذا البحث');
+}
+
+async function loadSidePanelsFB(){
+  if(!currentBook)return;
+  const{data:mss}=await sb.from('manuscripts').select('*').eq('book_id',currentBook.id);
+  document.getElementById('mss-list-fb').innerHTML=mss&&mss.length?mss.map(m=>`<div class="lsp-item"><h4>${m.name}${m.status!=='approved'?' <span style="font-size:11px;padding:2px 8px;border-radius:10px;background:var(--fb-gold-light);color:var(--fb-gold)">قيد المراجعة</span>':''}</h4><p>${m.library||''}</p>${m.image_url?`<img src="${m.image_url}" onclick="zoomImg('${m.image_url}')" loading="lazy">`:''}</div>`).join(''):'<div style="font-size:13px;color:var(--fb-text-secondary);text-align:center;padding:14px">لا توجد مخطوطات</div>';
+  const{data:eds}=await sb.from('editions').select('*').eq('book_id',currentBook.id);
+  document.getElementById('editions-list-fb').innerHTML=eds&&eds.length?eds.map(e=>`<div class="lsp-item"><h4>${e.name}${e.status!=='approved'?' <span style="font-size:11px;padding:2px 8px;border-radius:10px;background:var(--fb-gold-light);color:var(--fb-gold)">قيد المراجعة</span>':''}</h4><p>${e.publisher||''}</p>${e.image_url?`<img src="${e.image_url}" onclick="zoomImg('${e.image_url}')" loading="lazy">`:''}</div>`).join(''):'<div style="font-size:13px;color:var(--fb-text-secondary);text-align:center;padding:14px">لا توجد طبعات</div>';
+}
+
+function openAddItemModal(type){
+  if(currentProfile?.account_type!=='verified'){toast('يتطلب حساباً موثقاً');return;}
+  addItemType=type;
+  document.getElementById('add-item-title-fb').textContent=type==='manuscript'?'إضافة مصورة مخطوط':'إضافة مصورة مطبوع';
+  ['ai-name-fb','ai-meta-fb','ai-image-url-fb','ai-notes-fb'].forEach(id=>document.getElementById(id).value='');
+  openModal('add-item-modal-fb');
+}
+
+async function submitAddItem(){
+  const name=document.getElementById('ai-name-fb').value.trim();
+  const meta=document.getElementById('ai-meta-fb').value.trim();
+  const url=document.getElementById('ai-image-url-fb').value.trim();
+  const notes=document.getElementById('ai-notes-fb').value.trim();
+  if(!name)return toast('أدخل الاسم');
+  if(addItemType==='manuscript'){
+    await sb.from('manuscripts').insert({book_id:currentBook.id,name,library:meta,image_url:url,notes,author_id:currentUser.id,status:'pending_review'});
+  } else {
+    await sb.from('editions').insert({book_id:currentBook.id,name,publisher:meta,image_url:url,notes,author_id:currentUser.id,status:'pending_review'});
+  }
+  closeModal('add-item-modal-fb');
+  toast('أُرسلت الإضافة للجنة العلمية');
+  loadSidePanelsFB();
+}
+
+function openAddTextModal(){
+  if(currentProfile?.account_type!=='verified'){toast('يتطلب حساباً موثقاً');return;}
+  ['at-title-fb','at-author-fb','at-content-fb'].forEach(id=>document.getElementById(id).value='');
+  openModal('add-text-modal-fb');
+}
+
+async function submitAddText(){
+  const title=document.getElementById('at-title-fb').value.trim();
+  const author=document.getElementById('at-author-fb').value.trim();
+  const content=document.getElementById('at-content-fb').value.trim();
+  if(!title||!content)return toast('أدخل العنوان والنص');
+  const newId='txt_'+Date.now().toString(36);
+  const{error:bookErr}=await sb.from('books').insert({id:newId,title,author:author||'غير معروف',icon:'📜',category:'تحقيق'});
+  if(bookErr)return toast('خطأ في إنشاء الكتاب');
+  const{error:textErr}=await sb.from('texts').insert({book_id:newId,hadith_number:1,matn:content});
+  if(textErr)return toast('خطأ في حفظ النص');
+  BOOKS.push({id:newId,icon:'📜',title,author:author||'غير معروف'});
+  renderBooksFB();
+  closeModal('add-text-modal-fb');
+  toast('تم حفظ الكتاب');
+  selectBook(newId);
+}
+
+function toggleCommentsDrawer(){
+  commentsDrawerOpen=!commentsDrawerOpen;
+  document.getElementById('comments-drawer-fb').classList.toggle('open',commentsDrawerOpen);
+  document.getElementById('comments-toggle-btn-fb').classList.toggle('active',commentsDrawerOpen);
+  if(commentsDrawerOpen)loadDrawerCommentsFB();
+}
+
+function openCommentsDrawer(){if(!commentsDrawerOpen)toggleCommentsDrawer();else loadDrawerCommentsFB();}
+
+async function loadDrawerCommentsFB(){
+  const body=document.getElementById('cd-body');
+  if(!activeHadith||!currentBook){body.innerHTML='<div style="font-size:13px;color:var(--fb-text-secondary);text-align:center;padding:14px">اختر حديثاً أولاً</div>';return;}
+  body.innerHTML='<div class="loading-spinner" style="padding:20px"></div>';
+  const{data:direct}=await sb.from('comments').select('*,author:profiles!author_id(full_name)').eq('book_id',currentBook.id).eq('hadith_number',activeHadith.num).order('created_at');
+  let comments=direct&&direct.length?direct:[];
+  if(!comments.length){
+    const{data:fromPosts}=await sb.from('posts').select('*,author:profiles!author_id(full_name)').eq('book_id',currentBook.id).eq('text_id',activeHadith.num).order('created_at');
+    comments=fromPosts||[];
+  }
+  body.innerHTML=comments.length?comments.map(c=>`<div style="font-size:13px;border-bottom:1px solid var(--fb-border-light);padding:8px 0">
+    <b style="color:var(--fb-green)">${c.author?.full_name||'مجهول'}</b>
+    <div style="margin-top:4px;color:var(--fb-text)">${escHtml(c.content)}</div>
+    <div style="font-size:11px;color:var(--fb-text-secondary);margin-top:4px">${timeAgo(c.created_at)}</div>
+  </div>`).join(''):'<div style="font-size:13px;color:var(--fb-text-secondary);text-align:center;padding:14px">لا تعليقات على هذا الحديث بعد</div>';
+}
+
+async function submitDrawerComment(){
+  if(!currentUser)return toast('يجب تسجيل الدخول');
+  if(!activeHadith)return toast('اختر حديثاً أولاً');
+  const input=document.getElementById('drawer-comment-input-fb');
+  const content=input.value.trim();
+  if(!content)return;
+  const{error}=await sb.from('comments').insert({post_id:null,author_id:currentUser.id,content,book_id:currentBook.id,hadith_number:activeHadith.num});
+  if(error){
+    await sb.from('posts').insert({author_id:currentUser.id,post_type:'تحقيق',content,track:'حديث',book_id:currentBook.id,text_id:activeHadith.num,likes_count:0,comments_count:0,shares_count:0});
+  }
+  input.value='';
+  toast('تم نشر التعليق');
+  loadDrawerCommentsFB();
+}
+
+function initQCTypes(){
+  document.querySelectorAll('#qc-types button').forEach(btn=>{
+    btn.addEventListener('click',function(){document.querySelectorAll('#qc-types button').forEach(b=>b.classList.remove('active'));this.classList.add('active');});
+  });
+}
+
+function selectQCType(btn){document.querySelectorAll('#qc-types button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+
+function openQC(text,num){
+  qcHadith={text,num};
+  document.getElementById('qc-hadith-preview').textContent=text.substring(0,150)+(text.length>150?'...':'');
+  document.getElementById('qc-text').value='';
+  openModal('qc-modal');
+}
+
+async function submitQC(){
+  const content=document.getElementById('qc-text').value.trim();
+  if(!content)return toast('أدخل تعليقاً');
+  if(!currentUser)return toast('يجب تسجيل الدخول');
+  const type=document.querySelector('#qc-types button.active').dataset.type;
+  if(currentProfile?.account_type!=='verified'&&type!=='فائدة'){toast('الحساب الزائر يسمح فقط بفائدة');return;}
+  const fullContent=`[${currentBook?.title||''} - حديث ${qcHadith?.num||''}]\n${content}`;
+  const{error}=await sb.from('posts').insert({author_id:currentUser.id,post_type:type,content:fullContent,track:'حديث',book_id:currentBook?.id,text_id:qcHadith?.num,likes_count:0,comments_count:0,shares_count:0});
+  if(error)return toast('خطأ في النشر');
+  toast('نُشر التعليق في الرئيسية');
+  closeModal('qc-modal');
+}
+
+function goToHadith(bookId,hadithNum){
+  switchView('library');
+  setTimeout(()=>{
+    selectBook(bookId);
+    if(hadithNum){
+      setTimeout(()=>{
+        const el=document.querySelector(`.hadith-card-fb[data-num="${hadithNum}"]`);
+        if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.style.boxShadow='0 0 0 3px var(--fb-green)';setTimeout(()=>el.style.boxShadow='',2000);}
+      },800);
+    }
+  },300);
+}
+
+// ==================== TAHQIQ EDITOR FUNCTIONS ====================
+function setEditStatus(status){
+  const badge=document.getElementById('edit-status-badge');
+  const labels={draft:'مسودة',pending_review:'قيد المراجعة',approved:'معتمد ✓',rejected:'مرفوض'};
+  if(badge){badge.textContent=labels[status]||status;badge.className='tb-status status-'+status+'-fb';}
+}
+function fmt(cmd,val=null){document.getElementById('tahqiq-content').focus();document.execCommand(cmd,false,val);}
+function pickColor(cmd){
+  const c=prompt(cmd==='foreColor'?'لون الخط (hex):':'لون التظليل (hex):',cmd==='foreColor'?'#e41e3f':'#fdf8e8');
+  if(c)fmt(cmd,c);
+}
+function insertSymbolFB(){
+  const syms=['ﷺ','ﷻ','﷽','رضي الله عنه','رحمه الله','حفظه الله','﴿','﴾'];
+  const s=prompt('اختر رمزاً أو أدخله:\n'+syms.join('  '));
+  if(s){document.getElementById('tahqiq-content').focus();document.execCommand('insertText',false,s);}
+}
+function openFnDialogFB(){document.getElementById('fn-text-input-fb').value='';openModal('fn-dialog-fb');}
+function addFootnote(){
+  const text=document.getElementById('fn-text-input-fb').value.trim();
+  if(!text)return toast('أدخل نص الحاشية');
+  const sel=window.getSelection();
+  fnCounter++;
+  if(sel.rangeCount&&sel.toString()){
+    const range=sel.getRangeAt(0);
+    const ref=document.createElement('sup');
+    ref.className='m-fn-ref-fb';
+    ref.textContent=fnCounter;
+    range.collapse(false);
+    range.insertNode(ref);
+  }
+  footnotes.push({num:fnCounter,text});
+  renderFootnotesFB();
+  closeModal('fn-dialog-fb');
+}
+function deleteFootnote(num){footnotes=footnotes.filter(f=>f.num!==num);renderFootnotesFB();}
+function renderFootnotesFB(){
+  const list=document.getElementById('fn-list-fb');
+  if(!list)return;
+  list.innerHTML=footnotes.length?footnotes.map(f=>`<div class="fn-item-fb"><span class="fn-num-fb">${f.num}</span><span class="fn-text-fb">${escHtml(f.text)}</span><button class="fn-del-fb" onclick="deleteFootnote(${f.num})">×</button></div>`).join(''):'<div style="font-size:13px;color:var(--fb-text-tertiary);padding:4px 0">لا حواشي شخصية بعد</div>';
+}
+async function saveDraftFB(){
+  if(!currentUser||editingNum==null||!currentBook)return toast('لا يوجد حديث محدد');
+  const matn=document.getElementById('tahqiq-content').innerHTML;
+  const payload={user_id:currentUser.id,book_id:currentBook.id,hadith_number:editingNum,edited_matn:matn,custom_footnotes:footnotes,status:'draft',updated_at:new Date().toISOString()};
+  let res;
+  if(currentDraftId)res=await sb.from('user_edits').update(payload).eq('id',currentDraftId);
+  else{res=await sb.from('user_edits').insert(payload).select().single();if(res.data)currentDraftId=res.data.id;}
+  if(res.error)return toast('خطأ في الحفظ');
+  editingStatus='draft';setEditStatus('draft');
+  toast('تم حفظ المسودة');
+}
+async function submitForReviewFB(){
+  await saveDraftFB();
+  if(!currentDraftId)return;
+  const{error}=await sb.from('user_edits').update({status:'pending_review'}).eq('id',currentDraftId);
+  if(error)return toast('خطأ');
+  editingStatus='pending_review';setEditStatus('pending_review');
+  toast('أُرسل للجنة العلمية للمراجعة');
+}
+
+// ==================== MODALS & UTILS ====================
+function openModal(id){document.getElementById(id).style.display='flex';}
+function closeModal(id){document.getElementById(id).style.display='none';}
+function zoomImg(src){document.getElementById('zoom-img').src=src;document.getElementById('img-zoom').style.display='flex';}
+function closeZoom(){document.getElementById('img-zoom').style.display='none';}
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),3000);
+}
+function escHtml(str){if(!str)return'';return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ==================== AI ASSISTANT (المساعد الذكي) ====================
+let aiChatOpen=false,aiMessages=[],aiContext={book:null,hadith:null,post:null},aiTyping=false;
+
+function toggleAIChat(){
+  aiChatOpen=!aiChatOpen;
+  const win=document.getElementById('ai-chat-window');
+  const fab=document.getElementById('ai-fab');
+  win.classList.toggle('open',aiChatOpen);
+  fab.classList.toggle('hidden',aiChatOpen);
+  if(aiChatOpen){
+    document.getElementById('ai-input').focus();
+    document.getElementById('ai-fab-badge').style.display='none';
+  }
+}
+
+function clearAIChat(){
+  aiMessages=[];
+  document.getElementById('ai-messages').innerHTML='';
+  document.getElementById('ai-welcome').style.display='block';
+}
+
+function sendAIQuick(text){
+  document.getElementById('ai-input').value=text;
+  sendAIMessage();
+}
+
+function toggleAIAttachMenu(){
+  const menu=document.getElementById('ai-attach-menu');
+  menu.style.display=menu.style.display==='none'?'flex':'none';
+}
+
+function attachHadithToAI(){
+  if(!activeHadith||!currentBook){toast('اختر حديثاً أولاً من المكتبة');return;}
+  aiContext={book:currentBook,hadith:activeHadith,post:null};
+  document.getElementById('ai-input').value=`حلل لي هذا الحديث من ${currentBook.title} رقم ${activeHadith.num}:`;
+  document.getElementById('ai-attach-menu').style.display='none';
+  sendAIMessage();
+}
+
+function attachPostToAI(){
+  toast('إرفاق منشور قريباً');
+  document.getElementById('ai-attach-menu').style.display='none';
+}
+
+function attachTextToAI(){
+  const text=prompt('أدخل النص المراد تحليله:');
+  if(text){document.getElementById('ai-input').value=text;document.getElementById('ai-attach-menu').style.display='none';sendAIMessage();}
+}
+
+async function sendAIMessage(){
+  const input=document.getElementById('ai-input');
+  const text=input.value.trim();
+  if(!text||aiTyping)return;
+  document.getElementById('ai-welcome').style.display='none';
+  addAIMessage('user',text);
+  aiMessages.push({role:'user',content:text});
+  input.value='';
+  document.getElementById('ai-send-btn').disabled=true;
+  showAITyping(true);
+  const response=await processAIQuery(text);
+  showAITyping(false);
+  addAIMessage('bot',response.text,response.type);
+  aiMessages.push({role:'assistant',content:response.text,type:response.type});
+}
+
+function addAIMessage(role,text,type='text'){
+  const container=document.getElementById('ai-messages');
+  const msgDiv=document.createElement('div');
+  msgDiv.className='ai-message ai-'+role;
+  let content=text;
+  if(type==='hadith'&&aiContext.hadith){
+    content=`<div class="ai-hadith-card"><div class="ai-hadith-text">${escHtml(aiContext.hadith.text)}</div><div class="ai-hadith-ref">${aiContext.book?.title||''} — رقم ${aiContext.hadith.num}</div></div><div style="margin-top:8px">${text}</div>`;
+  }
+  msgDiv.innerHTML=`<div class="ai-avatar">${role==='user'?(currentProfile?.full_name||'أ').charAt(0):'🤖'}</div><div class="ai-bubble"><div class="ai-text">${content}</div></div>`;
+  container.appendChild(msgDiv);
+  scrollAIChat();
+}
+
+function showAITyping(show){
+  aiTyping=show;
+  document.getElementById('ai-typing').style.display=show?'block':'none';
+  const status=document.getElementById('ai-status-indicator');
+  status.className=show?'typing':'online';
+  document.getElementById('ai-chat-status').textContent=show?'يكتب الآن...':'متصل · مساعدك العلمي';
+  if(show)scrollAIChat();
+}
+
+function scrollAIChat(){
+  const body=document.getElementById('ai-chat-body');
+  body.scrollTop=body.scrollHeight;
+}
+
+async function processAIQuery(query){
+  await new Promise(r=>setTimeout(r,1000+Math.random()*1500));
+  const q=query.toLowerCase();
+  if(q.includes('حديث')||q.includes('شرح')||q.includes('معنى')) return processHadithQuery(query);
+  if(q.includes('بحث')||q.includes('ابحث')||q.includes('أين')) return processSearchQuery(query);
+  if(q.includes('قارن')||q.includes('فرق')||q.includes('مقارنة')) return processComparisonQuery(query);
+  if(q.includes('فقه')||q.includes('حكم')||q.includes('هل يجوز')) return processFiqhQuery(query);
+  if(q.includes('تفسير')||q.includes('آية')) return processTafsirQuery(query);
+  if(q.includes('تحقيق')||q.includes('تخريج')||q.includes('علل')) return processTahqiqQuery(query);
+  if(q.includes('اقترح')||q.includes('موضوع')) return processSuggestionQuery(query);
+  return {text:`شكراً على سؤالك! 🌟\n\nأنا مساعدك العلمي المتخصص في:
+• 📖 شرح الأحاديث ومعانيها
+• 🔍 البحث في كتب السنة
+• ⚖️ المقارنة بين الروايات
+• 📚 الفقه والاستنباط
+• ✍️ التحقيق العلمي
+\nيمكنك سؤالي مثلاً:
+<b>"اشرح لي حديث الإخلاص"</b>
+<b>"ابحث لي عن أحاديث الصدق"</b>
+<b>"قارن بين رواية البخاري ومسلم في..."</b>
+\nكيف يمكنني مساعدتك؟`,type:'text'};
+}
+
+function processHadithQuery(query){
+  const hadithMatch=query.match(/حديث (.+)/i);
+  const topic=hadithMatch?hadithMatch[1]:query;
+  return {text:`📖 <b>تحليل الحديث:</b> "${topic}"\n\n<b>المعنى اللغوي:</b>\nالحديث يتحدث عن ${topic} وهو من الأحاديث المهمة في باب...\n\n<b>الدلالة الشرعية:</b>\n• يدل على أهمية ${topic} في الإسلام
+• يُستدل به على...
+• يتفق عليه جمهور العلماء
+\n<b>الفوائد المستنبطة:</b>\n1. فائدة أولى...
+2. فائدة ثانية...
+3. فائدة ثالثة...
+\n<b>الكتب التي ورد فيها:</b>\n📗 صحيح البخاري
+📘 صحيح مسلم
+📙 سنن أبي داود
+\nهل تريد <b>التخريج الكامل</b> أو <b>شرحاً أعمق</b> أو <b>الأحاديث المشابهة</b>؟`,type:'hadith'};
+}
+
+function processSearchQuery(query){
+  const topic=query.replace(/بحث|ابحث|أين/gi,'').trim();
+  return {text:`🔍 <b>نتائج البحث عن:</b> "${topic}"\n\n<b>الأحاديث المرتبطة:</b>\n\n1️⃣ <b>حديث البخاري (رقم ١)</b>
+   "من كان يؤمن بالله واليوم الآخر..."
+   <span style="color:var(--fb-text-secondary)">📗 صحيح البخاري — كتاب الإيمان</span>\n\n2️⃣ <b>حديث مسلم (رقم ٤٥)</b>
+   "بني الإسلام على خمس..."
+   <span style="color:var(--fb-text-secondary)">📘 صحيح مسلم — كتاب الإيمان</span>\n\n3️⃣ <b>حديث الترمذي (رقم ٢٦١٦)</b>
+   "الدين النصيحة..."
+   <span style="color:var(--fb-text-secondary)">📕 سنن الترمذي — كتاب الزهد</span>\n\n<b>الفوائد المستخرجة:</b>
+• فائدة ١...
+• فائدة ٢...\n\n<b>هل تريد:</b>
+<button onclick="sendAIQuick('اشرح الحديث الأول')" style="background:var(--fb-green-light);color:var(--fb-green);padding:4px 10px;border-radius:12px;font-size:12px;border:none;cursor:pointer;margin:4px">شرح الحديث الأول</button>
+<button onclick="sendAIQuick('أعطني المزيد من النتائج')" style="background:var(--fb-bg);color:var(--fb-text);padding:4px 10px;border-radius:12px;font-size:12px;border:none;cursor:pointer;margin:4px">المزيد من النتائج</button>`,type:'search'};
+}
+
+function processComparisonQuery(query){
+  return {text:`⚖️ <b>المقارنة العلمية:</b>\n\n<table style="width:100%;border-collapse:collapse;margin:10px 0;font-size:13px">
+<tr style="background:var(--fb-green);color:#fff">
+<th style="padding:8px;border:1px solid var(--fb-border)">العنصر</th>
+<th style="padding:8px;border:1px solid var(--fb-border)">الرواية الأولى</th>
+<th style="padding:8px;border:1px solid var(--fb-border)">الرواية الثانية</th>
+</tr>
+<tr>
+<td style="padding:8px;border:1px solid var(--fb-border);font-weight:600">المتن</td>
+<td style="padding:8px;border:1px solid var(--fb-border)">النص الأول...</td>
+<td style="padding:8px;border:1px solid var(--fb-border)">النص الثاني...</td>
+</tr>
+<tr style="background:var(--fb-bg)">
+<td style="padding:8px;border:1px solid var(--fb-border);font-weight:600">الإسناد</td>
+<td style="padding:8px;border:1px solid var(--fb-border)">فلان عن فلان</td>
+<td style="padding:8px;border:1px solid var(--fb-border)">فلان عن فلان</td>
+</tr>
+<tr>
+<td style="padding:8px;border:1px solid var(--fb-border);font-weight:600">الحكم</td>
+<td style="padding:8px;border:1px solid var(--fb-border)">صحيح</td>
+<td style="padding:8px;border:1px solid var(--fb-border)">حسن</td>
+</tr>
+</table>\n\n<b>الخلاصة:</b> الروايتان متفقتان في المعنى، ويُجمع بينهما ب...\n\nهل تريد <b>التعليق على الفروق</b> أو <b>الشواهد</b>؟`,type:'comparison'};
+}
+
+function processFiqhQuery(query){
+  return {text:`📚 <b>الاستنباط الفقهي:</b>\n\n<b>السؤال:</b> ${query}\n\n<b>الأدلة من الكتاب والسنة:</b>
+• قال الله تعالى: ﴿...﴾ [سورة ...]
+• وعن النبي ﷺ: "..." [رواه ...]\n\n<b>أقوال العلماء:</b>
+🔹 <b>المذهب الحنفي:</b> ...
+🔹 <b>المذهب المالكي:</b> ...
+🔹 <b>المذهب الشافعي:</b> ...
+🔹 <b>المذهب الحنبلي:</b> ...\n\n<b>الترجيح:</b>
+الراجح عند جمهور العلماء هو...\n\n<b>التعليل:</b>
+لأن...\n\n⚠️ <b>تنبيه:</b> هذا اجتهاد علمي يحتاج إلى مراجعة عالم مختص للفتوى الشرعية.\n\nهل تريد <b>المزيد من الأدلة</b> أو <b>كلام العلماء المعاصرين</b>؟`,type:'fiqh'};
+}
+
+function processTafsirQuery(query){
+  return {text:`🌟 <b>التفسير:</b>\n\n<b>الآية:</b> ﴿...﴾\n\n<b>تفسير ابن كثير:</b>
+...\n\n<b>تفسير القرطبي:</b>
+...\n\n<b>تفسير السعدي:</b>
+...\n\n<b>الفوائد:</b>
+1. ...
+2. ...\n\n<b>الأحاديث المفسرة:</b>
+• ...\n\nهل تريد <b>تفسيراً لآية أخرى</b> أو <b>الإعراب</b>؟`,type:'tafsir'};
+}
+
+function processTahqiqQuery(query){
+  return {text:`✍️ <b>خدمات التحقيق العلمي:</b>\n\nيمكنني مساعدتك في:
+\n1️⃣ <b>تخريج الأحاديث</b>
+   البحث عن مصدر الحديث في الكتب المعتمدة
+\n2️⃣ <b>مقارنة الروايات</b>
+   عرض الفروق بين الطرق والنسخ
+\n3️⃣ <b>ضبط المتن</b>
+   اقتراحات لضبط النص من المخطوطات
+\n4️⃣ <b>التعليق العلمي</b>
+   تحليل الإسناد والمتن
+\n<b>للبدء:</b>
+• أرفق حديثاً من المكتبة (📎)
+• أو اكتب نص الحديث مباشرة
+• أو اطلب "قارن بين رواية البخاري ومسلم في..."\n\nأنا هنا لأساعدك في عملك التحقيقي! 📖`,type:'tahqiq'};
+}
+
+function processSuggestionQuery(query){
+  const topics=[
+    {title:'أحاديث الإخلاص',desc:'جمع وشرح أحاديث الإخلاص في العمل'},
+    {title:'آداب طالب العلم',desc:'ما يجب على طالب العلم من آداب'},
+    {title:'فضائل القرآن',desc:'أحاديث في فضل تلاوة القرآن'},
+    {title:'الصدق وأثره',desc:'جمع أحاديث الصدق وآثاره'},
+    {title:'بر الوالدين',desc:'أحاديث بر الوالدين وفضله'}
+  ];
+  return {text:`💡 <b>اقتراحات موضوعات علمية:</b>\n\n${topics.map((t,i)=>`${i+1}️⃣ <b>${t.title}</b>
+   <span style="color:var(--fb-text-secondary)">${t.desc}</span>
+   <button onclick="sendAIQuick('اشرح لي موضوع ${t.title}')" style="background:var(--fb-green-light);color:var(--fb-green);padding:3px 10px;border-radius:12px;font-size:11px;border:none;cursor:pointer;margin-top:4px;display:block">استكشاف الموضوع</button>`).join('\n\n')}\n\n<b>هل تريد اقتراحات أخرى في مجال معين؟</b>
+اكتب لي: <i>"اقترح لي في باب..."</i>`,type:'suggestion'};
+}
+
+function analyzeHadithWithAI(hadithText,hadithNum,bookTitle){
+  aiContext={book:{title:bookTitle},hadith:{text:hadithText,num:hadithNum},post:null};
+  document.getElementById('ai-input').value=`حلل لي هذا الحديث من ${bookTitle} رقم ${hadithNum}:`;
+  if(!aiChatOpen)toggleAIChat();
+  sendAIMessage();
+}
+
+function suggestTahqiqWithAI(hadithText,hadithNum){
+  aiContext={book:currentBook,hadith:{text:hadithText,num:hadithNum},post:null};
+  document.getElementById('ai-input').value=`اقترح لي تعليقات تحقيقية على هذا الحديث رقم ${hadithNum}:`;
+  if(!aiChatOpen)toggleAIChat();
+  sendAIMessage();
+}
+
+// Input listener for AI
+setTimeout(()=>{
+  const input=document.getElementById('ai-input');
+  if(input)input.addEventListener('input',function(){document.getElementById('ai-send-btn').disabled=!this.value.trim();});
+},1000);
+</script>
+</body>
+</html>
+    
