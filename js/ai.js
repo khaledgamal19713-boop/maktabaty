@@ -1,6 +1,6 @@
-// ===== محرك التحليل: محلي حقيقي (بلا مفتاح) + بعيد بالذكاء الاصطناعي (يتطلب AI_API_KEY) =====
+// ===== محرك التحليل: محلي حقيقي (بلا مفتاح) + بعيد بالذكاء الاصطناعي عبر Vercel (يتطلب AI_API_KEY في Vercel لا GitHub) =====
 // لا واجهة مستقلة — كل دالة هنا تُستدعى مباشرة من زر إجرائي داخل بيئة التحقيق نفسها
-const AI_FN_URL=SUPA_URL+'/functions/v1/ai-analyze';
+const AI_FN_URL='https://maktabaty-ai-proxy.vercel.app/api/analyze';
 
 function extractIsnadChain(text){
   const chain=[];
@@ -42,7 +42,7 @@ async function callAIEdge(text,mode,context){
     const res=await fetch(AI_FN_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,mode,context})});
     const data=await res.json();
     if(!res.ok){
-      if(data.error==='AI_API_KEY_NOT_CONFIGURED')return{error:true,text:'⚠️ يتطلب تفعيل مفتاح AI_API_KEY من إعدادات مشروع Supabase.'};
+      if(data.error==='AI_API_KEY_NOT_CONFIGURED')return{error:true,text:'⚠️ يتطلب تفعيل مفتاح AI_API_KEY من إعدادات مشروع Vercel.'};
       return{error:true,text:'تعذّر الاتصال بخدمة الذكاء الاصطناعي: '+(data.message||data.error||'خطأ غير معروف')};
     }
     return{error:false,text:data.result};
