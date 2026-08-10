@@ -1,41 +1,75 @@
-#app{display:none}
+:root{--fb-bg:var(--bg);--fb-white:#fff;--fb-green:var(--green);--fb-green-dark:#14522e;--fb-green-light:var(--green-light);--fb-gold:var(--gold);--fb-gold-light:var(--gold-light);--fb-blue:#1877f2;--fb-blue-light:#e7f3ff;--fb-text:var(--text);--fb-text-secondary:var(--text2);--fb-text-tertiary:#8a8d91;--fb-border:var(--border);--fb-border-light:#e4e6eb;--fb-hover:#f2f2f2;--fb-shadow:0 1px 2px rgba(0,0,0,.1),0 2px 4px rgba(0,0,0,.05);--fb-radius-lg:12px}
+#center-feed{max-width:680px;margin:0 auto;width:100%;padding:16px 12px}
+#composer-card{background:var(--fb-white);border-radius:var(--fb-radius-lg);box-shadow:var(--fb-shadow);padding:12px 16px;margin-bottom:16px}
+.composer-top{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+.composer-avatar{width:40px;height:40px;border-radius:50%;background:var(--fb-green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;flex-shrink:0}
+.composer-input{flex:1;background:var(--fb-bg);border:none;border-radius:20px;padding:10px 16px;font-size:15px;color:var(--fb-text);cursor:pointer;transition:.15s}
+.composer-input:hover{background:var(--fb-hover)}
+.composer-divider{height:1px;background:var(--fb-border);margin:8px 0}
+.composer-actions{display:flex;justify-content:space-around}
+.composer-action{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:8px;cursor:pointer;transition:.15s;font-size:14px;font-weight:500;color:var(--fb-text-secondary)}
+.composer-action:hover{background:var(--fb-hover)}
+.composer-action .ca-icon{font-size:20px}
+#composer-modal-overlay{position:fixed;inset:0;background:rgba(255,255,255,.8);backdrop-filter:blur(4px);z-index:2000;display:none;align-items:center;justify-content:center;padding:16px}
+#composer-modal{background:var(--fb-white);border-radius:var(--fb-radius-lg);box-shadow:0 12px 28px rgba(0,0,0,.2);width:500px;max-width:100%;overflow:hidden}
+#composer-modal-header{padding:12px 16px;border-bottom:1px solid var(--fb-border);display:flex;justify-content:space-between;align-items:center}
+#composer-modal-header h3{font-size:17px;font-weight:700;text-align:center;flex:1}
+#composer-modal-close{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;color:var(--fb-text-secondary)}
+#composer-modal-close:hover{background:var(--fb-hover)}
+#composer-modal-body{padding:16px}
+#composer-modal-user{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+#composer-modal-user .name{font-weight:600;font-size:15px}
+#composer-types{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.composer-type{padding:5px 12px;border-radius:14px;border:1px solid var(--fb-border);font-size:12px;color:var(--fb-text-secondary)}
+.composer-type.active{background:var(--fb-green);color:#fff;border-color:var(--fb-green)}
+#composer-textarea{width:100%;border:none;resize:none;font-size:17px;min-height:120px;font-family:inherit;color:var(--fb-text)}
+#composer-textarea::placeholder{color:var(--fb-text-tertiary)}
+#composer-modal-footer{padding:12px 16px;border-top:1px solid var(--fb-border);display:flex;justify-content:space-between;align-items:center}
+#post-track-fb{border:1px solid var(--fb-border);border-radius:6px;padding:6px 10px;font-size:13px}
+#btn-publish-modal{background:var(--fb-green);color:#fff;padding:8px 24px;border-radius:6px;font-size:15px;font-weight:600;opacity:.6;transition:.15s}
+#btn-publish-modal:not(:disabled){opacity:1}
+.empty-state{text-align:center;padding:50px 20px;color:var(--fb-text-secondary)}
+.empty-state .empty-icon{font-size:40px;margin-bottom:10px}
+.post-card{background:var(--fb-white);border-radius:var(--fb-radius-lg);box-shadow:var(--fb-shadow);margin-bottom:16px;overflow:visible}
+.post-header{display:flex;justify-content:space-between;align-items:flex-start;padding:12px 16px}
+.post-author-section{display:flex;gap:10px;align-items:center}
+.post-avatar{width:40px;height:40px;border-radius:50%;background:var(--fb-green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;cursor:pointer;flex-shrink:0}
+.post-meta-info{display:flex;flex-direction:column}
+.post-author-name{font-weight:600;font-size:14.5px;cursor:pointer}
+.post-meta-row{font-size:12.5px;color:var(--fb-text-secondary);display:flex;align-items:center;gap:6px}
+.post-meta-row .dot{width:3px;height:3px;border-radius:50%;background:var(--fb-text-secondary)}
+.post-hadith-ref{color:var(--fb-green);cursor:pointer}
+.post-menu-btn{width:32px;height:32px;border-radius:50%;font-size:18px;color:var(--fb-text-secondary)}
+.post-menu-btn:hover{background:var(--fb-hover)}
+.post-content{padding:0 16px 12px;font-size:15px;line-height:1.7;white-space:pre-wrap}
+.post-stats{display:flex;justify-content:space-between;padding:0 16px 8px;font-size:13px;color:var(--fb-text-secondary)}
+.post-reactions{display:flex;align-items:center;gap:4px}
+.reaction-icons{display:flex}
+.reaction-icon{font-size:14px;background:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;margin-inline-start:-6px;box-shadow:0 0 0 1.5px #fff}
+.post-actions{display:flex;border-top:1px solid var(--fb-border-light);border-bottom:1px solid var(--fb-border-light);padding:2px 8px}
+.post-action{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px;border-radius:6px;font-size:14px;font-weight:600;color:var(--fb-text-secondary);position:relative;cursor:pointer}
+.post-action:hover{background:var(--fb-hover)}
+.post-action.liked{color:var(--fb-green)}
+.pa-icon{font-size:18px}
+.reactions-popover{position:absolute;bottom:calc(100% + 4px);right:0;background:#fff;border-radius:24px;box-shadow:var(--fb-shadow);padding:6px 8px;display:none;gap:4px;z-index:10}
+.reactions-popover.show{display:flex}
+.reaction-btn{font-size:22px;transition:transform .1s}
+.reaction-btn:hover{transform:scale(1.3)}
+.comments-section{display:none;padding:8px 16px 14px}
+.comments-section.open{display:block}
+.comment-input-row{display:flex;gap:8px;align-items:center;margin-top:8px}
+.my-avatar{width:30px;height:30px;border-radius:50%;background:var(--fb-blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.comment-input-wrapper{flex:1;display:flex;align-items:center;background:var(--fb-bg);border-radius:18px;padding:0 6px 0 12px}
+.comment-input-wrapper input{flex:1;background:transparent;border:none;padding:8px 6px;font-size:13.5px}
+.comment-send-btn{color:var(--fb-green);font-weight:700;cursor:pointer;padding:4px}
+.comment-item{display:flex;gap:8px;margin-top:10px}
+.comment-avatar{width:28px;height:28px;border-radius:50%;background:var(--fb-gold);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.comment-bubble{background:var(--fb-bg);border-radius:14px;padding:7px 12px}
+.comment-author{font-weight:600;font-size:12.5px}
+.comment-text{font-size:13.5px}
+.comment-actions{display:flex;gap:10px;font-size:11.5px;color:var(--fb-text-secondary);margin-top:3px;padding:0 10px}
+.comment-action{cursor:pointer;font-weight:600}
+#app{display:block}
 .page{display:none;min-height:calc(100vh - 50px)}
 .page.active{display:block}
-#page-feed{max-width:680px;margin:0 auto;padding:16px}
-#composer{background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px}
-#guest-notice{font-size:12px;color:var(--gold);background:var(--gold-light);padding:8px 12px;border-radius:6px;margin-bottom:10px}
-#post-types{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
-#post-types button{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:#fff;font-size:13px;color:var(--text2)}
-#post-types button.active{background:var(--green);color:#fff;border-color:var(--green)}
-#post-types button:disabled{opacity:.35;cursor:not-allowed}
-#post-content{width:100%;border:1px solid var(--border);border-radius:6px;padding:10px;min-height:80px;resize:vertical}
-#post-content:focus{border-color:var(--green)}
-#composer-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;gap:8px}
-#composer-footer select{border:1px solid var(--border);border-radius:4px;padding:4px 8px;font-size:13px}
-#btn-publish{background:var(--green);color:#fff;padding:8px 22px;border-radius:6px;font-size:14px}
-#btn-publish:hover{background:#155530}
-#btn-publish:disabled{background:#aaa}
-.post-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:12px}
-.post-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
-.post-author-row{display:flex;align-items:center;gap:8px}
-.post-author{font-weight:600;font-size:14px;color:var(--green);cursor:pointer}
-.post-meta{font-size:11px;color:var(--text2);margin-top:1px}
-.post-type-badge{font-size:11px;padding:2px 8px;border-radius:10px;background:var(--green-light);color:var(--green);font-weight:600}
-.post-type-badge.فائدة{background:var(--blue-light);color:var(--blue)}
-.post-type-badge.سؤال{background:#fdf3e8;color:#b85c0b}
-.post-type-badge.اقتباس{background:var(--gold-light);color:var(--gold)}
-.post-type-badge.تحقيق{background:var(--purple-light);color:var(--purple)}
-.post-content{line-height:1.7;font-size:15px;white-space:pre-wrap;margin-bottom:4px}
-.post-footer{display:flex;gap:14px;margin-top:10px;padding-top:8px;border-top:1px solid #f3f3f3}
-.post-footer button{color:var(--text2);font-size:13px;padding:3px 6px;border-radius:4px}
-.post-footer button:hover{background:var(--green-light);color:var(--green)}
-.post-footer button.liked{color:var(--green);font-weight:600}
-.post-hadith-ref{font-size:12px;color:var(--blue);background:var(--blue-light);padding:3px 10px;border-radius:4px;cursor:pointer}
-.post-hadith-ref:hover{text-decoration:underline}
-.comments-section{margin-top:10px;border-top:1px solid #f3f3f3;padding-top:8px;display:none}
-.comment-item{padding:6px 0;border-bottom:1px solid #f7f7f7;font-size:13px;display:flex;gap:6px}
-.comment-author{font-weight:600;color:var(--green);font-size:12px;flex-shrink:0}
-.comment-input-row{display:flex;gap:8px;margin-top:8px}
-.comment-input-row input{flex:1;border:1px solid var(--border);border-radius:20px;padding:7px 12px;font-size:13px}
-.comment-input-row button{background:var(--green);color:#fff;padding:7px 14px;border-radius:20px;font-size:13px}
-#posts-loading,#posts-empty{text-align:center;padding:30px;color:var(--text2)}
+#posts-loading,#posts-empty{text-align:center;padding:30px;color:var(--fb-text-secondary)}
