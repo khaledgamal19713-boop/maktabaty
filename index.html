@@ -61,25 +61,43 @@
   </nav>
   <div id="sub-bar" style="display:none"></div>
   <div id="page-feed" class="page active">
-    <div id="composer">
-      <div id="guest-notice" style="display:none">حساب زائر: يمكنك نشر فائدة عامة فقط، والتعليق على كل المحتوى.</div>
-      <div id="post-types">
-        <button class="active" data-type="حديث">حديث</button>
-        <button data-type="فائدة">فائدة</button>
-        <button data-type="سؤال">سؤال</button>
-        <button data-type="اقتباس">اقتباس</button>
-        <button data-type="تحقيق">تحقيق</button>
+    <div id="center-feed">
+    <div id="guest-notice" style="display:none">حساب زائر: يمكنك نشر فائدة عامة فقط، والتعليق على كل المحتوى.</div>
+    <div id="composer-card">
+      <div class="composer-top">
+        <div class="composer-avatar" id="composer-avatar-mini"></div>
+        <div class="composer-input" onclick="openComposerModal()">بم تفكر؟</div>
       </div>
-      <textarea id="post-content" placeholder="اكتب منشورك..."></textarea>
-      <div id="composer-footer">
-        <div style="display:flex;gap:8px;align-items:center;font-size:13px;color:var(--text2)">المسار:
-          <select id="post-track"><option value="عام">عام</option><option value="حديث">علم الحديث</option><option value="فقه">الفقه</option><option value="تفسير">التفسير</option><option value="تحقيق">التحقيق</option></select>
-        </div>
-        <button id="btn-publish" onclick="publishPost()">نشر</button>
+      <div class="composer-divider"></div>
+      <div class="composer-actions">
+        <div class="composer-action" onclick="openComposerModal()"><span class="ca-icon">📝</span>حديث</div>
+        <div class="composer-action" onclick="openComposerModal()"><span class="ca-icon">💡</span>فائدة</div>
+        <div class="composer-action" onclick="openComposerModal()"><span class="ca-icon">🔎</span>تحقيق</div>
       </div>
     </div>
     <div id="posts-loading">جاري التحميل...</div>
     <div id="posts-list"></div>
+    </div>
+  </div>
+  <div id="composer-modal-overlay">
+    <div id="composer-modal">
+      <div id="composer-modal-header"><span style="width:36px"></span><h3>إنشاء منشور</h3><span id="composer-modal-close" onclick="closeComposerModal()">✕</span></div>
+      <div id="composer-modal-body">
+        <div id="composer-modal-user"><div class="composer-avatar" id="composer-modal-avatar"></div><span class="name" id="composer-modal-user-name"></span></div>
+        <div id="composer-types">
+          <span class="composer-type active" data-type="حديث" onclick="selectComposerType('حديث')">حديث</span>
+          <span class="composer-type" data-type="فائدة" onclick="selectComposerType('فائدة')">فائدة</span>
+          <span class="composer-type" data-type="سؤال" onclick="selectComposerType('سؤال')">سؤال</span>
+          <span class="composer-type" data-type="اقتباس" onclick="selectComposerType('اقتباس')">اقتباس</span>
+          <span class="composer-type" data-type="تحقيق" onclick="selectComposerType('تحقيق')">تحقيق</span>
+        </div>
+        <textarea id="composer-textarea" placeholder="اكتب منشورك..." oninput="updatePublishBtnState()"></textarea>
+      </div>
+      <div id="composer-modal-footer">
+        <select id="post-track-fb"><option value="عام">عام</option><option value="حديث">علم الحديث</option><option value="فقه">الفقه</option><option value="تفسير">التفسير</option><option value="تحقيق">التحقيق</option></select>
+        <button id="btn-publish-modal" onclick="publishPostFromModal()" disabled>نشر</button>
+      </div>
+    </div>
   </div>
   <div id="page-library" class="page">
     <div id="lib-sidebar">
@@ -130,21 +148,27 @@
     </div>
   </div>
   <div id="page-profile" class="page">
-    <div id="profile-header">
-      <div class="avatar" id="profile-avatar"></div>
-      <div id="profile-info">
-        <h2 id="profile-name"></h2>
-        <span class="acc-badge" id="profile-acc-badge"></span>
-        <p id="profile-bio-text"></p>
-        <div id="profile-bio-edit"><input id="profile-bio-input" placeholder="اكتب نبذة عنك..."><button onclick="saveBio()">حفظ</button></div>
+    <div class="profile-cover"></div>
+    <div class="profile-header-info">
+      <div class="profile-avatar-lg" id="profile-avatar"></div>
+      <div class="profile-name-section">
+        <h2 class="profile-name-lg" id="profile-name"></h2>
+        <span class="profile-username-lg" id="profile-acc-badge"></span>
       </div>
     </div>
-    <div id="profile-tabs">
-      <button class="active" data-tab="posts" onclick="switchProfileTab('posts')">منشوراتي</button>
-      <button data-tab="tahqiq" onclick="switchProfileTab('tahqiq')">تحقيقاتي</button>
-      <button data-tab="additions" onclick="switchProfileTab('additions')">إضافاتي</button>
+    <div class="profile-nav" id="profile-tabs">
+      <button class="profile-nav-btn active" data-tab="posts" onclick="switchProfileTab('posts')">منشوراتي</button>
+      <button class="profile-nav-btn" data-tab="tahqiq" onclick="switchProfileTab('tahqiq')">تحقيقاتي</button>
+      <button class="profile-nav-btn" data-tab="additions" onclick="switchProfileTab('additions')">إضافاتي</button>
     </div>
-    <div id="profile-content"></div>
+    <div class="profile-body">
+      <div class="intro-card">
+        <h3>نبذة</h3>
+        <p class="profile-bio-lg" id="profile-bio-text"></p>
+        <div id="profile-bio-edit"><input id="profile-bio-input" placeholder="اكتب نبذة عنك..." style="width:100%;margin-bottom:6px;padding:6px;border:1px solid var(--fb-border);border-radius:6px"><button onclick="saveBio()" style="background:var(--fb-green);color:#fff;padding:6px 14px;border-radius:6px;font-size:13px">حفظ</button></div>
+      </div>
+      <div id="profile-content"></div>
+    </div>
   </div>
 </div>
 <div class="modal-overlay" id="quick-comment-modal"><div class="modal-box"><h3>تعليق على الحديث</h3><div id="qc-hadith-preview" style="font-size:13px;color:var(--text2);background:var(--bg);padding:10px;border-radius:6px;margin-bottom:10px;max-height:80px;overflow:hidden"></div><div class="modal-types" id="qc-types"><button class="active" data-type="حديث">حديث</button><button data-type="فائدة">فائدة</button><button data-type="تحقيق">تحقيق</button></div><textarea id="qc-text" placeholder="اكتب تعليقك..."></textarea><div class="modal-footer"><button class="modal-cancel" onclick="closeModal('quick-comment-modal')">إلغاء</button><button class="modal-submit" onclick="submitQC()">نشر في الرئيسية</button></div></div></div>
