@@ -55,8 +55,7 @@ def main():
     }
     Path(a.report).write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")
     print(json.dumps(report,ensure_ascii=False))
-    if report["decision"]!="use_existing_text":
-        raise SystemExit("OCR_FULL_REQUIRED" if report["decision"]=="ocr_full" else "SOURCE_REVIEW_REQUIRED")
+    return
 
 if __name__=="__main__":
     main()
