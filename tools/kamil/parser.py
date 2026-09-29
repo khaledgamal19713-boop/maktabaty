@@ -4,9 +4,9 @@ from difflib import SequenceMatcher
 from pathlib import Path
 
 ARABIC_DIGITS = str.maketrans("٠١٢٣٤٥٦٧٨٩", "0123456789")
-NUM_RE = re.compile(r"^\s*(?:\[\s*)?(\d{1,5})(?:\s*\])?\s*[-–—.]\s*(.+?)\s*$")
-HEADING_RE = re.compile(r"^\s*(?:\[\s*)?(\d{1,4})(?:\s*\])?\s*[-–—]\s*(.+?)\s*$")
-NUMBERED_RE = re.compile(r"^\s*(\d{1,5})\s*[-–—]\s+(.+?)\s*$")
+NUM_RE = re.compile(r"^\s*(?:\[\s*)?(\d{1,5})(?:\s*\])?\s*(?:[-–—.]\s*)?(.+?)\s*$")
+HEADING_RE = re.compile(r"^\s*\[\s*(\d{1,4})\s*\]\s*(.+?)\s*$")
+NUMBERED_RE = re.compile(r"^\s*(?:\[\s*)?(\d{1,5})(?:\s*\])?\s*(?:[-–—.]\s*)?(.+?)\s*$")
 FOOTNOTE_RE = re.compile(r"^\s*\(?\d{1,4}\)?\s*[-–—.]\s*(?:ينظر|انظر|راجع)\b")
 CRITIC_HINTS = (
     "قال ", "وقال ", "سمعت ", "سألت ", "سئل ", "ذكر ", "يقول ",
@@ -33,7 +33,7 @@ def read_pages(path):
     return raw.split("\f")
 
 def is_probable_translation_heading(line, current_no):
-    m = re.match(r"^\s*\[?(\d{1,4})\]?\s*[-–—]\s*(.+?)\s*$", line)
+    m = HEADING_RE.match(line)
     if not m:
         return None
     n = int(m.group(1))
