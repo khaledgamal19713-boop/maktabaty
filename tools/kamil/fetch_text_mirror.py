@@ -53,8 +53,9 @@ def main():
     pages=list(range(a.start,a.end+1))
     todo=[p for p in pages if not (out/f"{p:05d}.txt").exists()]
     results={"start":a.start,"end":a.end,"pages":len(pages),"fetched":0,"resumed":len(pages)-len(todo),"failed":[]}
-    session=requests.Session()
-    def one(p): return fetch(session,a.base_url+str(p),p)
+    def one(p):
+        with requests.Session() as session:
+            return fetch(session,a.base_url+str(p),p)
     with concurrent.futures.ThreadPoolExecutor(max_workers=a.workers) as ex:
         futures={ex.submit(one,p):p for p in todo}
         for n,f in enumerate(concurrent.futures.as_completed(futures),1):
