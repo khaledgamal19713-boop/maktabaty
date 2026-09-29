@@ -21,3 +21,14 @@ first=$(find build/kamil/text -type f -name "*.txt" | sort | head -1)
 echo "FIRST_TEXT=$first"
 sed -n '1,100p' "$first" || true
 python3 tools/kamil/quality.py --text build/kamil/text/book.txt --pdf-dir build/kamil/source/extracted --report build/kamil/source/quality.json
+decision=$(python3 - <<'PY'
+import json
+p=json.load(open("build/kamil/source/quality.json",encoding="utf-8"))
+print(p.get("decision",""))
+PY
+)
+if [ "$decision" = "ocr_full" ]; then
+  rm -rf build/kamil/ocr
+  python3 tools/kamil/ocr_full.py --pdf-dir build/kamil/source/extracted --out-dir build/kamil/ocr --manifest build/kamil/source/ocr-manifest.json
+  cp build/kamil/ocr/book.txt build/kamil/text/book.txt
+fi
