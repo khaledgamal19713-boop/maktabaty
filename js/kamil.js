@@ -10,7 +10,7 @@ async function load(){
 }
 function save(){localStorage.setItem("kamilPrefs",JSON.stringify(prefs))}
 function restore(){try{prefs={...prefs,...JSON.parse(localStorage.getItem("kamilPrefs")||"{}")}}catch{};applyPrefs()}
-function applyPrefs(){document.documentElement.style.setProperty("--size",prefs.size+"px");document.documentElement.style.setProperty("--lh",prefs.lh);document.body.classList.toggle("dark",!!prefs.dark);document.body.style.fontFamily=prefs.font+",serif"}
+function applyPrefs(){document.documentElement.style.setProperty("--size",prefs.size+"px");document.documentElement.style.setProperty("--lh",prefs.lh);\n  document.documentElement.style.setProperty("--width",prefs.width+"px");document.body.classList.toggle("dark",!!prefs.dark);document.body.style.fontFamily=prefs.font+",serif"}
 function text(t){return prefs.diacritics?t:t.replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g,"")}
 function renderTree(filter=""){
   const list=$("#treeList"), q=filter.trim();
@@ -41,14 +41,14 @@ $("#prev").onclick=()=>move(-1);$("#next").onclick=()=>move(1);
 $("#treeBtn").onclick=()=>$("#tree").classList.add("open");$("#closeTree").onclick=()=>$("#tree").classList.remove("open");
 $("#treeSearch").oninput=e=>renderTree(e.target.value);
 $("#search").oninput=e=>{const q=e.target.value.trim();if(!q)return;const i=book.translations.findIndex(t=>t.name.includes(q));if(i>=0)showTranslation(i)};
-$("#copyBtn").onclick=async()=>{const r=flatRecords[recordIndex];await navigator.clipboard.writeText(r.text+"\n\n["+book.translations[index].name+"]");};
+$("#copyBtn").onclick=async()=>{const r=flatRecords[recordIndex];if(!r)return;const ref=r.refs?.length?"\\n\\n[المصدر: "+r.refs.join("، ")+"]":"";await navigator.clipboard.writeText(r.text+"\\n\\n["+book.translations[index].name+"]"+ref);};\n$("#jumpBtn").onclick=()=>jumpToNumber();$("#jump").onkeydown=e=>{if(e.key==="Enter")jumpToNumber()};\nfunction jumpToNumber(){const n=Number($("#jump").value);if(!Number.isInteger(n))return;let ri=flatRecords.findIndex(r=>r.numbers?.includes(n));if(ri>=0){recordIndex=ri;document.getElementById("rec-"+ri)?.scrollIntoView({behavior:"smooth"});return}const ti=book.translations.findIndex(t=>t.hadith_groups?.some(g=>g.numbers?.includes(n)));if(ti>=0){showTranslation(ti);ri=flatRecords.findIndex(r=>r.numbers?.includes(n));if(ri>=0){recordIndex=ri;document.getElementById("rec-"+ri)?.scrollIntoView({behavior:"smooth"})}}}
 document.querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>{
  const a=b.dataset.action;
  if(a==="smaller")prefs.size=Math.max(14,prefs.size-1);
  if(a==="larger")prefs.size=Math.min(40,prefs.size+1);
  if(a==="line")prefs.lh=prefs.lh===2?2.4:2;
  if(a==="diacritics")prefs.diacritics=!prefs.diacritics;
- if(a==="font")prefs.font=prefs.font==="Amiri"?"Cairo":"Amiri";
+ if(a==="font"){const fonts=["Amiri","Cairo","Noto Naskh Arabic"];prefs.font=fonts[(fonts.indexOf(prefs.font)+1)%fonts.length];}\n if(a==="width")prefs.width=prefs.width>=1180?760:prefs.width+140;
  if(a==="dark")prefs.dark=!prefs.dark;
  applyPrefs();save();showTranslation(index);
 });
