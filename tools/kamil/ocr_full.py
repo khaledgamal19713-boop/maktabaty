@@ -41,12 +41,12 @@ def main():
         book=out/f"volume-{vol:02d}.txt"
         with book.open("w",encoding="utf-8") as w:
             for page,pf in enumerate(page_files,1):
-                w.write(f"@@SOURCE volume={vol} pdf_page={page}@@
-")
+                w.write(f"@@SOURCE volume={vol} pdf_page={page}@@")
+                w.write(chr(10))
                 w.write(pf.read_text(encoding="utf-8",errors="replace"))
-                w.write("
-\f
-")
+                w.write(chr(10))
+                w.write(chr(12))
+                w.write(chr(10))
         manifest.append({"volume":vol,"pdf":pdf.name,"pages":n,"text":str(book)})
     Path(args.manifest).write_text(json.dumps({"volumes":manifest},ensure_ascii=False,indent=2),encoding="utf-8")
     with (out/"book.txt").open("w",encoding="utf-8") as w:
