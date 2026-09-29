@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-import argparse, subprocess, tempfile, os, json\nfrom concurrent.futures import ThreadPoolExecutor
+import argparse, subprocess, tempfile, os, json
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 def ocr_one(pdf,page,outfile):
@@ -40,9 +41,12 @@ def main():
         book=out/f"volume-{vol:02d}.txt"
         with book.open("w",encoding="utf-8") as w:
             for page,pf in enumerate(page_files,1):
-                w.write(f"@@SOURCE volume={vol} pdf_page={page}@@\n")
+                w.write(f"@@SOURCE volume={vol} pdf_page={page}@@
+")
                 w.write(pf.read_text(encoding="utf-8",errors="replace"))
-                w.write("\n\f\n")
+                w.write("
+\f
+")
         manifest.append({"volume":vol,"pdf":pdf.name,"pages":n,"text":str(book)})
     Path(args.manifest).write_text(json.dumps({"volumes":manifest},ensure_ascii=False,indent=2),encoding="utf-8")
     with (out/"book.txt").open("w",encoding="utf-8") as w:
