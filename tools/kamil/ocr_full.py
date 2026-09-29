@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import argparse, subprocess, tempfile, os, json
+import argparse, subprocess, tempfile, os, json\nfrom concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 def ocr_one(pdf,page,outfile):
