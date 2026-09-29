@@ -2,7 +2,7 @@ name: Build Kamil reader
 
 on:
   push:
-    branches: [main]
+    branches: [main, feature/kamil-reader]
     paths:
       - 'tools/kamil/**'
       - 'kamil.html'
@@ -24,20 +24,23 @@ jobs:
         run: bash tools/kamil/build-source.sh
       - name: Parse
         run: |
-          python3 tools/kamil/parser.py             --input build/kamil/text/book.txt             --output build/kamil/book.json             --overrides tools/kamil/overrides.json
+          python3 tools/kamil/parser.py --input build/kamil/text/book.txt --output build/kamil/book.json --overrides tools/kamil/overrides.json
       - name: Validate gates
         run: |
-          python3 tools/kamil/validate.py             --book build/kamil/book.json             --gold tools/kamil/gold.json             --report build/kamil/report.json
-      - name: Assemble reader data
+          python3 tools/kamil/validate.py --book build/kamil/book.json --gold tools/kamil/gold.json --report build/kamil/report.json
+      - name: Assemble build evidence
+        if: always()
         run: |
           mkdir -p artifacts/kamil
-          cp build/kamil/book.json artifacts/kamil/
-          cp build/kamil/report.json artifacts/kamil/
-          cp build/kamil/source/quality.json artifacts/kamil/
-          cp build/kamil/source/SHA256.txt artifacts/kamil/
+          cp build/kamil/book.json artifacts/kamil/ 2>/dev/null || true
+          cp build/kamil/report.json artifacts/kamil/ 2>/dev/null || true
+          cp build/kamil/source/quality.json artifacts/kamil/ 2>/dev/null || true
+          cp build/kamil/source/SHA256.txt artifacts/kamil/ 2>/dev/null || true
           cp tools/kamil/gold.json artifacts/kamil/
       - name: Upload build evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: kamil-build-evidence
           path: artifacts/kamil/
+          if-no-files-found: ignore
