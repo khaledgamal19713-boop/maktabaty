@@ -16,4 +16,8 @@ for pdf in "${pdfs[@]}"; do
   cat "build/kamil/text/$base.txt" >> build/kamil/text/book.txt
   printf '\f\n' >> build/kamil/text/book.txt
 done
+echo "=== SOURCE TEXT SAMPLE ==="
+first=$(find build/kamil/text -type f -name "*.txt" | sort | head -1)
+echo "FIRST_TEXT=$first"
+sed -n '1,100p' "$first" || true
 python3 tools/kamil/quality.py --text build/kamil/text/book.txt --pdf-dir build/kamil/source/extracted --report build/kamil/source/quality.json
