@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الكامل في ضعفاء الرجال — الرشد</title>
+<link rel="stylesheet" href="css/kamil.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="tools">
+    <button id="treeBtn">☰ التراجم</button>
+    <button data-action="smaller">− الخط</button>
+    <button data-action="larger">+ الخط</button>
+    <button data-action="line">تباعد</button>
+    <button data-action="diacritics">التشكيل</button>
+    <button data-action="font">الخط</button>
+    <button data-action="dark">ليلي</button>
+    <button id="copyBtn">نسخ السجل</button>
+    <label class="search"><input id="search" placeholder="بحث باسم الراوي"><span>⌕</span></label>
+  </div>
+  <div id="stickyTitle" class="sticky-title">الكامل في ضعفاء الرجال</div>
+</header>
+<aside id="tree" class="tree">
+  <div class="tree-head"><b>شجرة التراجم</b><button id="closeTree">×</button></div>
+  <input id="treeSearch" placeholder="بحث سريع...">
+  <div id="treeList"></div>
+</aside>
+<main id="main">
+  <div id="status">جاري تحميل بيانات الكتاب...</div>
+  <section id="records"></section>
+  <nav class="pager">
+    <button id="prev">السابق</button>
+    <span id="position"></span>
+    <button id="next">التالي</button>
+  </nav>
+</main>
+<script src="js/kamil.js"></script>
+</body>
+</html>
