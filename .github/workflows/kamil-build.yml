@@ -22,7 +22,15 @@ jobs:
       - uses: actions/checkout@v4
       - name: Fetch and extract source
         run: bash tools/kamil/build-source.sh
-      - name: Inspect extracted text layer\n        run: |\n          pdf=$(find build/kamil/source/extracted -type f -iname "*.pdf" | sort | head -1)\n          echo "FIRST_PDF=$pdf"\n          pdfinfo "$pdf" | grep -E "Pages|Page size" || true\n          txt=$(find build/kamil/text -type f -name "*.txt" | sort | head -1)\n          echo "FIRST_TEXT=$txt"\n          sed -n "1,80p" "$txt" || true\n      - name: Parse
+      - name: Inspect extracted text layer
+        run: |
+          pdf=$(find build/kamil/source/extracted -type f -iname "*.pdf" | sort | head -1)
+          echo "FIRST_PDF=$pdf"
+          pdfinfo "$pdf" | grep -E "Pages|Page size" || true
+          txt=$(find build/kamil/text -type f -name "*.txt" | sort | head -1)
+          echo "FIRST_TEXT=$txt"
+          sed -n "1,80p" "$txt" || true
+      - name: Parse
         run: |
           python3 tools/kamil/parser.py --input build/kamil/text/book.txt --output build/kamil/book.json --overrides tools/kamil/overrides.json
       - name: Validate gates
