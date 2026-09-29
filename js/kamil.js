@@ -1,4 +1,4 @@
-let book=null,index=0,recordIndex=0,flatRecords=[],prefs={size:20,lh:2,font:"Amiri",diacritics:true,dark:false};
+let book=null,index=0,recordIndex=0,flatRecords=[],prefs={size:20,lh:2,font:"Amiri",diacritics:true,dark:false,width:980};
 const $=s=>document.querySelector(s);
 async function load(){
   try{
@@ -21,9 +21,9 @@ function renderTree(filter=""){
 function recordsFor(t){
   const r=[{type:"name",label:"اسم صاحب الترجمة",text:t.name}];
   if(t.intro)r.push({type:"intro",label:"المقدمة",text:t.intro});
-  if(t.critics?.length)r.push({type:"critics",label:"نقولات الأئمة",text:t.critics.map(x=>x.number+" - "+x.text).join("\n\n"),ref:t.critics.map(x=>x.source_pages).flat()});
+  if(t.critics?.length)r.push({type:"critics",label:"نقولات الأئمة",text:t.critics.map(x=>x.number+" - "+x.text).join("\n\n"),refs:t.critics.flatMap(x=>x.source_pages||[]),numbers:t.critics.map(x=>x.number)});
   for(const g of (t.hadith_groups||[])){
-    r.push({type:"hadith",label:g.grouping_reason==="single"?"حديث "+g.numbers[0]:"مجموعة أحاديث: "+g.numbers.join("، "),kind:g.type,text:g.items.map(x=>x.number+" - "+x.text).join("\n\n")});
+    r.push({type:"hadith",label:g.grouping_reason==="single"?"حديث "+g.numbers[0]:"مجموعة أحاديث: "+g.numbers.join("، "),kind:g.type,text:g.items.map(x=>x.number+" - "+x.text).join("\n\n"),numbers:g.numbers,refs:g.items.flatMap(x=>x.source_pages||[])});
   }
   return r;
 }
@@ -41,7 +41,7 @@ $("#prev").onclick=()=>move(-1);$("#next").onclick=()=>move(1);
 $("#treeBtn").onclick=()=>$("#tree").classList.add("open");$("#closeTree").onclick=()=>$("#tree").classList.remove("open");
 $("#treeSearch").oninput=e=>renderTree(e.target.value);
 $("#search").oninput=e=>{const q=e.target.value.trim();if(!q)return;const i=book.translations.findIndex(t=>t.name.includes(q));if(i>=0)showTranslation(i)};
-$("#copyBtn").onclick=async()=>{const r=flatRecords[recordIndex];if(!r)return;const ref=r.refs?.length?"\\n\\n[المصدر: "+r.refs.join("، ")+"]":"";await navigator.clipboard.writeText(r.text+"\\n\\n["+book.translations[index].name+"]"+ref);};\n$("#jumpBtn").onclick=()=>jumpToNumber();$("#jump").onkeydown=e=>{if(e.key==="Enter")jumpToNumber()};\nfunction jumpToNumber(){const n=Number($("#jump").value);if(!Number.isInteger(n))return;let ri=flatRecords.findIndex(r=>r.numbers?.includes(n));if(ri>=0){recordIndex=ri;document.getElementById("rec-"+ri)?.scrollIntoView({behavior:"smooth"});return}const ti=book.translations.findIndex(t=>t.hadith_groups?.some(g=>g.numbers?.includes(n)));if(ti>=0){showTranslation(ti);ri=flatRecords.findIndex(r=>r.numbers?.includes(n));if(ri>=0){recordIndex=ri;document.getElementById("rec-"+ri)?.scrollIntoView({behavior:"smooth"})}}}
+$("#copyBtn").onclick=async()=>{const r=flatRecords[recordIndex];if(!r)return;const ref=r.refs?.length?"\n\n[المصدر: "+r.refs.join("، ")+"]":"";await navigator.clipboard.writeText(r.text+"\n\n["+book.translations[index].name+"]"+ref);};\n$("#jumpBtn").onclick=()=>jumpToNumber();$("#jump").onkeydown=e=>{if(e.key==="Enter")jumpToNumber()};\nfunction jumpToNumber(){const n=Number($("#jump").value);if(!Number.isInteger(n))return;let ri=flatRecords.findIndex(r=>r.numbers?.includes(n));if(ri>=0){recordIndex=ri;document.getElementById("rec-"+ri)?.scrollIntoView({behavior:"smooth"});return}const ti=book.translations.findIndex(t=>t.hadith_groups?.some(g=>g.numbers?.includes(n)));if(ti>=0){showTranslation(ti);ri=flatRecords.findIndex(r=>r.numbers?.includes(n));if(ri>=0){recordIndex=ri;document.getElementById("rec-"+ri)?.scrollIntoView({behavior:"smooth"})}}}
 document.querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>{
  const a=b.dataset.action;
  if(a==="smaller")prefs.size=Math.max(14,prefs.size-1);
