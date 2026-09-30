@@ -6,7 +6,7 @@ ap=argparse.ArgumentParser()
 ap.add_argument("--pages-dir",required=True)
 ap.add_argument("--output",required=True)
 a=ap.parse_args()
-pages=sorted(Path(a.pages_dir).glob("*.txt"))
+pages=sorted(Path(a.pages_dir).rglob("*.txt"))
 if not pages:
     raise SystemExit("No text pages found")
 with open(a.output,"w",encoding="utf-8") as out:
