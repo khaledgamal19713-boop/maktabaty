@@ -15,27 +15,95 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  fetch-text:
+    name: Fetch text pages ${{ matrix.part }}
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {part: 1, start: 1, end: 1215}
+          - {part: 2, start: 1216, end: 2430}
+          - {part: 3, start: 2431, end: 3645}
+          - {part: 4, start: 3646, end: 4860}
+          - {part: 5, start: 4861, end: 6075}
+          - {part: 6, start: 6076, end: 7290}
+          - {part: 7, start: 7291, end: 8505}
+          - {part: 8, start: 8506, end: 9714}
     steps:
       - uses: actions/checkout@v4
-      - name: Fetch and extract source
-        run: bash tools/kamil/build-source.sh
-      - name: Inspect extracted text layer
+      - name: Install parser dependencies
         run: |
-          pdf=$(find build/kamil/source/extracted -type f -iname "*.pdf" | sort | head -1)
-          echo "FIRST_PDF=$pdf"
-          pdfinfo "$pdf" | grep -E "Pages|Page size" || true
-          txt=$(find build/kamil/text -type f -name "*.txt" | sort | head -1)
-          echo "FIRST_TEXT=$txt"
-          sed -n "1,80p" "$txt" || true
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq python3-bs4 python3-requests
+      - name: Fetch assigned pages
+        run: |
+          python3 tools/kamil/fetch_text_mirror.py \
+            --base-url "https://www.islamarchive.cc/ketab_content/16515/p-" \
+            --start "${{ matrix.start }}" \
+            --end "${{ matrix.end }}" \
+            --out-dir "build/kamil/text/part-${{ matrix.part }}" \
+            --manifest "build/kamil/text/part-${{ matrix.part }}-manifest.json" \
+            --workers 32
+      - name: Upload text part
+        uses: actions/upload-artifact@v4
+        with:
+          name: kamil-text-part-${{ matrix.part }}
+          path: build/kamil/text/part-${{ matrix.part }}
+
+  build:
+    name: Assemble, parse and validate
+    needs: fetch-text
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq p7zip-full poppler-utils
+      - name: Download text parts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: kamil-text-part-*
+          path: build/kamil/text/pages
+          merge-multiple: false
+      - name: Assemble source and fetch reference edition
+        run: |
+          mkdir -p build/kamil/source build/kamil/text/pages
+          find build/kamil/text/pages -type f -name '*.txt' | sort
+          python3 tools/kamil/assemble_text.py \
+            --pages-dir build/kamil/text/pages \
+            --output build/kamil/text/book.txt
+          curl -L --fail --retry 3 --retry-delay 2 \
+            "https://saaid.org/book/downloadurl.php?id=11865&type=rar" \
+            -o build/kamil/source/kamil.rar
+          sha256sum build/kamil/source/kamil.rar | tee build/kamil/source/SHA256.txt
+          7z x -y build/kamil/source/kamil.rar -obuild/kamil/source/extracted
+      - name: Validate source quality
+        run: |
+          python3 tools/kamil/quality.py \
+            --text build/kamil/text/book.txt \
+            --pdf-dir build/kamil/source/extracted \
+            --report build/kamil/source/quality.json
+          python3 - <<'PY'
+          import json
+          p=json.load(open("build/kamil/source/quality.json",encoding="utf-8"))
+          assert p.get("decision") == "use_existing_text", p
+          PY
       - name: Parse
         run: |
-          python3 tools/kamil/parser.py --input build/kamil/text/book.txt --output build/kamil/book.json --overrides tools/kamil/overrides.json
+          python3 tools/kamil/parser.py \
+            --input build/kamil/text/book.txt \
+            --output build/kamil/book.json \
+            --overrides tools/kamil/overrides.json
       - name: Validate gates
         run: |
-          python3 tools/kamil/validate.py --book build/kamil/book.json --gold tools/kamil/gold.json --report build/kamil/report.json
+          python3 tools/kamil/validate.py \
+            --book build/kamil/book.json \
+            --gold tools/kamil/gold.json \
+            --report build/kamil/report.json
       - name: Assemble build evidence
         if: always()
         run: |
