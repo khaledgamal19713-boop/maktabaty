@@ -9,7 +9,7 @@ button:hover,.tree-row.active{background:var(--active)}
 .search input,.tree input{border:0;background:var(--card);color:var(--ink);padding:8px;font-family:inherit;outline:0}
 .sticky-title{text-align:center;font-weight:700;font-size:22px;padding:8px 12px;min-height:32px}
 .tree{position:fixed;right:0;top:0;bottom:0;width:min(340px,90vw);background:var(--card);z-index:30;transform:translateX(105%);transition:.2s;box-shadow:-3px 0 15px #0002;overflow:hidden;display:flex;flex-direction:column}
-.tree.open{transform:none}.tree-head{padding:12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}.tree>input{margin:8px;border:1px solid var(--line);border-radius:7px}.tree-list{overflow:auto}.tree-row{padding:9px 12px;border-bottom:1px solid var(--line);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tree.open{transform:none}.tree-head{padding:12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}.tree>input{margin:8px;border:1px solid var(--line);border-radius:7px}.tree-list{overflow:auto}.tree-row{padding:9px 12px;border-bottom:1px solid var(--line);cursor:pointer;display:flex;flex-direction:column;gap:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tree-row small{font:11px system-ui;color:var(--muted)}.tree-row.current{box-shadow:inset -3px 0 0 var(--accent)}
 #treeList{overflow:auto}.tree-row.current{font-weight:700;background:var(--active)}
 #main{max-width:var(--width);margin:0 auto;padding:20px 16px 80px}
 #status{text-align:center;color:var(--muted);padding:30px}.record{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:0 0 14px;padding:18px;font-size:var(--size);line-height:var(--lh);scroll-margin-top:120px}
