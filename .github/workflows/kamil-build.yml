@@ -68,7 +68,7 @@ jobs:
         with:
           pattern: kamil-text-part-*
           path: build/kamil/text/pages
-          merge-multiple: false
+          merge-multiple: true
       - name: Assemble source and fetch reference edition
         run: |
           mkdir -p build/kamil/source build/kamil/text/pages
